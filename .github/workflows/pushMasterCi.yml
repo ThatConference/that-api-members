@@ -23,7 +23,7 @@ jobs:
         cp .env.sample .env
         npm ci
         npm run validate
-    - name: Past Build Copies
+    - name: Post Build Copies
       run: |
         cp ./package.json __build__/
         cp ./package-lock.json __build__/
