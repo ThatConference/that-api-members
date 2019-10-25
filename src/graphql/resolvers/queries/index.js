@@ -1,5 +1,5 @@
-import echo from './echo';
+import members from './members';
 
 export default {
-  ...echo,
+  ...members,
 };
