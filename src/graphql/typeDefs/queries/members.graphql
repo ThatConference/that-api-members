@@ -1,5 +1,3 @@
-# import Message from '../dataTypes/message.graphql'
-
 type Query {
   members(message: String!): Message!
 }
