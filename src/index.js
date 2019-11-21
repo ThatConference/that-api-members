@@ -3,6 +3,8 @@ import 'dotenv/config';
 import connect from 'connect';
 import * as Sentry from '@sentry/node';
 import uuid from 'uuid/v4';
+import responseTime from 'response-time';
+import cors from 'cors';
 
 import apolloGraphServer from './graphql';
 
@@ -56,12 +58,7 @@ const createUserContext = (req, res, next) => {
 const apiHandler = async (req, res) => {
   try {
     const graphServer = apolloGraphServer(createConfig());
-    const graphApi = graphServer.createHandler({
-      cors: {
-        origin: '*',
-        credentials: true,
-      },
-    });
+    const graphApi = graphServer.createHandler();
 
     graphApi(req, res);
   } catch (e) {
@@ -79,6 +76,8 @@ const apiHandler = async (req, res) => {
  * This is your api handler for your serverless function
  */
 export const graphEndpoint = api
+  .use(responseTime())
+  .use(cors())
   .use(useSentry)
   .use(createUserContext)
   .use(apiHandler);
