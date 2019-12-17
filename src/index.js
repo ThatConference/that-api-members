@@ -8,6 +8,10 @@ import cors from 'cors';
 
 import apolloGraphServer from './graphql';
 
+const { version } = require('../package.json');
+
+const defaultVersion = `that-api-gateway@${version}`;
+
 const api = connect();
 
 const createConfig = () => ({
@@ -20,7 +24,7 @@ const useSentry = async (req, res, next) => {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.THAT_ENVIRONMENT,
-    debug: true,
+    release: process.env.SENTRY_VERSION || defaultVersion,
   });
 
   Sentry.addBreadcrumb({
