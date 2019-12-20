@@ -1,5 +1,13 @@
-// import mutateActivity from './activity/mutateActivity';
+import rootMutations from './root';
 
-// export default {
-//   ...mutateActivity,
-// };
+import { fieldResolvers as sessionFields } from './member';
+import { fieldResolvers as sessionsFields } from './members';
+
+export default {
+  ...rootMutations,
+};
+
+export const fieldResolvers = {
+  ...sessionFields,
+  ...sessionsFields,
+};

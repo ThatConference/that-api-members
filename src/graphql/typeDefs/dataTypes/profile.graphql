@@ -1,0 +1,13 @@
+type Profile @key(fields: "id") {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  emailAddress: Email!
+  createDate: Date!
+  lastUpdate: Date!
+  sessions: [Session]
+}
+
+extend type Session @key(fields: "id") {
+  id: ID! @external
+}
