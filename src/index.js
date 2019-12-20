@@ -1,22 +1,38 @@
 /* eslint-disable import/prefer-default-export */
 import 'dotenv/config';
 import connect from 'connect';
+import cors from 'cors';
+import debug from 'debug';
+import { Firestore } from '@google-cloud/firestore';
+import pino from 'pino';
+import responseTime from 'response-time';
 import * as Sentry from '@sentry/node';
 import uuid from 'uuid/v4';
-import responseTime from 'response-time';
-import cors from 'cors';
 
 import apolloGraphServer from './graphql';
-
-const { version } = require('../package.json');
+import { version } from '../package.json';
 
 const defaultVersion = `that-api-gateway@${version}`;
-
+const dlog = debug('that-api-members:index');
 const api = connect();
+
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  prettyPrint: JSON.parse(process.env.LOG_PRETTY_PRINT || false)
+    ? { colorize: true }
+    : false,
+  mixin() {
+    return {
+      service: 'that-api-members',
+    };
+  },
+});
 
 const createConfig = () => ({
   dataSources: {
     sentry: Sentry,
+    logger,
+    firestore: new Firestore(),
   },
 });
 
@@ -47,6 +63,8 @@ const useSentry = async (req, res, next) => {
  *
  */
 const createUserContext = (req, res, next) => {
+  dlog('creating user context');
+
   req.userContext = {
     locale: req.headers.locale,
     authToken: req.headers.authorization,
@@ -60,19 +78,25 @@ const createUserContext = (req, res, next) => {
 };
 
 const apiHandler = async (req, res) => {
-  try {
-    const graphServer = apolloGraphServer(createConfig());
-    const graphApi = graphServer.createHandler();
+  dlog('api handler called');
 
-    graphApi(req, res);
-  } catch (e) {
-    Sentry.captureException(e);
-    res
-      .set('Content-Type', 'application/json')
-      .status(500)
-      .send(new Error(e));
-  }
+  const graphServer = apolloGraphServer(createConfig());
+  const graphApi = graphServer.createHandler();
+
+  graphApi(req, res);
 };
+
+function failure(err, req, res, next) {
+  req.log.trace('Middleware Catch All');
+  req.log.error('catchall', err);
+
+  Sentry.captureException(err);
+
+  res
+    .set('Content-Type', 'application/json')
+    .status(500)
+    .json(err);
+}
 
 /**
  * http middleware function that follows adhering to express's middleware.
@@ -80,8 +104,9 @@ const apiHandler = async (req, res) => {
  * This is your api handler for your serverless function
  */
 export const graphEndpoint = api
-  .use(responseTime())
   .use(cors())
+  .use(responseTime())
   .use(useSentry)
   .use(createUserContext)
-  .use(apiHandler);
+  .use(apiHandler)
+  .use(failure);

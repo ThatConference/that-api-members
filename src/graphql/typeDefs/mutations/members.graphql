@@ -1,0 +1,4 @@
+type MembersMutation {
+  create(profile: ProfileCreateInput!): Profile!
+  member: MemberMutation
+}

@@ -1,0 +1,11 @@
+input ProfileCreateInput {
+  firstName: String!
+  lastName: String!
+  emailAddress: Email
+}
+
+input ProfileUpdateInput {
+  firstName: String
+  lastName: String
+  emailAddress: Email
+}
