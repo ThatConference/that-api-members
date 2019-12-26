@@ -44,7 +44,6 @@ const createServer = ({ dataSources }) => {
 
       if (req.headers.authorization) {
         dlog('validating token for %o:', req.headers.authorization);
-        console.log('TCL: createServer -> security', security);
 
         const validatedToken = await security
           .jwt()
