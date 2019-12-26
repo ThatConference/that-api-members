@@ -21,6 +21,7 @@ jobs:
           npm run validate
         env:
           CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Slack Notification
         uses: 8398a7/action-slack@v2
         with:

@@ -22,6 +22,8 @@ jobs:
           cp .env.sample .env
           npm ci
           npm run validate
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Post-Build Copies
         run: |
           cp ./package.json __build__/
