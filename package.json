@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "rimraf __build__ && babel ./src -d ./__build__ --copy-files --ignore ./**/__tests__,./**/__mocks__",
-    "postbuild": "cp .env .npmrc __build__",
+    "postbuild": "cp .env __build__",
     "predeploy:local": "npm run build",
     "deploy:local": "cd ./__build__ && functions-framework --target=graphEndpoint --port=8004 --verbose",
     "start:watch": "nodemon -e env,js,json,graphql --watch src --ignore '*.test.js' --exec npm run deploy:local",
@@ -21,7 +21,7 @@
     "@apollo/federation": "^0.11.2",
     "@google-cloud/firestore": "^3.0.0",
     "@sentry/node": "^5.10.2",
-    "@thatconference/api": "^1.1.0",
+    "@thatconference/api": "^1.2.0",
     "apollo-datasource-rest": "^0.6.10",
     "apollo-server": "^2.9.14",
     "apollo-server-cloud-functions": "^2.9.14",
