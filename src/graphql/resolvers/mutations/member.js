@@ -3,7 +3,7 @@ import debug from 'debug';
 
 // import sessionStore from '../../../dataSources/cloudFirestore/session';
 
-const dlog = debug('that-api-sessions:mutation');
+const dlog = debug('that:api:members:mutation');
 
 export const fieldResolvers = {
   MemberMutation: {

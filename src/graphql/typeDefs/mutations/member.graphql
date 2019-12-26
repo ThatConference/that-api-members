@@ -1,3 +1,4 @@
 type MemberMutation {
   update(profile: ProfileUpdateInput!): Profile!
+    @auth(requires: "members:update")
 }
