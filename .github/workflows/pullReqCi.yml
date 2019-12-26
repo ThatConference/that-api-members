@@ -16,7 +16,7 @@ jobs:
           node-version: 10.x
       - name: npm ci, run validate
         run: |
-          cp .env.sample .env
+          cp .env.sample .env .npmrc
           npm ci
           npm run validate
         env:
