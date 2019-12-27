@@ -12,8 +12,9 @@ import uuid from 'uuid/v4';
 import apolloGraphServer from './graphql';
 import { version } from '../package.json';
 
+const dlog = debug('that:api:members:index');
 const defaultVersion = `that-api-gateway@${version}`;
-const dlog = debug('that-api-members:index');
+const firestore = new Firestore();
 const api = connect();
 
 const logger = pino({
@@ -28,21 +29,26 @@ const logger = pino({
   },
 });
 
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.THAT_ENVIRONMENT,
+  release: process.env.SENTRY_VERSION || defaultVersion,
+  debug: process.env.NODE_ENV === 'development',
+});
+
+Sentry.configureScope(scope => {
+  scope.setTag('thatApp', 'that-api-members');
+});
+
 const createConfig = () => ({
   dataSources: {
     sentry: Sentry,
     logger,
-    firestore: new Firestore(),
+    firestore,
   },
 });
 
 const useSentry = async (req, res, next) => {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.THAT_ENVIRONMENT,
-    release: process.env.SENTRY_VERSION || defaultVersion,
-  });
-
   Sentry.addBreadcrumb({
     category: 'that-api-members',
     message: 'init',
@@ -65,6 +71,12 @@ const useSentry = async (req, res, next) => {
 const createUserContext = (req, res, next) => {
   dlog('creating user context');
 
+  const correlationId = req.headers['that-correlation-id']
+    ? req.headers['that-correlation-id']
+    : uuid();
+
+  const contextLogger = logger.child({ correlationId });
+
   req.userContext = {
     locale: req.headers.locale,
     authToken: req.headers.authorization,
@@ -72,6 +84,7 @@ const createUserContext = (req, res, next) => {
       ? req.headers['correlation-id']
       : uuid(),
     sentry: Sentry,
+    logger: contextLogger,
   };
 
   next();
@@ -87,8 +100,8 @@ const apiHandler = async (req, res) => {
 };
 
 function failure(err, req, res, next) {
-  req.log.trace('Middleware Catch All');
-  req.log.error('catchall', err);
+  logger.error(err);
+  logger.trace('Middleware Catch All');
 
   Sentry.captureException(err);
 

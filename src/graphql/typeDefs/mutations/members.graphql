@@ -1,4 +1,4 @@
 type MembersMutation {
-  create(profile: ProfileCreateInput!): Profile!
-  member: MemberMutation
+  create(profile: ProfileCreateInput!): Profile! @auth(requires: "members")
+  member: MemberMutation @auth(requires: "members")
 }

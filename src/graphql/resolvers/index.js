@@ -4,7 +4,7 @@ import customScalars from './scalars/date';
 import queries, { fieldResolvers as qFieldResolvers } from './queries';
 import mutations, { fieldResolvers as mFieldResolvers } from './mutations';
 
-const createServer = {
+const createResolvers = {
   ...graphScalars,
   ...customScalars,
 
@@ -20,4 +20,4 @@ const createServer = {
   },
 };
 
-export default createServer;
+export default createResolvers;
