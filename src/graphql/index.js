@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { ApolloServer, gql, mergeSchemas } from 'apollo-server-cloud-functions';
 import { buildFederatedSchema } from '@apollo/federation';
 import debug from 'debug';
@@ -42,7 +43,7 @@ const createServer = ({ dataSources }) => {
       dlog('buulding graphql user context');
       let context = {};
 
-      if (req.headers.authorization) {
+      if (!_.isNil(req.headers.authorization)) {
         dlog('validating token for %o:', req.headers.authorization);
 
         const validatedToken = await security
