@@ -21,12 +21,12 @@ export const fieldResolvers = {
         profile,
       });
 
-      // await postmark.sendEmail({
-      //   From: 'hello@thatconference.com',
-      //   To: memberProfile.email,
-      //   Subject: 'You just created THAT account, welcome!',
-      //   TextBody: 'TODO.. YOUR ACCOUNT',
-      // });
+      await postmark.sendEmail({
+        From: 'hello@thatconference.com',
+        To: memberProfile.email,
+        Subject: 'You just created THAT account, welcome!',
+        TextBody: 'TODO.. YOUR ACCOUNT',
+      });
 
       return memberProfile;
     },
