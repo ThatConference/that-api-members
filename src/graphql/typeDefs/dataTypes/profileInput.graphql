@@ -1,11 +1,44 @@
 input ProfileCreateInput {
   firstName: String!
   lastName: String!
-  emailAddress: Email
+  email: EmailAddress!
+  profileSlug: String!
+
+  mobilePhone: PhoneNumber
+  city: String
+  state: String
+  country: String
+
+  profileImage: String
+
+  bio: String
+  interests: [String]
+  lifeHack: String
+
+  profileLinks: [ProfileLinkCreateInput]
+  thatSlackUsername: String
+
+  acceptedCodeOfConduct: Boolean!
+  acceptedTermsOfService: Boolean!
+  isOver13: Boolean!
+  isOver18: Boolean!
+
+  canFeature: Boolean!
 }
 
 input ProfileUpdateInput {
   firstName: String
   lastName: String
-  emailAddress: Email
+  email: EmailAddress
+  mobilePhone: PhoneNumber
+  city: String
+  state: String
+  country: String
+  profileImage: String
+  bio: String
+  interests: [String]
+  lifeHack: String
+  profileLinks: [ProfileLinkUpdateInput]
+  thatSlackUsername: String
+  canFeature: Boolean
 }

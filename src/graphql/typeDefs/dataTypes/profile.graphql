@@ -1,11 +1,36 @@
 type Profile @key(fields: "id") {
   id: ID!
+
   firstName: String!
   lastName: String!
-  emailAddress: Email!
-  createDate: Date!
-  lastUpdate: Date!
+
+  email: EmailAddress!
+  mobilePhone: PhoneNumber
+  city: String
+  state: String
+  country: String
+
+  profileSlug: String!
+  profileImage: String
+
+  bio: String
+  interests: [String]
+  lifeHack: String
+
+  profileLinks: [ProfileLink]
+  thatSlackUsername: String
+
   sessions: [Session]
+  isDeactived: Boolean
+
+  canFeature: Boolean!
+  acceptedCodeOfConduct: Boolean
+  acceptedTermsOfService: Boolean
+  isOver13: Boolean
+  isOver18: Boolean
+
+  createdAt: Date!
+  lastUpdatedAt: Date!
 }
 
 extend type Session @key(fields: "id") {
