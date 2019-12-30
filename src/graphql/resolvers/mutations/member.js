@@ -21,7 +21,8 @@ export const fieldResolvers = {
       });
 
       await postmark.sendEmailWithTemplate({
-        TemplateId: 15579922,
+        // TemplateId: 15579922,
+        TemplateAlias: 'MemberUpdated',
         From: 'hello@thatconference.com',
         To: updatedMember.email,
         TemplateModel: {
@@ -29,8 +30,8 @@ export const fieldResolvers = {
             firstName: updatedMember.firstName,
             lastName: updatedMember.lastName,
             email: updatedMember.email,
-            updatedAt: moment(updatedMember.lastUpdatedAt).format(
-              'M/D/YYYY H:mm:ss A',
+            lastUpdatedAt: moment(updatedMember.lastUpdatedAt).format(
+              'M/D/YYYY h:mm:ss A',
             ),
           },
         },
