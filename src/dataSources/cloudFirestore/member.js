@@ -16,7 +16,7 @@ function scrubProfile(profile, isNew) {
   return scrubbedProfile;
 }
 
-const event = (dbInstance, logger) => {
+const member = (dbInstance, logger) => {
   const collectionName = 'members';
   const membersCol = dbInstance.collection(collectionName);
 
@@ -35,12 +35,18 @@ const event = (dbInstance, logger) => {
   }
 
   async function findMe(memberId) {
-    const docRef = dbInstance.doc(`${collectionName}/${memberId}`);
-    const doc = await await docRef.get();
-    return {
-      id: doc.id,
-      ...doc.data(),
-    };
+    const docRef = await dbInstance.doc(`${collectionName}/${memberId}`).get();
+
+    const result = null;
+
+    if (docRef.exists) {
+      return {
+        id: docRef.id,
+        ...docRef.data(),
+      };
+    }
+
+    return result;
   }
 
   async function update({ memberId, profile }) {
@@ -61,4 +67,4 @@ const event = (dbInstance, logger) => {
   return { create, findMe, update };
 };
 
-export default event;
+export default member;
