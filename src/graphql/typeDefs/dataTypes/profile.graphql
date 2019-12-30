@@ -12,7 +12,7 @@ type Profile @key(fields: "id") {
   company: String
   jobTitle: String
 
-  profileSlug: String!
+  profileSlug: String! @lowerCase
   profileImage: String
 
   bio: String

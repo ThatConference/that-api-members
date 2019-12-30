@@ -1,3 +1,4 @@
 type MembersQuery {
   me: Profile @auth(requires: "members")
+  isProfileSlugTaken(slug: String!): Boolean @auth(requires: "members")
 }
