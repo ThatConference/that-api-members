@@ -9,6 +9,8 @@ type Profile @key(fields: "id") {
   city: String
   state: String
   country: String
+  company: String
+  jobTitle: String
 
   profileSlug: String!
   profileImage: String
