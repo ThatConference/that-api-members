@@ -2,6 +2,7 @@
 import debug from 'debug';
 import { ForbiddenError } from 'apollo-server';
 import _ from 'lodash';
+import moment from 'moment';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
 
@@ -21,11 +22,20 @@ export const fieldResolvers = {
         profile,
       });
 
-      await postmark.sendEmail({
+      await postmark.sendEmailWithTemplate({
+        TemplateId: 15580573,
         From: 'hello@thatconference.com',
         To: memberProfile.email,
-        Subject: 'You just created THAT account, welcome!',
-        TextBody: 'TODO.. YOUR ACCOUNT',
+        TemplateModel: {
+          member: {
+            firstName: memberProfile.firstName,
+            lastName: memberProfile.lastName,
+            email: memberProfile.email,
+            updatedAt: moment(memberProfile.lastUpdatedAt).format(
+              'M/D/YYYY H:mm:ss A',
+            ),
+          },
+        },
       });
 
       return memberProfile;
