@@ -9,7 +9,7 @@ enum LinkType {
   TICTOK
   WEBSITE
   DEV_TO
-  DRIBBLE
+  DRIBBBLE
   MEDIUM
   STACK_OVERFLOW
 }
