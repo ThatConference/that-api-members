@@ -1,5 +1,5 @@
 enum LinkType {
-  LINKED_IN
+  LINKEDIN
   GITHUB
   YOUTUBE
   INSTAGRAM
@@ -8,4 +8,8 @@ enum LinkType {
   TWITCH
   TICTOK
   WEBSITE
+  DEV_TO
+  DRIBBLE
+  MEDIUM
+  STACK_OVERFLOW
 }
