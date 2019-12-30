@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import debug from 'debug';
+import moment from 'moment';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
 
@@ -19,12 +20,21 @@ export const fieldResolvers = {
         profile,
       });
 
-      await postmark.sendEmail({
+      await postmark.sendEmailWithTemplate({
+        // TemplateId: 15579922,
+        TemplateAlias: 'MemberUpdated',
         From: 'hello@thatconference.com',
         To: updatedMember.email,
-        Subject: 'Your THAT account was just updated.',
-        TextBody:
-          'todo: this is just an email to let you know your account was just updated',
+        TemplateModel: {
+          member: {
+            firstName: updatedMember.firstName,
+            lastName: updatedMember.lastName,
+            email: updatedMember.email,
+            lastUpdatedAt: moment(updatedMember.lastUpdatedAt).format(
+              'M/D/YYYY h:mm:ss A',
+            ),
+          },
+        },
       });
 
       return updatedMember;
