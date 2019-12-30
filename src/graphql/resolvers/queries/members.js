@@ -1,17 +1,15 @@
 /* eslint-disable import/prefer-default-export */
 import debug from 'debug';
 
-// import sessionStore from '../../../dataSources/cloudFirestore/session';
+import memberStore from '../../../dataSources/cloudFirestore/member';
 
 const dlog = debug('that:api:members:query');
 
 export const fieldResolvers = {
   MembersQuery: {
-    me: async (parent, args, { dataSources: { firestore, logger } }) => {
-      dlog('MembersQuery:XXX called');
-
-      throw new Error('not implemented yet');
-      // sessionStore(firestore, logger).get(id),
+    me: async (parent, args, { dataSources: { firestore, logger }, user }) => {
+      dlog('MembersQuery:me called');
+      return memberStore(firestore, logger).findMe(user.sub);
     },
   },
 };

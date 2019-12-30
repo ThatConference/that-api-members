@@ -1,0 +1,5 @@
+type ProfileLink {
+  isPublic: Boolean!
+  linkType: LinkType!
+  url: String!
+}

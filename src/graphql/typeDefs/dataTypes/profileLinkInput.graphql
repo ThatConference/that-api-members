@@ -1,0 +1,11 @@
+input ProfileLinkCreateInput {
+  isPublic: Boolean!
+  linkType: LinkType!
+  url: String!
+}
+
+input ProfileLinkUpdateInput {
+  isPublic: Boolean
+  linkType: LinkType
+  url: String
+}

@@ -5,17 +5,21 @@ import cors from 'cors';
 import debug from 'debug';
 import { Firestore } from '@google-cloud/firestore';
 import pino from 'pino';
+import { Client as Postmark } from 'postmark';
 import responseTime from 'response-time';
 import * as Sentry from '@sentry/node';
 import uuid from 'uuid/v4';
 
 import apolloGraphServer from './graphql';
+import envConfig from './envConfig';
 import { version } from '../package.json';
 
 const dlog = debug('that:api:members:index');
 const defaultVersion = `that-api-gateway@${version}`;
 const firestore = new Firestore();
 const api = connect();
+
+const postmark = new Postmark(envConfig.postmarkApiToken);
 
 const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
@@ -45,6 +49,7 @@ const createConfig = () => ({
     sentry: Sentry,
     logger,
     firestore,
+    postmark,
   },
 });
 
