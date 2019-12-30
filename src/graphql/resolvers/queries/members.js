@@ -11,5 +11,14 @@ export const fieldResolvers = {
       dlog('MembersQuery:me called');
       return memberStore(firestore, logger).findMe(user.sub);
     },
+
+    isProfileSlugTaken: async (
+      _,
+      { slug },
+      { dataSources: { firestore, logger } },
+    ) => {
+      dlog('isProfileSlugUnique called');
+      return memberStore(firestore, logger).isProfileSlugTaken(slug);
+    },
   },
 };

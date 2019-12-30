@@ -1,1 +1,4 @@
 directive @auth(requires: String!) on OBJECT | FIELD_DEFINITION
+
+directive @upperCase on FIELD_DEFINITION
+directive @lowerCase on FIELD_DEFINITION
