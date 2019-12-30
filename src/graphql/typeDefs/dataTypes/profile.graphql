@@ -27,6 +27,7 @@ type Profile @key(fields: "id") {
 
   canFeature: Boolean!
   acceptedCodeOfConduct: Boolean
+  acceptedCommitments: Boolean
   acceptedTermsOfService: Boolean
   isOver13: Boolean
   isOver18: Boolean

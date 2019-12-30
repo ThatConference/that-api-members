@@ -22,6 +22,7 @@ input ProfileCreateInput {
 
   acceptedCodeOfConduct: Boolean!
   acceptedTermsOfService: Boolean!
+  acceptedCommitments: Boolean
   isOver13: Boolean!
   isOver18: Boolean!
 
