@@ -47,8 +47,8 @@ input ProfileUpdateInput {
   thatSlackUsername: String
 
   acceptedCommitments: Boolean
-  isOver18: Boolean!
-  isDeactivated: Boolean!
+  isOver18: Boolean
+  isDeactivated: Boolean
 
   canFeature: Boolean
 }

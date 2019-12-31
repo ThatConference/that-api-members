@@ -11,7 +11,13 @@ export const fieldResolvers = {
     update: async (
       { memberId },
       { profile },
-      { dataSources: { firestore, logger, postmark } },
+      {
+        dataSources: {
+          firestore,
+          logger,
+          events: { userEvents },
+        },
+      },
     ) => {
       dlog(`MembersMutation:update for ${memberId}, %o`, profile);
 
@@ -20,22 +26,7 @@ export const fieldResolvers = {
         profile,
       });
 
-      await postmark.sendEmailWithTemplate({
-        // TemplateId: 15579922,
-        TemplateAlias: 'MemberUpdated',
-        From: 'hello@thatconference.com',
-        To: updatedMember.email,
-        TemplateModel: {
-          member: {
-            firstName: updatedMember.firstName,
-            lastName: updatedMember.lastName,
-            email: updatedMember.email,
-            lastUpdatedAt: moment(updatedMember.lastUpdatedAt).format(
-              'M/D/YYYY h:mm:ss A',
-            ),
-          },
-        },
-      });
+      userEvents.emit('accountUpdated', updatedMember);
 
       return updatedMember;
     },
