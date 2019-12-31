@@ -15,11 +15,15 @@ export const fieldResolvers = {
       { profile },
       { dataSources: { firestore, logger, postmark }, user },
     ) => {
+      const modifiedProfile = profile;
       dlog('MembersMutation:create %o', profile);
+
+      // set some default values.
+      modifiedProfile.isDeactivated = false;
 
       const memberProfile = await memberStore(firestore, logger).create({
         user,
-        profile,
+        modifiedProfile,
       });
 
       await postmark.sendEmailWithTemplate({

@@ -53,6 +53,7 @@ const member = (dbInstance, logger) => {
     const docSnapshot = await membersCol
       .where('profileSlug', '==', slug.toLowerCase())
       .where('canFeature', '==', true)
+      .where('isDeactivated', '==', false)
       .get();
 
     let results = null;

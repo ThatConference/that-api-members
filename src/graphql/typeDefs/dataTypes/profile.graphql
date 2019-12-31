@@ -23,7 +23,7 @@ type Profile @key(fields: "id") {
   thatSlackUsername: String
 
   sessions: [Session]
-  isDeactived: Boolean
+  isDeactivated: Boolean!
 
   canFeature: Boolean!
   acceptedCodeOfConduct: Boolean

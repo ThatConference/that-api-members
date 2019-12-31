@@ -48,6 +48,7 @@ input ProfileUpdateInput {
 
   acceptedCommitments: Boolean
   isOver18: Boolean!
+  isDeactivated: Boolean!
 
   canFeature: Boolean
 }
