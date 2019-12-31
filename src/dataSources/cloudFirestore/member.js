@@ -33,9 +33,11 @@ const member = (dbInstance, logger) => {
   }
 
   async function create({ user, profile }) {
+    dlog('created called for user %o, with profile %o', user, profile);
     const docRef = membersCol.doc(user.sub);
 
     const modifiedProfile = scrubProfile(profile, true);
+    dlog('modified profile %o', modifiedProfile);
 
     const isSlugTaken = await isProfileSlugTaken(modifiedProfile.profileSlug);
     if (isSlugTaken) throw new Error('profile slug is taken');

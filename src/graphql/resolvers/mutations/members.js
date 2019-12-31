@@ -2,7 +2,6 @@
 import debug from 'debug';
 import { ForbiddenError } from 'apollo-server';
 import _ from 'lodash';
-import moment from 'moment';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
 
@@ -13,35 +12,27 @@ export const fieldResolvers = {
     create: async (
       parent,
       { profile },
-      { dataSources: { firestore, logger, postmark }, user },
+      {
+        dataSources: {
+          firestore,
+          logger,
+          events: { userEvents },
+        },
+        user,
+      },
     ) => {
-      const modifiedProfile = profile;
       dlog('MembersMutation:create %o', profile);
+      const modifiedProfile = profile;
 
       // set some default values.
       modifiedProfile.isDeactivated = false;
 
       const memberProfile = await memberStore(firestore, logger).create({
         user,
-        modifiedProfile,
+        profile: modifiedProfile,
       });
 
-      await postmark.sendEmailWithTemplate({
-        // TemplateId: 15580573,
-        TemplateAlias: 'MemberCreated',
-        From: 'hello@thatconference.com',
-        To: memberProfile.email,
-        TemplateModel: {
-          member: {
-            firstName: memberProfile.firstName,
-            lastName: memberProfile.lastName,
-            email: memberProfile.email,
-            createdAt: moment(memberProfile.createdAt).format(
-              'M/D/YYYY h:mm:ss A',
-            ),
-          },
-        },
-      });
+      userEvents.emit('newAccountCreated', memberProfile);
 
       return memberProfile;
     },
