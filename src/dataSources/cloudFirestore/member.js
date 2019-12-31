@@ -49,6 +49,28 @@ const member = (dbInstance, logger) => {
     };
   }
 
+  async function findMember(slug) {
+    const docSnapshot = await membersCol
+      .where('profileSlug', '==', slug.toLowerCase())
+      .where('canFeature', '==', true)
+      .where('isDeactivated', '==', false)
+      .get();
+
+    let results = null;
+
+    if (docSnapshot.size === 1) {
+      const profile = docSnapshot.docs[0].data();
+      profile.id = docSnapshot.docs[0].id;
+      profile.profileLinks = profile.profileLinks.filter(
+        pl => pl.isPublic === true,
+      );
+
+      results = profile;
+    }
+
+    return results;
+  }
+
   async function findMe(memberId) {
     const docRef = await dbInstance.doc(`${collectionName}/${memberId}`).get();
 
@@ -79,7 +101,7 @@ const member = (dbInstance, logger) => {
     };
   }
 
-  return { create, findMe, update, isProfileSlugTaken };
+  return { create, findMe, update, isProfileSlugTaken, findMember };
 };
 
 export default member;
