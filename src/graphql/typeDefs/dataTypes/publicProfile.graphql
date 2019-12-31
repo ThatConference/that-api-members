@@ -1,0 +1,22 @@
+type PublicProfile @key(fields: "id") {
+  id: ID!
+
+  firstName: String!
+  lastName: String!
+  company: String
+  jobTitle: String
+  profileSlug: String! @lowerCase
+  profileImage: String
+  bio: String
+  interests: [String]
+  lifeHack: String
+  profileLinks: [ProfileLink]
+  thatSlackUsername: String
+  sessions: [Session]
+  createdAt: Date!
+  lastUpdatedAt: Date!
+}
+
+extend type Session @key(fields: "id") {
+  id: ID! @external
+}

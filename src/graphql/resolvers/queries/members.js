@@ -7,6 +7,11 @@ const dlog = debug('that:api:members:query');
 
 export const fieldResolvers = {
   MembersQuery: {
+    member: async (_, { slug }, { dataSources: { firestore, logger } }) => {
+      dlog('member called');
+      return memberStore(firestore, logger).findMember(slug);
+    },
+
     me: async (parent, args, { dataSources: { firestore, logger }, user }) => {
       dlog('MembersQuery:me called');
       return memberStore(firestore, logger).findMe(user.sub);
