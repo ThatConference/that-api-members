@@ -11,6 +11,7 @@ import resolvers from './resolvers';
 import directives from './directives';
 
 const dlog = debug('that:api:members:graphServer');
+const jwtClient = security.jwt();
 
 // convert our raw schema to gql
 const typeDefs = gql`
@@ -46,9 +47,9 @@ const createServer = ({ dataSources }) => {
       if (!_.isNil(req.headers.authorization)) {
         dlog('validating token for %o:', req.headers.authorization);
 
-        const validatedToken = await security
-          .jwt()
-          .verify(req.headers.authorization);
+        const validatedToken = await jwtClient.verify(
+          req.headers.authorization,
+        );
 
         dlog('validated token: %o', validatedToken);
         context = {
