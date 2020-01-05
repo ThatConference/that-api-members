@@ -103,7 +103,14 @@ const member = (dbInstance, logger) => {
     };
   }
 
-  return { create, findMe, update, isProfileSlugTaken, findMember };
+  function remove(memberId) {
+    dlog('remove');
+    const documentRef = dbInstance.doc(`${collectionName}/${memberId}`);
+
+    return documentRef.delete().then(res => memberId);
+  }
+
+  return { create, findMe, update, isProfileSlugTaken, findMember, remove };
 };
 
 export default member;

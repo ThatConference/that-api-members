@@ -39,7 +39,8 @@ export const fieldResolvers = {
 
     delete: async (parent, { id }, { dataSources: { firestore, logger } }) => {
       dlog('MembersMutation:delete called');
-      throw new Error('not implemented yet');
+
+      return memberStore(firestore, logger).remove(id);
     },
 
     member: async (parent, { id }, { user }) => {
