@@ -17,7 +17,7 @@ input ProfileCreateInput {
   company: String
   jobTitle: String
 
-  profileLinks: [ProfileLink]!
+  profileLinks: [ProfileLinkCreateInput]!
   thatSlackUsername: String
   lifeHack: String
   interests: [String]
@@ -45,7 +45,7 @@ input ProfileUpdateInput {
   company: String
   jobTitle: String
 
-  profileLinks: [ProfileLink]
+  profileLinks: [ProfileLinkUpdateInput]
   thatSlackUsername: String
   lifeHack: String
   interests: [String]
