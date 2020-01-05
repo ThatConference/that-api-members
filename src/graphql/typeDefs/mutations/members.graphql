@@ -1,4 +1,5 @@
 type MembersMutation {
   create(profile: ProfileCreateInput!): Profile! @auth(requires: "members")
+  delete(id: ID!): ID @auth(requires: "admin")
   member: MemberMutation @auth(requires: "members")
 }
