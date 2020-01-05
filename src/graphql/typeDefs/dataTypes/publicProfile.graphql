@@ -13,6 +13,7 @@ type PublicProfile @key(fields: "id") {
   profileLinks: [ProfileLink]
   thatSlackUsername: String
   sessions: [Session]
+
   createdAt: Date!
   lastUpdatedAt: Date!
 }

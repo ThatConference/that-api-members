@@ -1,54 +1,55 @@
 input ProfileCreateInput {
   firstName: String!
   lastName: String!
+  isOver13: Boolean!
+  canFeature: Boolean!
+
   email: EmailAddress!
-  profileSlug: String!
+  profileSlug: String! @lowerCase
+  profileImage: String
+  bio: String!
 
   mobilePhone: PhoneNumber
   city: String
   state: String
   country: String
+
   company: String
   jobTitle: String
 
-  profileImage: String
-
-  bio: String
-  interests: [String]
-  lifeHack: String
-
-  profileLinks: [ProfileLinkCreateInput]
+  profileLinks: [ProfileLink]!
   thatSlackUsername: String
+  lifeHack: String
+  interests: [String]
 
   acceptedCodeOfConduct: Boolean!
   acceptedTermsOfService: Boolean!
   acceptedCommitments: Boolean
-  isOver13: Boolean!
-  isOver18: Boolean!
-
-  canFeature: Boolean!
+  isDeactivated: Boolean!
 }
 
 input ProfileUpdateInput {
   firstName: String
   lastName: String
+  canFeature: Boolean
+
   email: EmailAddress
+  profileImage: String
+  bio: String
+
   mobilePhone: PhoneNumber
-  company: String
-  jobTitle: String
   city: String
   state: String
   country: String
-  profileImage: String
-  bio: String
-  interests: [String]
-  lifeHack: String
-  profileLinks: [ProfileLinkUpdateInput]
+
+  company: String
+  jobTitle: String
+
+  profileLinks: [ProfileLink]
   thatSlackUsername: String
+  lifeHack: String
+  interests: [String]
 
   acceptedCommitments: Boolean
-  isOver18: Boolean
   isDeactivated: Boolean
-
-  canFeature: Boolean
 }

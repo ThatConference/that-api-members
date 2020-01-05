@@ -5,7 +5,7 @@ input ProfileLinkCreateInput {
 }
 
 input ProfileLinkUpdateInput {
-  isPublic: Boolean
-  linkType: LinkType
-  url: String
+  isPublic: Boolean!
+  linkType: LinkType!
+  url: String!
 }
