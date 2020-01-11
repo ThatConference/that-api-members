@@ -71,6 +71,8 @@ jobs:
           echo "" >> tc-api/.env
           echo $SENTRYREL >> tc-api/.env
           echo "::set-env name=SENTRYREL::$SENTRYREL"
+        env:
+          CLOUDSDK_CORE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
       - name: Checks and verifications
         run: |
           echo "**********"
