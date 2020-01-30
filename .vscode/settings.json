@@ -9,11 +9,11 @@
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#ff00ff",
     "titleBar.inactiveBackground": "#ff00ff99",
-    "titleBar.activeForeground": "#393939",
-    "titleBar.inactiveForeground": "#393939",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveForeground": "#e7e7e799",
     "statusBar.background": "#ff00ff",
-    "statusBarItem.hoverBackground": "#ff00ff",
-    "statusBar.foreground": "#393939"
+    "statusBarItem.hoverBackground": "#ff33ff",
+    "statusBar.foreground": "#e7e7e7"
   },
   "peacock.affectActivityBar": false,
   "editor.codeActionsOnSave": {
