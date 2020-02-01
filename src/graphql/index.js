@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { ApolloServer, gql, mergeSchemas } from 'apollo-server-cloud-functions';
 import { buildFederatedSchema } from '@apollo/federation';
 import debug from 'debug';
+import DataLoader from 'dataloader';
 
 import { security } from '@thatconference/api';
 
@@ -9,6 +10,7 @@ import { security } from '@thatconference/api';
 import typeDefsRaw from './typeDefs';
 import resolvers from './resolvers';
 import directives from './directives';
+import memberStore from '../dataSources/cloudFirestore/member';
 
 const dlog = debug('that:api:members:graphServer');
 const jwtClient = security.jwt();
@@ -36,9 +38,18 @@ const createServer = ({ dataSources }) => {
       ? { endpoint: '/' }
       : false,
 
-    dataSources: () => ({
-      ...dataSources,
-    }),
+    dataSources: () => {
+      dlog('creating dataSources');
+      const { firestore } = dataSources;
+      const profileLoader = new DataLoader(ids =>
+        memberStore(firestore).batchFindMembers(ids),
+      );
+
+      return {
+        ...dataSources,
+        profileLoader,
+      };
+    },
 
     context: async ({ req, res }) => {
       dlog('buulding graphql user context');

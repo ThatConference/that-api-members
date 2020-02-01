@@ -88,6 +88,21 @@ const member = (dbInstance, logger) => {
     return result;
   }
 
+  async function batchFindMembers(memberIds) {
+    dlog('batchFindMembers %o', memberIds);
+
+    const docRefs = memberIds.map(id =>
+      dbInstance.doc(`${collectionName}/${id}`),
+    );
+
+    return Promise.all(docRefs.map(d => d.get())).then(res =>
+      res.map(r => ({
+        id: r.id,
+        ...r.data(),
+      })),
+    );
+  }
+
   async function update({ memberId, profile }) {
     dlog('db update called');
 
@@ -110,7 +125,15 @@ const member = (dbInstance, logger) => {
     return documentRef.delete().then(res => memberId);
   }
 
-  return { create, findMe, update, isProfileSlugTaken, findMember, remove };
+  return {
+    create,
+    findMe,
+    update,
+    isProfileSlugTaken,
+    findMember,
+    remove,
+    batchFindMembers,
+  };
 };
 
 export default member;
