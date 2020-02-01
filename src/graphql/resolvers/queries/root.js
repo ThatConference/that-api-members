@@ -4,7 +4,7 @@ const dlog = debug('that:api:members:query');
 
 const resolvers = {
   members: () => {
-    dlog('root:members query called');
+    dlog('members');
     return {};
   },
 };
