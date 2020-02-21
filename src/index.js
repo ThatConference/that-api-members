@@ -1,7 +1,5 @@
-/* eslint-disable import/prefer-default-export */
 import 'dotenv/config';
 import connect from 'connect';
-import cors from 'cors';
 import debug from 'debug';
 import { Firestore } from '@google-cloud/firestore';
 import pino from 'pino';
@@ -9,6 +7,7 @@ import { Client as Postmark } from 'postmark';
 import responseTime from 'response-time';
 import * as Sentry from '@sentry/node';
 import uuid from 'uuid/v4';
+import { middleware } from '@thatconference/api';
 
 import apolloGraphServer from './graphql';
 import envConfig from './envConfig';
@@ -19,6 +18,7 @@ const dlog = debug('that:api:members:index');
 const defaultVersion = `that-api-gateway@${version}`;
 const firestore = new Firestore();
 const api = connect();
+const { requestLogger } = middleware;
 
 const postmark = new Postmark(envConfig.postmarkApiToken);
 const userEvents = userEventEmitter(postmark);
@@ -102,12 +102,16 @@ const createUserContext = (req, res, next) => {
   next();
 };
 
+const graphApi = graphServer.createHandler({
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
+});
+
 const apiHandler = async (req, res) => {
   dlog('api handler called');
-
-  const graphApi = graphServer.createHandler();
-
-  graphApi(req, res);
+  return graphApi(req, res);
 };
 
 function failure(err, req, res, next) {
@@ -128,8 +132,8 @@ function failure(err, req, res, next) {
  * This is your api handler for your serverless function
  */
 export const graphEndpoint = api
-  .use(cors())
   .use(responseTime())
+  .use(requestLogger('that:api:members').handler)
   .use(useSentry)
   .use(createUserContext)
   .use(apiHandler)

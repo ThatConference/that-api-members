@@ -1,6 +1,4 @@
-/* eslint-disable import/prefer-default-export */
 import debug from 'debug';
-import moment from 'moment';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
 
