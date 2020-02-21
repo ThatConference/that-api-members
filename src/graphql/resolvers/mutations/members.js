@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import debug from 'debug';
 import { ForbiddenError } from 'apollo-server';
 import _ from 'lodash';
@@ -37,13 +36,13 @@ export const fieldResolvers = {
       return memberProfile;
     },
 
-    delete: async (parent, { id }, { dataSources: { firestore, logger } }) => {
+    delete: (parent, { id }, { dataSources: { firestore, logger } }) => {
       dlog('MembersMutation:delete called');
 
       return memberStore(firestore, logger).remove(id);
     },
 
-    member: async (parent, { id }, { user }) => {
+    member: (parent, { id }, { user }) => {
       dlog('MembersMutation:session called');
 
       let memberId = user.sub;
