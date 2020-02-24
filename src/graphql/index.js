@@ -43,7 +43,9 @@ const createServer = ({ dataSources }) => {
       dlog('creating dataSources');
       const { firestore } = dataSources;
       const profileLoader = new DataLoader(ids =>
-        memberStore(firestore).batchFindMembers(ids),
+        memberStore(firestore)
+          .batchFindMembers(ids)
+          .then(members => ids.map(i => members.find(p => p.id === i))),
       );
 
       return {
