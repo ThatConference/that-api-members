@@ -12,14 +12,13 @@ export const fieldResolvers = {
       {
         dataSources: {
           firestore,
-          logger,
           events: { userEvents },
         },
       },
     ) => {
       dlog(`MembersMutation:update for ${memberId}, %o`, profile);
 
-      const updatedMember = await memberStore(firestore, logger).update({
+      const updatedMember = await memberStore(firestore).update({
         memberId,
         profile,
       });

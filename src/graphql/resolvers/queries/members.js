@@ -6,23 +6,19 @@ const dlog = debug('that:api:members:query');
 
 export const fieldResolvers = {
   MembersQuery: {
-    member: (_, { slug }, { dataSources: { firestore, logger } }) => {
+    member: (_, { slug }, { dataSources: { firestore } }) => {
       dlog('member called');
-      return memberStore(firestore, logger).findMember(slug);
+      return memberStore(firestore).findMember(slug);
     },
 
-    me: (parent, args, { dataSources: { firestore, logger }, user }) => {
+    me: (parent, args, { dataSources: { firestore }, user }) => {
       dlog('MembersQuery:me called');
-      return memberStore(firestore, logger).findMe(user.sub);
+      return memberStore(firestore).findMe(user.sub);
     },
 
-    isProfileSlugTaken: (
-      _,
-      { slug },
-      { dataSources: { firestore, logger } },
-    ) => {
+    isProfileSlugTaken: (_, { slug }, { dataSources: { firestore } }) => {
       dlog('isProfileSlugUnique called');
-      return memberStore(firestore, logger).isProfileSlugTaken(slug);
+      return memberStore(firestore).isProfileSlugTaken(slug);
     },
   },
 };
