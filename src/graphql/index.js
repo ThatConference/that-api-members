@@ -3,7 +3,7 @@ import { ApolloServer, gql, mergeSchemas } from 'apollo-server-cloud-functions';
 import { buildFederatedSchema } from '@apollo/federation';
 import debug from 'debug';
 import DataLoader from 'dataloader';
-
+import * as Sentry from '@sentry/node';
 import { security, graph } from '@thatconference/api';
 
 // Graph Types and Resolvers
@@ -60,10 +60,22 @@ const createServer = ({ dataSources }) => {
 
       if (!_.isNil(req.headers.authorization)) {
         dlog('validating token for %o:', req.headers.authorization);
+        Sentry.addBreadcrumb({
+          category: 'graphql context',
+          message: 'user has authToken',
+          level: Sentry.Severity.Info,
+        });
 
         const validatedToken = await jwtClient.verify(
           req.headers.authorization,
         );
+
+        Sentry.configureScope(scope => {
+          scope.setUser({
+            id: validatedToken.sub,
+            permissions: validatedToken.permissions.toString(),
+          });
+        });
 
         dlog('validated token: %o', validatedToken);
         context = {
@@ -91,7 +103,15 @@ const createServer = ({ dataSources }) => {
     ],
 
     formatError: err => {
-      dataSources.sentry.captureException(err);
+      Sentry.withScope(scope => {
+        scope.setTag('formatError', true);
+        scope.setLevel('warning');
+
+        scope.setExtra('originalError', err.originalError);
+        scope.setExtra('path', err.path);
+
+        Sentry.captureException(err);
+      });
       return err;
     },
   });

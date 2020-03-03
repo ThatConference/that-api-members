@@ -16,7 +16,7 @@ function scrubProfile(profile, isNew) {
   return scrubbedProfile;
 }
 
-const member = (dbInstance, logger) => {
+const member = dbInstance => {
   const collectionName = 'members';
   const membersCol = dbInstance.collection(collectionName);
 

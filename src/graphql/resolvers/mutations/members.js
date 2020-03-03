@@ -14,7 +14,6 @@ export const fieldResolvers = {
       {
         dataSources: {
           firestore,
-          logger,
           events: { userEvents },
         },
         user,
@@ -26,7 +25,7 @@ export const fieldResolvers = {
       // set some default values.
       modifiedProfile.isDeactivated = false;
 
-      const memberProfile = await memberStore(firestore, logger).create({
+      const memberProfile = await memberStore(firestore).create({
         user,
         profile: modifiedProfile,
       });
@@ -36,10 +35,10 @@ export const fieldResolvers = {
       return memberProfile;
     },
 
-    delete: (parent, { id }, { dataSources: { firestore, logger } }) => {
+    delete: (parent, { id }, { dataSources: { firestore } }) => {
       dlog('MembersMutation:delete called');
 
-      return memberStore(firestore, logger).remove(id);
+      return memberStore(firestore).remove(id);
     },
 
     member: (parent, { id }, { user }) => {
