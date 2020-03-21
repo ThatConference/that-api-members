@@ -82,18 +82,6 @@ const createUserContext = (req, res, next) => {
   next();
 };
 
-const graphApi = graphServer.createHandler({
-  cors: {
-    origin: '*',
-    credentials: true,
-  },
-});
-
-const apiHandler = async (req, res) => {
-  dlog('api handler called');
-  return graphApi(req, res);
-};
-
 function failure(err, req, res, next) {
   dlog(err);
   Sentry.captureException(err);
@@ -104,14 +92,12 @@ function failure(err, req, res, next) {
     .json(err);
 }
 
-/**
- * http middleware function that follows adhering to express's middleware.
- * Last item in the middleware chain.
- * This is your api handler for your serverless function
- */
-export const graphEndpoint = api
+api
+  .set('etag', false)
   .use(responseTime())
   .use(useSentry)
   .use(createUserContext)
-  .use(apiHandler)
   .use(failure);
+
+graphServer.applyMiddleware({ app: api, path: '/' });
+api.listen({ port: 8004 });
