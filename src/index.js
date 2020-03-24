@@ -104,7 +104,6 @@ function failure(err, req, res, next) {
 }
 
 api
-  .set('etag', false)
   .use(responseTime())
   .use(useSentry)
   .use(createUserContext)
