@@ -82,10 +82,11 @@ jobs:
           ls -lasi
           cat secrets2array.sh
           GCR_ENV_VARS=$(gcloud secrets versions access latest --secret prod-api-non_gateway-env | ./secrets2array.sh)
+          echo "::add-mask::$GCR_ENV_VARS"
           C_CNT=$(cat __build__/ccnt.txt)
           SENTRYREL=SENTRY_VERSION=that-api-members@$(cat __build__/package.json | jq '.version' | tr -d '"')-$C_CNT.$(echo $GITHUB_SHA | cut -c1-7)
           GCR_ENV_VARS="${GCR_ENV_VARS}, ${SENTRYREL}"
-          # gcloud run deploy members --image us.gcr.io/${{ secrets.GCP_PROJECT_ID }}/members --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=$GCR_ENV_VARS --timeout=300 --memory=256Mi --cpu=1
+          gcloud run deploy memberstesting --image us.gcr.io/${{ secrets.GCP_PROJECT_ID }}/members --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars="$GCR_ENV_VARS" --timeout=300 --memory=256Mi --cpu=1
         env:
           CLOUDSDK_CORE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
       - name: Slack Notification
