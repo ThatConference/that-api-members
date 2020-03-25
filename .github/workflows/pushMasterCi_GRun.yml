@@ -47,7 +47,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DEV_NOTIFICATIONS }}
         if: job.status == 'failure' || job.status == 'cancelled'
 
-  deploy-members:
+  deploy:
     name: Deploy Members to Cloud Run
     needs: build
     runs-on: ubuntu-latest
