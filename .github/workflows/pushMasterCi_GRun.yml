@@ -79,7 +79,6 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud secrets versions access latest --secret any-secrets2array-util_file > secrets2array.sh && chmod +x secrets2array.sh
-          echo "::add-mask::$(gcloud secrets versions access latest --secret prod-api-non_gateway-env)"
           GCR_ENV_VARS=$(gcloud secrets versions access latest --secret prod-api-non_gateway-env | ./secrets2array.sh)
           C_CNT=$(cat __build__/ccnt.txt)
           SENTRYREL=SENTRY_VERSION=that-api-members@$(cat __build__/package.json | jq '.version' | tr -d '"')-$C_CNT.$(echo $GITHUB_SHA | cut -c1-7)
