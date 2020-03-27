@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import connect from 'connect';
+import connect from 'express';
 import debug from 'debug';
 import { Firestore } from '@google-cloud/firestore';
 import { Client as Postmark } from 'postmark';
@@ -9,8 +9,19 @@ import uuid from 'uuid/v4';
 
 import apolloGraphServer from './graphql';
 import envConfig from './envConfig';
-import { version } from '../package.json';
 import userEventEmitter from './events/user';
+// import { version } from '../package.json';
+
+let version;
+(async () => {
+  let p;
+  try {
+    p = await import('./package.json');
+  } catch {
+    p = await import('../package.json');
+  }
+  version = p.version;
+})();
 
 const dlog = debug('that:api:members:index');
 const defaultVersion = `that-api-gateway@${version}`;
@@ -82,18 +93,6 @@ const createUserContext = (req, res, next) => {
   next();
 };
 
-const graphApi = graphServer.createHandler({
-  cors: {
-    origin: '*',
-    credentials: true,
-  },
-});
-
-const apiHandler = async (req, res) => {
-  dlog('api handler called');
-  return graphApi(req, res);
-};
-
 function failure(err, req, res, next) {
   dlog(err);
   Sentry.captureException(err);
@@ -104,14 +103,15 @@ function failure(err, req, res, next) {
     .json(err);
 }
 
-/**
- * http middleware function that follows adhering to express's middleware.
- * Last item in the middleware chain.
- * This is your api handler for your serverless function
- */
-export const graphEndpoint = api
+api
   .use(responseTime())
   .use(useSentry)
   .use(createUserContext)
-  .use(apiHandler)
   .use(failure);
+
+graphServer.applyMiddleware({ app: api, path: '/' });
+
+// const port = process.env.PORT || 8004;
+// api.listen({ port }, () => dlog(`members running on port %d`, port));
+
+export const handler = api;
