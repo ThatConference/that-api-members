@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ApolloServer, gql, mergeSchemas } from 'apollo-server-cloud-functions';
+import { ApolloServer, gql, mergeSchemas } from 'apollo-server-express';
 import { buildFederatedSchema } from '@apollo/federation';
 import debug from 'debug';
 import DataLoader from 'dataloader';
