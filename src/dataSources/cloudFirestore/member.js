@@ -103,6 +103,23 @@ const member = dbInstance => {
     );
   }
 
+  async function getPublicMembers() {
+    dlog('getPublicMembers()');
+    const qrySnapshot = await membersCol
+      .where('canFeature', '==', true)
+      .where('isDeactivated', '==', false)
+      .get();
+
+    dlog('doc snap %o', qrySnapshot);
+    if (qrySnapshot.empty) {
+      return null;
+    }
+    return qrySnapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data(),
+    }));
+  }
+
   async function update({ memberId, profile }) {
     dlog('db update called');
 
@@ -128,6 +145,7 @@ const member = dbInstance => {
   return {
     create,
     findMe,
+    getPublicMembers,
     update,
     isProfileSlugTaken,
     findMember,

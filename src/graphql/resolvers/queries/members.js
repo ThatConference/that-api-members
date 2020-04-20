@@ -6,6 +6,10 @@ const dlog = debug('that:api:members:query');
 
 export const fieldResolvers = {
   MembersQuery: {
+    all: (_, __, { dataSources: { firestore } }) => {
+      dlog('all members (public)');
+      return memberStore(firestore).getPublicMembers();
+    },
     member: (_, { slug }, { dataSources: { firestore } }) => {
       dlog('member called');
       return memberStore(firestore).findMember(slug);
