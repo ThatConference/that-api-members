@@ -108,7 +108,10 @@ const member = dbInstance => {
     const qrySnapshot = await membersCol
       .where('canFeature', '==', true)
       .where('isDeactivated', '==', false)
-      .get();
+      .orderBy('createdAt', 'desc');
+    // .limit(5)
+    // .startAt('')
+    // .get();
 
     if (qrySnapshot.empty) {
       return null;
@@ -117,6 +120,34 @@ const member = dbInstance => {
       id: d.id,
       ...d.data(),
     }));
+  }
+
+  async function fetchPublicMember(limit, startAfter) {
+    dlog('fetchPublicMember: limit: %d start after: %s', limit, startAfter);
+    const truelimit = Math.min(limit || 20, 20);
+    let query = membersCol
+      .where('canFeature', '==', true)
+      .where('isDeactivated', '==', false)
+      .orderBy('createdAt', 'desc')
+      .limit(truelimit);
+
+    if (startAfter) {
+      query = query.startAfter(startAfter);
+    }
+    const qrySnapshot = await query.get();
+
+    dlog('fetchPublicMember query is empty? %s', qrySnapshot.empty);
+    if (qrySnapshot.empty) return null;
+
+    const memberSet = qrySnapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data(),
+    }));
+
+    return {
+      cursor: memberSet[memberSet.length - 1].createdAt,
+      members: memberSet,
+    };
   }
 
   async function update({ memberId, profile }) {
@@ -145,6 +176,7 @@ const member = dbInstance => {
     create,
     findMe,
     getPublicMembers,
+    fetchPublicMember,
     update,
     isProfileSlugTaken,
     findMember,

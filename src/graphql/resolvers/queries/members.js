@@ -10,6 +10,10 @@ export const fieldResolvers = {
       dlog('all members (public)');
       return memberStore(firestore).getPublicMembers();
     },
+    members: (_, { pageSize = 5, after }, { dataSources: { firestore } }) => {
+      dlog('resolver, MembersQuery, members');
+      return memberStore(firestore).fetchPublicMember(pageSize, after);
+    },
     member: (_, { slug }, { dataSources: { firestore } }) => {
       dlog('member called');
       return memberStore(firestore).findMember(slug);
