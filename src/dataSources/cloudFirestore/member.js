@@ -110,7 +110,6 @@ const member = dbInstance => {
       .where('isDeactivated', '==', false)
       .get();
 
-    dlog('doc snap %o', qrySnapshot);
     if (qrySnapshot.empty) {
       return null;
     }
