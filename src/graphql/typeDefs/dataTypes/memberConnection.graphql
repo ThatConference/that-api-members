@@ -1,4 +1,4 @@
-type MemberConnection {
+type PagedMember {
   cursor: String!
-  members: [PublicProfile]!
+  members: [PublicProfile]
 }

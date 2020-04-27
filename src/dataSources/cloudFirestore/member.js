@@ -103,28 +103,9 @@ const member = dbInstance => {
     );
   }
 
-  async function getPublicMembers() {
-    dlog('getPublicMembers()');
-    const qrySnapshot = await membersCol
-      .where('canFeature', '==', true)
-      .where('isDeactivated', '==', false)
-      .orderBy('createdAt', 'desc');
-    // .limit(5)
-    // .startAt('')
-    // .get();
-
-    if (qrySnapshot.empty) {
-      return null;
-    }
-    return qrySnapshot.docs.map(d => ({
-      id: d.id,
-      ...d.data(),
-    }));
-  }
-
   async function fetchPublicMember(limit, startAfter) {
     dlog('fetchPublicMember: limit: %d start after: %s', limit, startAfter);
-    const truelimit = Math.min(limit || 20, 20);
+    const truelimit = Math.min(limit || 20, 100);
     let query = membersCol
       .where('canFeature', '==', true)
       .where('isDeactivated', '==', false)
@@ -175,7 +156,6 @@ const member = dbInstance => {
   return {
     create,
     findMe,
-    getPublicMembers,
     fetchPublicMember,
     update,
     isProfileSlugTaken,

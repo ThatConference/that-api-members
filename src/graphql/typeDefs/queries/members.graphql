@@ -1,7 +1,6 @@
 type MembersQuery {
-  all: [PublicProfile]
   member(slug: String): PublicProfile
   me: Profile @auth(requires: "members")
   isProfileSlugTaken(slug: String!): Boolean @auth(requires: "members")
-  members(pageSize: Int, after: String): MemberConnection
+  members(pageSize: Int, after: String): PagedMember
 }
