@@ -103,6 +103,34 @@ const member = dbInstance => {
     );
   }
 
+  async function fetchPublicMember(limit, startAfter) {
+    dlog('fetchPublicMember: limit: %d start after: %s', limit, startAfter);
+    const truelimit = Math.min(limit || 20, 100);
+    let query = membersCol
+      .where('canFeature', '==', true)
+      .where('isDeactivated', '==', false)
+      .orderBy('createdAt', 'desc')
+      .limit(truelimit);
+
+    if (startAfter) {
+      query = query.startAfter(startAfter);
+    }
+    const qrySnapshot = await query.get();
+
+    dlog('fetchPublicMember query is empty? %s', qrySnapshot.empty);
+    if (qrySnapshot.empty) return null;
+
+    const memberSet = qrySnapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data(),
+    }));
+
+    return {
+      cursor: memberSet[memberSet.length - 1].createdAt,
+      members: memberSet,
+    };
+  }
+
   async function update({ memberId, profile }) {
     dlog('db update called');
 
@@ -128,6 +156,7 @@ const member = dbInstance => {
   return {
     create,
     findMe,
+    fetchPublicMember,
     update,
     isProfileSlugTaken,
     findMember,

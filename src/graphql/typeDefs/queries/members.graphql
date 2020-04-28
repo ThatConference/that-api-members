@@ -1,5 +1,11 @@
 type MembersQuery {
+  "Returns a single member by slug"
   member(slug: String): PublicProfile
+
+  "Returns member based on auth"
   me: Profile @auth(requires: "members")
   isProfileSlugTaken(slug: String!): Boolean @auth(requires: "members")
+
+  "Returns all members in decending order. Default count of 20, limit of 100 per request"
+  members(pageSize: Int, after: String): PagedMember
 }
