@@ -103,7 +103,7 @@ const member = dbInstance => {
     );
   }
 
-  async function fetchPublicMember(limit, startAfter) {
+  async function fetchPublicMembersByCreated(limit, startAfter) {
     dlog('fetchPublicMember: limit: %d start after: %s', limit, startAfter);
     const truelimit = Math.min(limit || 20, 100);
     let query = membersCol
@@ -127,6 +127,48 @@ const member = dbInstance => {
 
     return {
       cursor: memberSet[memberSet.length - 1].createdAt,
+      members: memberSet,
+    };
+  }
+
+  async function fetchPublicMembersByFirstName(limit, startAfter) {
+    dlog(
+      'fetchPublicMembersByLastName: limit: %d, startAfter: %s',
+      limit,
+      startAfter,
+    );
+    const truelimit = Math.min(limit || 20, 100);
+    let query = membersCol
+      .where('canFeature', '==', true)
+      .where('isDeactivated', '==', false)
+      .orderBy('firstName', 'asc')
+      .orderBy('createdAt', 'asc')
+      .limit(truelimit);
+
+    if (startAfter) {
+      // decode base64, split on separator ||
+      const scursor = Buffer.from(startAfter, 'base64')
+        .toString('utf8')
+        .split('||');
+      dlog('decoded cursor: %s, %s', scursor[0], scursor[1]);
+      query = query.startAfter(scursor[0], scursor[1] || '');
+    }
+    const qrySnapshot = await query.get();
+
+    const memberSet = qrySnapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data(),
+    }));
+
+    // base64 encode new composite cursor
+    const cpieces = `${memberSet[memberSet.length - 1].firstName}||${
+      memberSet[memberSet.length - 1].createdAt
+    }`;
+    const cursor = Buffer.from(cpieces, 'utf8').toString('base64');
+    dlog('encoded cursor %s', cursor);
+
+    return {
+      cursor,
       members: memberSet,
     };
   }
@@ -156,7 +198,8 @@ const member = dbInstance => {
   return {
     create,
     findMe,
-    fetchPublicMember,
+    fetchPublicMembersByCreated,
+    fetchPublicMembersByFirstName,
     update,
     isProfileSlugTaken,
     findMember,
