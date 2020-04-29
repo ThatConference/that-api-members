@@ -12,19 +12,20 @@ export const fieldResolvers = {
       { dataSources: { firestore } },
     ) => {
       dlog('resolver, MembersQuery, members, orderBy: %s', orderBy);
+      let result = {};
       if (!orderBy || orderBy === 'CREATEDBY') {
-        return memberStore(firestore).fetchPublicMembersByCreated(
+        result = memberStore(firestore).fetchPublicMembersByCreated(
           pageSize,
           after,
         );
       }
       if (orderBy === 'FIRSTNAME') {
-        return memberStore(firestore).fetchPublicMembersByFirstName(
+        result = memberStore(firestore).fetchPublicMembersByFirstName(
           pageSize,
           after,
         );
       }
-      return {};
+      return result;
     },
     member: (_, { slug }, { dataSources: { firestore } }) => {
       dlog('member called');
