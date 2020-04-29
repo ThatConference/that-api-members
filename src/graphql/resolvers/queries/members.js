@@ -6,9 +6,26 @@ const dlog = debug('that:api:members:query');
 
 export const fieldResolvers = {
   MembersQuery: {
-    members: (_, { pageSize = 20, after }, { dataSources: { firestore } }) => {
-      dlog('resolver, MembersQuery, members');
-      return memberStore(firestore).fetchPublicMember(pageSize, after);
+    members: (
+      _,
+      { pageSize = 20, after, orderBy },
+      { dataSources: { firestore } },
+    ) => {
+      dlog('resolver, MembersQuery, members, orderBy: %s', orderBy);
+      let result = {};
+      if (!orderBy || orderBy === 'CREATEDBY') {
+        result = memberStore(firestore).fetchPublicMembersByCreated(
+          pageSize,
+          after,
+        );
+      }
+      if (orderBy === 'FIRSTNAME') {
+        result = memberStore(firestore).fetchPublicMembersByFirstName(
+          pageSize,
+          after,
+        );
+      }
+      return result;
     },
     member: (_, { slug }, { dataSources: { firestore } }) => {
       dlog('member called');
