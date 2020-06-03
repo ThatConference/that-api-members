@@ -55,7 +55,7 @@ const createServer = ({ dataSources }) => {
     },
 
     context: async ({ req, res }) => {
-      dlog('buulding graphql user context');
+      dlog('building graphql user context');
       let context = {};
 
       if (!_.isNil(req.headers.authorization)) {

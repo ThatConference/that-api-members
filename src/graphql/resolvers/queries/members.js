@@ -13,7 +13,7 @@ export const fieldResolvers = {
     ) => {
       dlog('resolver, MembersQuery, members, orderBy: %s', orderBy);
       let result = {};
-      if (!orderBy || orderBy === 'CREATEDBY') {
+      if (!orderBy || orderBy === 'CREATEDAT') {
         result = memberStore(firestore).fetchPublicMembersByCreated(
           pageSize,
           after,
