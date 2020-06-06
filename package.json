@@ -23,7 +23,7 @@
     "@google-cloud/firestore": "^3.8.4",
     "@google-cloud/functions-framework": "^1.5.1",
     "@sentry/node": "^5.16.1",
-    "@thatconference/api": "^1.5.0",
+    "@thatconference/api": "^1.6.0",
     "apollo-server": "^2.14.2",
     "apollo-server-express": "^2.14.2",
     "auth0": "^2.26.0",
