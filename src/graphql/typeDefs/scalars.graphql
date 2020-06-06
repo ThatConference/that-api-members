@@ -4,3 +4,4 @@ scalar EmailAddress
 scalar PhoneNumber
 scalar PostalCode
 scalar URL
+scalar Slug
