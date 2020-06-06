@@ -5,7 +5,7 @@ input ProfileCreateInput {
   canFeature: Boolean!
 
   email: EmailAddress!
-  profileSlug: String!
+  profileSlug: Slug!
   profileImage: String
   bio: String
 

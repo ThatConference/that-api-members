@@ -18,7 +18,7 @@ type Profile @key(fields: "id") {
   company: String
   jobTitle: String
 
-  profileSlug: String! @lowerCase
+  profileSlug: Slug!
   profileLinks: [ProfileLink]
   thatSlackUsername: String
   lifeHack: String
