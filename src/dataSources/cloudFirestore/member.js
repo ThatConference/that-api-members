@@ -154,6 +154,8 @@ const member = dbInstance => {
       query = query.startAfter(scursor[0], scursor[1] || '');
     }
     const qrySnapshot = await query.get();
+    dlog('qrySnapshot', qrySnapshot);
+    if (qrySnapshot.size === 0) return null;
 
     const memberSet = qrySnapshot.docs.map(d => ({
       id: d.id,
