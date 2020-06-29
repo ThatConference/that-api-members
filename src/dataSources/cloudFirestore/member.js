@@ -1,4 +1,5 @@
 import debug from 'debug';
+import moment from 'moment';
 
 const dlog = debug('that:api:members:datasources:members');
 
@@ -113,12 +114,16 @@ const member = dbInstance => {
       .limit(truelimit);
 
     if (startAfter) {
+      const validCursor = moment(startAfter, 'YYYY-MM-DDTHH:mm:ss').isValid();
+      dlog('cursor is valid date?', validCursor);
+      if (!validCursor) return null; // invalid cursor, return no records
+
       query = query.startAfter(startAfter);
     }
     const qrySnapshot = await query.get();
 
-    dlog('fetchPublicMember query is empty? %s', qrySnapshot.empty);
-    if (qrySnapshot.empty) return null;
+    dlog('fetchPublicMembersByCreated query size? %s', qrySnapshot.size);
+    if (!qrySnapshot.size || qrySnapshot.size === 0) return null;
 
     const memberSet = qrySnapshot.docs.map(d => ({
       id: d.id,
@@ -151,9 +156,13 @@ const member = dbInstance => {
         .toString('utf8')
         .split('||');
       dlog('decoded cursor: %s, %s', scursor[0], scursor[1]);
+      if (!scursor[1]) return null; // invalid cursor, return no records
+
       query = query.startAfter(scursor[0], scursor[1] || '');
     }
     const qrySnapshot = await query.get();
+    dlog('fetchPublicMembersByFirstName query size? %s', qrySnapshot.size);
+    if (!qrySnapshot.size || qrySnapshot.size === 0) return null;
 
     const memberSet = qrySnapshot.docs.map(d => ({
       id: d.id,
