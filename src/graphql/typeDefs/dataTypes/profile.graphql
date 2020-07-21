@@ -19,6 +19,7 @@ type Profile @key(fields: "id") {
   jobTitle: String
 
   profileSlug: Slug!
+  "profile links to all the socials and other references"
   profileLinks: [ProfileLink]
   thatSlackUsername: String
   lifeHack: String
@@ -27,9 +28,17 @@ type Profile @key(fields: "id") {
   createdAt: Date!
   lastUpdatedAt: Date!
 
+  "user agrees to the Code Of Conduct"
   acceptedCodeOfConduct: Boolean
-  acceptedCommitments: Boolean
+  "user agrees to the Terms Of Service"
   acceptedTermsOfService: Boolean
+  "user agrees to Anti-Harassment policy"
+  acceptedAntiHarassmentPolicy: Boolean
+  "user agrees to Commitment to Diversity"
+  acceptedCommitmentToDiversity: Boolean
+  "user commits to the conference"
+  acceptedCommitments: Boolean
+  "account is deactivated and cannot be used"
   isDeactivated: Boolean!
 
   sessions: [MySession]

@@ -6,7 +6,7 @@ const dlog = debug('that:api:members:datasources:members');
 function scrubProfile(profile, isNew) {
   const scrubbedProfile = profile;
 
-  const modifiedAtDate = new Date().toISOString();
+  const modifiedAtDate = new Date();
 
   if (isNew) {
     scrubbedProfile.createdAt = modifiedAtDate;
