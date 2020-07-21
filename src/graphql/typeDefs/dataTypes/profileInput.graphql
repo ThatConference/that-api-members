@@ -23,9 +23,9 @@ input ProfileCreateInput {
   interests: [String]
 
   "user agrees to the Code Of Conduct"
-  acceptedCodeOfConduct: Boolean
+  acceptedCodeOfConduct: Boolean!
   "user agrees to the Terms Of Service"
-  acceptedTermsOfService: Boolean
+  acceptedTermsOfService: Boolean!
   "user agrees to Anti-Harassment policy"
   acceptedAntiHarassmentPolicy: Boolean
   "user agrees to Commitment to Diversity"
@@ -69,5 +69,5 @@ input ProfileUpdateInput {
   "user commits to the conference"
   acceptedCommitments: Boolean
   "account is deactivated and cannot be used"
-  isDeactivated: Boolean!
+  isDeactivated: Boolean
 }
