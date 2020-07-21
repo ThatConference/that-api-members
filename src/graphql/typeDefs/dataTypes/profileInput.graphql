@@ -22,9 +22,17 @@ input ProfileCreateInput {
   lifeHack: String
   interests: [String]
 
-  acceptedCodeOfConduct: Boolean!
-  acceptedTermsOfService: Boolean!
+  "user agrees to the Code Of Conduct"
+  acceptedCodeOfConduct: Boolean
+  "user agrees to the Terms Of Service"
+  acceptedTermsOfService: Boolean
+  "user agrees to Anti-Harassment policy"
+  acceptedAntiHarassmentPolicy: Boolean
+  "user agrees to Commitment to Diversity"
+  acceptedCommitmentToDiversity: Boolean
+  "user commits to the conference"
   acceptedCommitments: Boolean
+  "account is deactivated and cannot be used"
   isDeactivated: Boolean!
 }
 
@@ -50,6 +58,16 @@ input ProfileUpdateInput {
   lifeHack: String
   interests: [String]
 
+  "user agrees to the Code Of Conduct"
+  acceptedCodeOfConduct: Boolean
+  "user agrees to the Terms Of Service"
+  acceptedTermsOfService: Boolean
+  "user agrees to Anti-Harassment policy"
+  acceptedAntiHarassmentPolicy: Boolean
+  "user agrees to Commitment to Diversity"
+  acceptedCommitmentToDiversity: Boolean
+  "user commits to the conference"
   acceptedCommitments: Boolean
-  isDeactivated: Boolean
+  "account is deactivated and cannot be used"
+  isDeactivated: Boolean!
 }
