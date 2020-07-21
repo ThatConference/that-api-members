@@ -58,10 +58,6 @@ input ProfileUpdateInput {
   lifeHack: String
   interests: [String]
 
-  "user agrees to the Code Of Conduct"
-  acceptedCodeOfConduct: Boolean
-  "user agrees to the Terms Of Service"
-  acceptedTermsOfService: Boolean
   "user agrees to Anti-Harassment policy"
   acceptedAntiHarassmentPolicy: Boolean
   "user agrees to Commitment to Diversity"
