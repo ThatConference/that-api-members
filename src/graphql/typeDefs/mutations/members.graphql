@@ -1,7 +1,8 @@
 type MembersMutation {
-  "craetes a new member based on logged in user"
+  "Creates a new member based on logged in user"
   create(profile: ProfileCreateInput!): Profile! @auth(requires: "members")
+  "Actions specific for the logged in user"
   member: MemberMutation @auth(requires: "members")
   "Admin mutation on a member"
-  admin(): AdminMemberMutation @auth(requires: "admin")
+  admin: AdminMemberMutation @auth(requires: "admin")
 }

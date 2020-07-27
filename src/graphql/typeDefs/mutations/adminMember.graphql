@@ -6,8 +6,8 @@ type AdminMemberMutation {
   deactivate: Profile @auth(requires: "admin")
 
   "Assign a new Merit Badge"
-  assignMeritBadge(meritBadgeId: ID!): earnedMertiBadge @auth(requires: "admin")
+  assignMeritBadge(meritBadgeId: ID!): Profile @auth(requires: "admin")
 
   "Delete a member"
-  delete(): ID @auth(requires: "admin")
+  delete: ID @auth(requires: "admin")
 }

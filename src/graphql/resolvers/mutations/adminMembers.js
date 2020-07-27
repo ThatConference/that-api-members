@@ -10,7 +10,7 @@ export const fieldResolvers = {
       return new Error('not implemented');
     },
 
-    member: (parent, { id }) => {
+    member: (_, { id }) => {
       dlog('session called');
       return { id };
     },
