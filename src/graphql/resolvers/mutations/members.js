@@ -36,7 +36,7 @@ export const fieldResolvers = {
     },
 
     member: (parent, { id }, { user }) => {
-      dlog('MembersMutation:session called');
+      dlog('member called');
 
       let memberId = user.sub;
 

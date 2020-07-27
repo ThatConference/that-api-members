@@ -1,6 +1,6 @@
 import debug from 'debug';
 
-const dlog = debug('that:api:events:datasources:firebase:meritBadge');
+const dlog = debug('that:api:members:datasources:firebase');
 
 const collectionName = 'meritBadges';
 const earnedCollectionName = 'earnedMeritBadges';

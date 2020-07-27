@@ -1,6 +1,8 @@
 import debug from 'debug';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
+import titoStore from '../../../dataSources/apis/tito';
+import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
 
 const dlog = debug('that:api:members:mutation');
 
@@ -28,14 +30,26 @@ export const fieldResolvers = {
       return updatedMember;
     },
 
-    claimTicket: (
+    claimTicket: async (
       { memberId },
       { ticketRef },
       { dataSources: { firestore } },
     ) => {
       dlog('claimTicket called: %s', ticketRef);
+      const result = await titoStore().checkInTicket(ticketRef);
+      dlog('checkin result %O', result);
 
-      throw new Error('not implemented');
+      if (
+        result.isGoodTicket &&
+        result.ticket.release_title === 'Patron Camper'
+      ) {
+        meritBadgeStore(firestore).awardMeritBadge(
+          memberId,
+          'u6JVbl2TosO5OcWLak6k',
+        );
+      }
+
+      return result.isGoodTicket;
     },
   },
 };
