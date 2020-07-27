@@ -1,0 +1,12 @@
+type MeritBadge @key(fields: "id") {
+  id: ID!
+
+  "Official Merit Badge name"
+  name: String!
+  "Url poiting to Merit Badge Image"
+  image: URL
+  "Description of Merit Badge"
+  description: String
+  "Date and time Merit Badge earned"
+  earnedAt: Date
+}

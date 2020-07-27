@@ -42,4 +42,7 @@ type Profile @key(fields: "id") {
   isDeactivated: Boolean!
 
   sessions: [MySession]
+
+  "Member's earned Merit Badges"
+  earnedMeritBadges: [MeritBadge]
 }

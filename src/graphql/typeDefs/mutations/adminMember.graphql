@@ -1,0 +1,13 @@
+type AdminMemberMutation {
+  "update a session"
+  update(member: AdminProfileUpdateInput): Profile @auth(requires: "admin")
+
+  "deactiveate a member"
+  deactivate: Profile @auth(requires: "admin")
+
+  "Assign a new Merit Badge"
+  assignMeritBadge(meritBadgeId: ID!): earnedMertiBadge @auth(requires: "admin")
+
+  "Delete a member"
+  delete(): ID @auth(requires: "admin")
+}
