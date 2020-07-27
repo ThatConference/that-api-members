@@ -1,27 +1,28 @@
 /* eslint-disable import/prefer-default-export */
 import debug from 'debug';
 
+import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
+
 const dlog = debug('that:api:members:mutation:AdminMemberMutation');
 
 export const fieldResolvers = {
   AdminMemberMutation: {
     update: ({ id }) => {
       dlog('update called', id);
-      return { id };
+      throw new Error('not implemented');
     },
     disable: ({ id }, args, { dataSources: { firestore } }) => {
       dlog('cancel called');
       throw new Error('not implemented');
-      // sessionStore(firestore, logger).get(id),
     },
-    assignMeritBadge: (
+    awardMeritBadge: (
       { id },
       { meritBadgeId },
       { dataSources: { firestore } },
     ) => {
-      dlog('assignMeritBadge called. badgeId', meritBadgeId);
+      dlog('awardMeritBadge called. badgeId', meritBadgeId);
 
-      throw new Error('not implemented');
+      return meritBadgeStore(firestore).awardMeritBadge(id, meritBadgeId);
     },
     delete: (parent, { id }, { dataSources: { firestore } }) => {
       dlog('delete called');

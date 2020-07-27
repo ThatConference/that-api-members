@@ -4,5 +4,5 @@ type MembersMutation {
   "Actions specific for the logged in user"
   member: MemberMutation @auth(requires: "members")
   "Admin mutation on a member"
-  admin: AdminMemberMutation @auth(requires: "admin")
+  admin: AdminMembersMutation @auth(requires: "admin")
 }

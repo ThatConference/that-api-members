@@ -7,6 +7,10 @@ type MeritBadge @key(fields: "id") {
   image: URL
   "Description of Merit Badge"
   description: String
+
+  # Earned Merit Badge Details
   "Date and time Merit Badge earned"
   earnedAt: Date
+  "earnedMeritBadge collection id"
+  earnedRefId: ID
 }

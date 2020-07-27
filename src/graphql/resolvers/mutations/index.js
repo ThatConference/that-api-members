@@ -1,13 +1,17 @@
 import rootMutations from './root';
 
-import { fieldResolvers as sessionFields } from './member';
-import { fieldResolvers as sessionsFields } from './members';
+import { fieldResolvers as memberFields } from './member';
+import { fieldResolvers as membersFields } from './members';
+import { fieldResolvers as adminMemberFields } from './adminMember';
+import { fieldResolvers as adminMembersFields } from './adminMembers';
 
 export default {
   ...rootMutations,
 };
 
 export const fieldResolvers = {
-  ...sessionFields,
-  ...sessionsFields,
+  ...memberFields,
+  ...membersFields,
+  ...adminMemberFields,
+  ...adminMembersFields,
 };

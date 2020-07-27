@@ -1,4 +1,5 @@
 input AdminProfileCreateInput {
+  id: ID!
   firstName: String!
   lastName: String!
   isOver13: Boolean!
