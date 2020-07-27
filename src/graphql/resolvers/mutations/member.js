@@ -27,5 +27,15 @@ export const fieldResolvers = {
 
       return updatedMember;
     },
+
+    claimTicket: (
+      { memberId },
+      { ticketRef },
+      { dataSources: { firestore } },
+    ) => {
+      dlog('claimTicket called: %s', ticketRef);
+
+      throw new Error('not implemented');
+    },
   },
 };
