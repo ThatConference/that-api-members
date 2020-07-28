@@ -1,5 +1,7 @@
 import debug from 'debug';
 
+import meritBadgesResolver from './earnedMeritBadges';
+
 const dlog = debug('that:api:members:query:PublicProfile');
 
 export const fieldResolvers = {
@@ -12,5 +14,6 @@ export const fieldResolvers = {
 
       return user;
     },
+    earnedMeritBadges: meritBadgesResolver.earnedMeritBadges,
   },
 };

@@ -1,0 +1,76 @@
+input AdminProfileCreateInput {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  isOver13: Boolean!
+  canFeature: Boolean!
+
+  email: EmailAddress!
+  profileSlug: Slug!
+  profileImage: String
+  bio: String
+
+  mobilePhone: PhoneNumber
+  city: String
+  state: String
+  country: String
+
+  company: String
+  jobTitle: String
+
+  profileLinks: [ProfileLinkCreateInput]
+  thatSlackUsername: String
+  lifeHack: String
+  interests: [String]
+
+  "user agrees to the Code Of Conduct"
+  acceptedCodeOfConduct: Boolean!
+  "user agrees to the Terms Of Service"
+  acceptedTermsOfService: Boolean!
+  "user agrees to Anti-Harassment policy"
+  acceptedAntiHarassmentPolicy: Boolean
+  "user agrees to Commitment to Diversity"
+  acceptedCommitmentToDiversity: Boolean
+  "user commits to the conference"
+  acceptedCommitments: Boolean
+  "account is deactivated and cannot be used"
+  isDeactivated: Boolean!
+}
+
+input AdminProfileUpdateInput {
+  firstName: String
+  lastName: String
+  isOver13: Boolean
+  canFeature: Boolean
+
+  email: EmailAddress
+  profileSlug: Slug
+  profileImage: String
+  bio: String
+
+  mobilePhone: PhoneNumber
+  city: String
+  state: String
+  country: String
+
+  company: String
+  jobTitle: String
+
+  profileLinks: [ProfileLinkCreateInput]
+  thatSlackUsername: String
+  lifeHack: String
+  interests: [String]
+
+  "user agrees to the Code Of Conduct"
+  acceptedCodeOfConduct: Boolean
+  "user agrees to the Terms Of Service"
+  acceptedTermsOfService: Boolean
+  "user agrees to Anti-Harassment policy"
+  acceptedAntiHarassmentPolicy: Boolean
+  "user agrees to Commitment to Diversity"
+  acceptedCommitmentToDiversity: Boolean
+  "user commits to the conference"
+  acceptedCommitments: Boolean
+  "account is deactivated and cannot be used"
+  isDeactivated: Boolean
+}

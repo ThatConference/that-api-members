@@ -35,14 +35,8 @@ export const fieldResolvers = {
       return memberProfile;
     },
 
-    delete: (parent, { id }, { dataSources: { firestore } }) => {
-      dlog('MembersMutation:delete called');
-
-      return memberStore(firestore).remove(id);
-    },
-
     member: (parent, { id }, { user }) => {
-      dlog('MembersMutation:session called');
+      dlog('member called');
 
       let memberId = user.sub;
 
@@ -55,6 +49,11 @@ export const fieldResolvers = {
       }
 
       return { memberId };
+    },
+
+    admin: () => {
+      dlog('admin called');
+      return {};
     },
   },
 };

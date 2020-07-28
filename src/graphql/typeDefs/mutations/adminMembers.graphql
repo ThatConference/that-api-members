@@ -1,0 +1,7 @@
+type AdminMembersMutation {
+  "Admin create a new Member"
+  create(member: AdminProfileCreateInput): Profile @auth(requires: "admin")
+
+  "Admin mutations on a specific member"
+  member(id: ID!): AdminMemberMutation @auth(requires: "admin")
+}

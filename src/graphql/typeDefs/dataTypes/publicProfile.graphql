@@ -5,15 +5,21 @@ type PublicProfile @key(fields: "id") {
   lastName: String!
   company: String
   jobTitle: String
+  "Unique token used to address member profile"
   profileSlug: Slug!
   profileImage: String
   bio: String
   interests: [String]
   lifeHack: String
+  "Social media and other member links"
   profileLinks: [ProfileLink]
   thatSlackUsername: String
+  "Member's accepted sessions"
   sessions: [AcceptedSession]
-
+  "Member's earned Merit Badges"
+  earnedMeritBadges: [MeritBadge]
+  "Date and time member created"
   createdAt: Date!
+  "Date and time last updated"
   lastUpdatedAt: Date!
 }
