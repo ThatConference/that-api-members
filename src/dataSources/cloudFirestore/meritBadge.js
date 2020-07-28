@@ -30,14 +30,15 @@ const meritBadge = dbInstance => {
 
     const docRef = await dbInstance.doc(`${collectionName}/${badgeId}`).get();
 
+    let result = null;
     if (docRef.exists) {
-      return {
+      result = {
         id: docRef.id,
         ...docRef.data(),
       };
     }
 
-    return null;
+    return result;
   }
 
   async function findAllEarnedBadgesReference(memberId) {

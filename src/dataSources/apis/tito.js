@@ -1,10 +1,11 @@
 import debug from 'debug';
 import fetch from 'isomorphic-unfetch';
+import envConfig from '../../envConfig';
 
 const dlog = debug('that:api:members:datasource:apis');
 
-const checkinslug = process.env.CHECKIN_SLUG || 'pmRx6nSzJo7X0mVRxtd0Zyg';
-const titocheckinbase = `https://checkin.tito.io/checkin_lists/${checkinslug}/`;
+const { titoCheckinSlug } = envConfig;
+const titocheckinbase = `https://checkin.tito.io/checkin_lists/${titoCheckinSlug}/`;
 
 const tito = () => {
   dlog('tito instance created');

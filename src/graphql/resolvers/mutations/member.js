@@ -41,7 +41,7 @@ export const fieldResolvers = {
 
       if (
         result.isGoodTicket &&
-        result.ticket.release_title === 'Patron Camper'
+        result.ticket.release_title.toUpperCase() === 'PATRON CAMPER'
       ) {
         meritBadgeStore(firestore).awardMeritBadge(
           memberId,
