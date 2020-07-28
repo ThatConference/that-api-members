@@ -28,9 +28,9 @@ input AdminProfileCreateInput {
   "user agrees to the Terms Of Service"
   acceptedTermsOfService: Boolean!
   "user agrees to Anti-Harassment policy"
-  acceptedAntiHarassmentPolicy: Boolean
+  acceptedAntiHarassmentPolicy: Boolean!
   "user agrees to Commitment to Diversity"
-  acceptedCommitmentToDiversity: Boolean
+  acceptedCommitmentToDiversity: Boolean!
   "user commits to the conference"
   acceptedCommitments: Boolean
   "account is deactivated and cannot be used"
