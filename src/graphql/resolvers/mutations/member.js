@@ -46,19 +46,20 @@ export const fieldResolvers = {
         : '';
       let awardedBadge = null;
 
-      if (result.isGoodTicket && memberTicketName === 'PATRON CAMPER') {
-        awardedBadge = await meritBadgeStore(firestore).awardMeritBadge(
-          memberId,
-          patronBadgeId,
-        );
-      } else if (
-        result.isGoodTicket &&
-        ['PARTNER', 'CORPORATE PARTNER'].includes(memberTicketName)
-      ) {
-        awardedBadge = await meritBadgeStore(firestore).awardMeritBadge(
-          memberId,
-          partnerBadgeId,
-        );
+      if (result.isGoodTicket) {
+        if (memberTicketName === 'PATRON CAMPER') {
+          awardedBadge = await meritBadgeStore(firestore).awardMeritBadge(
+            memberId,
+            patronBadgeId,
+          );
+        } else if (
+          ['PARTNER', 'CORPORATE PARTNER'].includes(memberTicketName)
+        ) {
+          awardedBadge = await meritBadgeStore(firestore).awardMeritBadge(
+            memberId,
+            partnerBadgeId,
+          );
+        }
       }
       return awardedBadge;
     },
