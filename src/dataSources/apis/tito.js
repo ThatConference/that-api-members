@@ -61,15 +61,16 @@ const tito = () => {
         },
       };
       options.method = 'POST';
-      options.body = payload;
-
-      result = fetch(`${titocheckinbase}checkins`, options).then(async r => {
-        if (r.ok) {
-          const data = await r.json();
-          if (data) return data;
-        }
-        return {};
-      });
+      options.body = JSON.stringify(payload);
+      result = await fetch(`${titocheckinbase}checkins`, options).then(
+        async r => {
+          if (r.ok) {
+            const data = await r.json();
+            if (data) return data;
+          }
+          return {};
+        },
+      );
     }
 
     return {
