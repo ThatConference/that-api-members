@@ -3,5 +3,5 @@ type MemberMutation {
   update(profile: ProfileUpdateInput!): Profile! @auth(requires: "members")
 
   "logged in user, claim ticket"
-  claimTicket(ticketRef: String!): Boolean! @auth(requires: "members")
+  claimTicket(ticketRef: String!): MeritBadge @auth(requires: "members")
 }

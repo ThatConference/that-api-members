@@ -39,17 +39,29 @@ export const fieldResolvers = {
       const result = await titoStore().checkInTicket(ticketRef);
       dlog('checkin result %O', result);
 
-      if (
-        result.isGoodTicket &&
-        result.ticket.release_title.toUpperCase() === 'PATRON CAMPER'
-      ) {
-        meritBadgeStore(firestore).awardMeritBadge(
-          memberId,
-          'u6JVbl2TosO5OcWLak6k',
-        );
-      }
+      const patronBadgeId = 'u6JVbl2TosO5OcWLak6k';
+      const partnerBadgeId = 'U8pHyHpbivjsoSuvcfJI';
+      const memberTicketName = result.ticket.release_title
+        ? result.ticket.release_title.toUpperCase()
+        : '';
+      let awardedBadge = null;
 
-      return result.isGoodTicket;
+      if (result.isGoodTicket) {
+        if (memberTicketName === 'PATRON CAMPER') {
+          awardedBadge = await meritBadgeStore(firestore).awardMeritBadge(
+            memberId,
+            patronBadgeId,
+          );
+        } else if (
+          ['PARTNER', 'CORPORATE PARTNER'].includes(memberTicketName)
+        ) {
+          awardedBadge = await meritBadgeStore(firestore).awardMeritBadge(
+            memberId,
+            partnerBadgeId,
+          );
+        }
+      }
+      return awardedBadge;
     },
   },
 };
