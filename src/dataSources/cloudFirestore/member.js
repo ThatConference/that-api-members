@@ -1,5 +1,6 @@
 import debug from 'debug';
 import moment from 'moment';
+import { isDate } from 'lodash';
 
 const dlog = debug('that:api:members:datasources:members');
 
@@ -118,7 +119,7 @@ const member = dbInstance => {
       dlog('cursor is valid date?', validCursor);
       if (!validCursor) return null; // invalid cursor, return no records
 
-      query = query.startAfter(startAfter);
+      query = query.startAfter(new Date(startAfter));
     }
     const qrySnapshot = await query.get();
 
@@ -130,8 +131,17 @@ const member = dbInstance => {
       ...d.data(),
     }));
 
+    let cursor = '';
+    const lastCreatedAt = memberSet[memberSet.length - 1].createdAt;
+    if (lastCreatedAt.toDate) {
+      dlog('converting Timestamp', lastCreatedAt);
+      cursor = lastCreatedAt.toDate().toISOString();
+    } else if (isDate(lastCreatedAt)) {
+      cursor = lastCreatedAt;
+    }
+
     return {
-      cursor: memberSet[memberSet.length - 1].createdAt,
+      cursor,
       members: memberSet,
     };
   }
