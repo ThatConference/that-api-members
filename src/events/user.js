@@ -1,15 +1,16 @@
 import { EventEmitter } from 'events';
 import debug from 'debug';
 import moment from 'moment';
+import slackNotifications from '../lib/slackNotifications';
 
-const dlog = debug('that:api:sessions:events:user');
+const dlog = debug('that:api:members:events:user');
 
 function userEvents(postmark) {
   const userEventEmitter = new EventEmitter();
   dlog('user event emitter created');
 
-  function newAccountCreated(user) {
-    dlog('new account created fired');
+  function sendAccountCreatedEmail(user) {
+    dlog('new account created send email fired');
     return postmark
       .sendEmailWithTemplate({
         // TemplateId: 15580573,
@@ -29,8 +30,8 @@ function userEvents(postmark) {
       .catch(e => process.nextTick(() => userEventEmitter.emit('error', e)));
   }
 
-  function accountUpdated(user) {
-    dlog('account updated event fired');
+  function sendAccountUpdatedEmail(user) {
+    dlog('account updated send email event fired');
     return postmark
       .sendEmailWithTemplate({
         // TemplateId: 15579922,
@@ -52,12 +53,20 @@ function userEvents(postmark) {
       .catch(e => process.nextTick(() => userEventEmitter.emit('error', e)));
   }
 
+  function sendAccountCreatedSlack({ user }) {
+    dlog('new account created slack notification called');
+    if (user.canFeature) {
+      slackNotifications.memberCreated({ user });
+    }
+  }
+
   userEventEmitter.on('error', err => {
     throw new Error(err);
   });
 
-  userEventEmitter.on('newAccountCreated', newAccountCreated);
-  userEventEmitter.on('accountUpdated', accountUpdated);
+  userEventEmitter.on('accountCreated', sendAccountCreatedEmail);
+  userEventEmitter.on('accountCreated', sendAccountCreatedSlack);
+  userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
 
   return userEventEmitter;
 }

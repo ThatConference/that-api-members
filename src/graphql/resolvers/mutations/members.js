@@ -30,7 +30,7 @@ export const fieldResolvers = {
         profile: modifiedProfile,
       });
 
-      userEvents.emit('newAccountCreated', memberProfile);
+      userEvents.emit('accountCreated', memberProfile);
 
       return memberProfile;
     },
