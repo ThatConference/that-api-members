@@ -53,7 +53,7 @@ function userEvents(postmark) {
       .catch(e => process.nextTick(() => userEventEmitter.emit('error', e)));
   }
 
-  function sendAccountCreatedSlack({ user }) {
+  function sendAccountCreatedSlack(user) {
     dlog('new account created slack notification called');
     if (user.canFeature) {
       slackNotifications.memberCreated({ user });
