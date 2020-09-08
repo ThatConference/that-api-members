@@ -11,7 +11,7 @@ export const fieldResolvers = {
       dlog('update called', id);
       throw new Error('not implemented');
     },
-    disable: ({ id }, args, { dataSources: { firestore } }) => {
+    deactivate: ({ id }, args, { dataSources: { firestore } }) => {
       dlog('cancel called');
       throw new Error('not implemented');
     },

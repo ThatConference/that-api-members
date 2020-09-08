@@ -1,5 +1,9 @@
 import _ from 'lodash';
-import { ApolloServer, gql, mergeSchemas } from 'apollo-server-express';
+import {
+  ApolloServer,
+  gql,
+  SchemaDirectiveVisitor,
+} from 'apollo-server-express';
 import { buildFederatedSchema } from '@apollo/federation';
 import debug from 'debug';
 import DataLoader from 'dataloader';
@@ -24,13 +28,8 @@ const typeDefs = gql`
 const createServer = ({ dataSources }) => {
   dlog('creating graph server');
 
-  const federatedSchemas = buildFederatedSchema([{ typeDefs, resolvers }]);
-  const schema = mergeSchemas({
-    schemas: [federatedSchemas],
-    schemaDirectives: {
-      ...directives,
-    },
-  });
+  const schema = buildFederatedSchema([{ typeDefs, resolvers }]);
+  SchemaDirectiveVisitor.visitSchemaDirectives(schema, directives);
 
   return new ApolloServer({
     schema,
