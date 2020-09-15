@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import debug from 'debug';
 import moment from 'moment';
 import slackNotifications from '../lib/slackNotifications';
+import acActions from '../lib/activeCampaignActions';
 
 const dlog = debug('that:api:members:events:user');
 
@@ -60,12 +61,23 @@ function userEvents(postmark) {
     }
   }
 
+  function addAcProfileCompleteTag(user) {
+    dlog('accountCreated Add THATProfileComplete tag in AC');
+    acActions
+      .addTagToContact('THATProfileComplete', user)
+      .then(r => dlog('add tag to contact result %o', r))
+      .catch(err =>
+        process.nextTick(() => userEventEmitter.emit('error', err)),
+      );
+  }
+
   userEventEmitter.on('error', err => {
     throw new Error(err);
   });
 
   userEventEmitter.on('accountCreated', sendAccountCreatedEmail);
   userEventEmitter.on('accountCreated', sendAccountCreatedSlack);
+  userEventEmitter.on('accountCreated', addAcProfileCompleteTag);
   userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
 
   return userEventEmitter;
