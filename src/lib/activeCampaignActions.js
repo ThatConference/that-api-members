@@ -20,7 +20,7 @@ async function addTagToContact(tagName, user) {
   if (!tagResult || (tagResult && !tagResult.id)) {
     dlog(`tag, ${tagName}, not found at AC`);
     Sentry.captureMessage(`Tag ${tagName} not found in AC`, 'error');
-    return undefined;
+    throw new Error('unable to find tag in AC. Cannot continue', { tagName });
   }
   const tagId = tagResult.id;
   let contactId = '';
@@ -36,7 +36,7 @@ async function addTagToContact(tagName, user) {
     if (!newContact) {
       dlog(`failed creating contact in AC %o`, contact);
       Sentry.captureMessage('failed creating contact in AC', 'error');
-      return undefined;
+      throw new Error('Failed creating contact in AC', { contact });
     }
     contactId = newContact.id;
   } else {
@@ -46,8 +46,12 @@ async function addTagToContact(tagName, user) {
   const taggedContact = await ac.addTagToContact(contactId, tagId);
   if (!taggedContact) {
     dlog(`Tag didn't set to contact`);
-    Sentry.captureMessage('falied adding tag to contact in AC', 'error');
-    return undefined;
+    Sentry.captureMessage('failed adding tag to contact in AC', 'error');
+    throw new Error(
+      'Failed adding tag to contact in AC',
+      { tagId },
+      { contactId },
+    );
   }
   return taggedContact;
 }
@@ -71,10 +75,7 @@ function setRegisteredFromFieldValue(email, fieldValue) {
       ],
     },
   };
-  return ac
-    .syncContact(contact)
-    .then(r => r)
-    .catch(err => err);
+  return ac.syncContact(contact).then(r => r);
 }
 
 export default {

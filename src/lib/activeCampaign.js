@@ -37,7 +37,11 @@ function findContactByEmail(email) {
           );
           Sentry.captureMessage('non-200 result from contact query by email');
         });
-        return undefined;
+        throw new Error(
+          'non-200 result from list all contacts query: ',
+          res.status,
+          res.statusText,
+        );
       }
       return res.json();
     })
@@ -58,15 +62,14 @@ function findContactByEmail(email) {
           );
           Sentry.captureMessage('query by email returned > 1 contact');
         });
-        return undefined;
+        throw new Error(
+          'Contact search by email returned > 1 contact',
+          json.contacts.length,
+          { email },
+        );
       }
-      dlog(`returning ${json.contacts[0]}`);
+
       return json.contacts[0];
-    })
-    .catch(err => {
-      dlog('exception looking for contact: %s', err);
-      Sentry.captureException(err);
-      return undefined;
     });
 }
 
@@ -99,16 +102,15 @@ function createContact(contact) {
           );
           Sentry.captureMessage('non-200 result from sync AC contact');
         });
-        return undefined;
+        throw new Error(
+          'Non-200 result creating contact',
+          res.status,
+          res.statusText,
+        );
       }
       return res.json();
     })
-    .then(json => json.contact)
-    .catch(err => {
-      dlog('exception creating AC contact: %s', err);
-      Sentry.captureException(err);
-      return undefined;
-    });
+    .then(json => json.contact);
 }
 
 function syncContact(contact) {
@@ -134,16 +136,15 @@ function syncContact(contact) {
           );
           Sentry.captureMessage('non-200 result from sync AC contact');
         });
-        return undefined;
+        throw new Error(
+          'Non-200 result creating contact',
+          res.status,
+          res.statusText,
+        );
       }
       return res.json();
     })
-    .then(json => json.contact)
-    .catch(err => {
-      dlog('exception syncing AC contact: %s', err);
-      Sentry.captureException(err);
-      return undefined;
-    });
+    .then(json => json.contact);
 }
 
 function searchForTag(tagName) {
@@ -167,7 +168,12 @@ function searchForTag(tagName) {
           );
           Sentry.captureMessage('non-200 result from search for tag');
         });
-        return undefined;
+        throw new Error(
+          'non-200 status return searching for tag',
+          tagName,
+          res.status,
+          res.statusText,
+        );
       }
       return res.json();
     })
@@ -188,14 +194,14 @@ function searchForTag(tagName) {
           );
           Sentry.captureMessage('query for tag returned > 1 contact');
         });
-        return undefined;
+        throw new Error(
+          'Tag search returned > 1 tag. Expected 0 or 1',
+          json.tags.length,
+          { tagName },
+        );
       }
+
       return json.tags[0];
-    })
-    .catch(err => {
-      dlog('exception searching for tag: %s', err);
-      Sentry.captureException(err);
-      return undefined;
     });
 }
 
@@ -226,16 +232,122 @@ function addTagToContact(acId, tagId) {
           );
           Sentry.captureMessage('issue adding tag to contact');
         });
-        return undefined;
+        throw new Error(
+          'Unable to add tag to contact',
+          { acId },
+          { tagId },
+          res.status,
+          res.statusText,
+        );
       }
       return res.json();
     })
-    .then(json => json)
-    .catch(err => {
-      dlog('Exception adding tag: %s', err);
-      Sentry.captureException(err);
-      return undefined;
+    .then(json => json);
+}
+
+function searchForList(listName) {
+  dlog('search for list %s', listName);
+  const url = `${acBaseUrl}/lists?`;
+  const params = URLSearchParams({ 'filters[name]': listName });
+  const reqOptions = {
+    method: 'GET',
+    ...fetchBaseOptions,
+  };
+  return fetch(url + params, reqOptions)
+    .then(res => {
+      if (!res.ok) {
+        dlog('non-200 result from search for list %s', listName);
+        Sentry.withScope(scope => {
+          scope.setLevel('warning');
+          scope.setContext(
+            'non-200 result from search for list',
+            { listName },
+            { res },
+          );
+          Sentry.captureMessage('non-200 result from search for list');
+        });
+        throw new Error(
+          'non-200 status return searching for list',
+          listName,
+          res.status,
+          res.statusText,
+        );
+      }
+      return res.json();
+    })
+    .then(json => {
+      if (!json) return undefined;
+      if (json.lists && json.lists.length > 1) {
+        dlog(
+          'query for list, %s, returned %d matches, expect 1 or 0',
+          listName,
+          json.lists.length,
+        );
+        Sentry.withScope(scope => {
+          scope.setLevel('error');
+          scope.setContext(
+            'list search return > 1 contact',
+            { listName },
+            { lists: json.lists },
+          );
+          Sentry.captureMessage('query for list returned > 1 contact');
+        });
+        throw new Error(
+          'list search returned > 1 list. Expected 0 or 1',
+          json.lists.length,
+          { listName },
+        );
+      }
+
+      return json.lists[0];
     });
+}
+
+function setContactToList(acId, listId, status = '1') {
+  // https://developers.activecampaign.com/reference#update-list-status-for-contact
+  // statuses: '1': subscribe, '2': unsubscribe
+  dlog('call setContactToList for id %s to list %s', acId, listId);
+  const url = `${acBaseUrl}/contactLists`;
+  const body = {
+    contactLists: {
+      list: listId,
+      contact: acId,
+      status,
+    },
+  };
+  if (status === '1') body.contactLists.sourceid = 4;
+  const reqOptions = {
+    method: 'POST',
+    ...fetchBaseOptions,
+    body,
+  };
+
+  return fetch(url, reqOptions)
+    .then(res => {
+      if (!res.ok) {
+        dlog('issue setting contact to list');
+        Sentry.withScope(scope => {
+          scope.setLevel('error');
+          scope.setContext(
+            'Issue setting contact to list',
+            { acId },
+            { listId },
+            { status },
+            { res },
+          );
+          Sentry.captureMessage('issue setting contact to list');
+        });
+        throw new Error(
+          'Unable to add contact to list',
+          { acId },
+          { listId },
+          res.status,
+          res.statusText,
+        );
+      }
+      return res.json();
+    })
+    .then(json => json);
 }
 
 export default {
@@ -244,4 +356,6 @@ export default {
   syncContact,
   searchForTag,
   addTagToContact,
+  searchForList,
+  setContactToList,
 };
