@@ -77,7 +77,7 @@ function userEvents(postmark) {
 
   userEventEmitter.on('accountCreated', sendAccountCreatedEmail);
   userEventEmitter.on('accountCreated', sendAccountCreatedSlack);
-  userEventEmitter.on('accountCreated', addAcProfileCompleteTag);
+  // userEventEmitter.on('accountCreated', addAcProfileCompleteTag);
   userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
 
   return userEventEmitter;
