@@ -8,6 +8,7 @@ import envConfig from '../envConfig';
 const dlog = debug('that:api:members:activeCampaignActions');
 
 async function createNewAcContact(user) {
+  dlog('createNewAcContact');
   const contact = {
     contact: {
       email: user.email,
@@ -21,13 +22,14 @@ async function createNewAcContact(user) {
     Sentry.captureMessage('failed creating contact in AC', 'error');
     throw new Error('Failed creating contact in AC', { contact });
   }
+  dlog('contact created %s', newContact.id);
   return newContact.id;
 }
 
 async function addTagToContact({ tagName, user }) {
   // Add a tag to a contact based on email address.
   // If the user isn't an AC contact they will be added.
-  dlog('call addTagToContact for tag % and user %o', tagName, user);
+  dlog('call addTagToContact for tag %s and user %o', tagName, user);
   const [contactResult, tagResult] = await Promise.all([
     ac.findContactByEmail(user.email),
     ac.searchForTag(tagName),
