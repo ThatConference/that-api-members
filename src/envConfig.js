@@ -12,6 +12,11 @@ const requiredConfig = () => ({
   memberNotifSlackChannel: '#introductions',
   defaultProfileImage:
     'https://images.that.tech/members/person-placeholder.jpg',
+  activeCampaignApi:
+    process.env.ACTIVE_CAMPAIGN_API || configMissing('ACTIVE_CAMPAIGN_API'),
+  activeCampaignKey:
+    process.env.ACTIVE_CAMPAIGN_KEY || configMissing('ACTIVE_CAMPAIGN_KEY'),
+  acRegisteredFromField: '20',
 });
 
 export default requiredConfig();
