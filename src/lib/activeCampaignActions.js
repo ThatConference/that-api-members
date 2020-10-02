@@ -42,7 +42,7 @@ async function syncAcContactFromTHATUser(user) {
     Sentry.captureMessage('failed synching contact in AC', 'error');
     throw new Error('Failed synching contact in AC', { contact });
   }
-  dlog('contact created %s', newContact.id);
+  dlog('contact syncd %s', newContact.id);
   return newContact.id;
 }
 
@@ -64,7 +64,7 @@ async function addTagToContact({ tagName, user }) {
   const tagId = tagResult.id;
   let contactId = '';
   if (!contactResult || (contactResult && !contactResult.id)) {
-    contactId = await createNewAcContact(user);
+    contactId = await syncAcContactFromTHATUser(user);
   } else {
     contactId = contactResult.id;
   }
@@ -100,7 +100,7 @@ async function addContactToList({ user, listName }) {
   const listId = listResult.id;
   let contactId = '';
   if (!contactResult || (contactResult && !contactResult.id)) {
-    contactId = await createNewAcContact(user);
+    contactId = await syncAcContactFromTHATUser(user);
   } else {
     contactId = contactResult.id;
   }
@@ -145,6 +145,7 @@ function setRegisteredFromFieldValue(email, fieldValue) {
 }
 
 export default {
+  createNewAcContact,
   syncAcContactFromTHATUser,
   addTagToContact,
   addContactToList,
