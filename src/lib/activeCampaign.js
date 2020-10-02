@@ -46,7 +46,6 @@ function findContactByEmail(email) {
       return res.json();
     })
     .then(json => {
-      if (!json) return undefined;
       if (json.contacts && json.contacts.length > 1) {
         dlog(
           'query for email, %s, returned %d matches, expect 1 or 0',
@@ -178,7 +177,6 @@ function searchForTag(tagName) {
       return res.json();
     })
     .then(json => {
-      if (!json) return undefined;
       if (json.tags && json.tags.length > 1) {
         dlog(
           'query for tag, %s, returned %d matches, expect 1 or 0',
@@ -276,7 +274,6 @@ function searchForList(listName) {
       return res.json();
     })
     .then(json => {
-      if (!json) return undefined;
       if (json.lists && json.lists.length > 1) {
         dlog(
           'query for list, %s, returned %d matches, expect 1 or 0',
@@ -303,7 +300,7 @@ function searchForList(listName) {
     });
 }
 
-function setContactToList(acId, listId, status = '1') {
+function setContactToList({ acId, listId, status = '1' }) {
   // https://developers.activecampaign.com/reference#update-list-status-for-contact
   // statuses: '1': subscribe, '2': unsubscribe
   dlog('call setContactToList for id %s to list %s', acId, listId);
