@@ -13,7 +13,7 @@ async function createNewAcContact(user) {
     contact: {
       email: user.email,
       firstName: user.firstName,
-      lastName: user.firstName,
+      lastName: user.lastName,
     },
   };
   const newContact = await ac.createContact(contact);
@@ -21,6 +21,26 @@ async function createNewAcContact(user) {
     dlog(`failed creating contact in AC %o`, contact);
     Sentry.captureMessage('failed creating contact in AC', 'error');
     throw new Error('Failed creating contact in AC', { contact });
+  }
+  dlog('contact created %s', newContact.id);
+  return newContact.id;
+}
+
+async function syncAcContactFromTHATUser(user) {
+  // Updates AC contact with values from THAT Profile (here as 'user')
+  dlog('syncAcContactFromTHATUser, user %o', user);
+  const contact = {
+    contact: {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    },
+  };
+  const newContact = await ac.syncContact(contact);
+  if (!newContact) {
+    dlog(`failed synching contact in AC %o`, contact);
+    Sentry.captureMessage('failed synching contact in AC', 'error');
+    throw new Error('Failed synching contact in AC', { contact });
   }
   dlog('contact created %s', newContact.id);
   return newContact.id;
@@ -125,6 +145,7 @@ function setRegisteredFromFieldValue(email, fieldValue) {
 }
 
 export default {
+  syncAcContactFromTHATUser,
   addTagToContact,
   addContactToList,
   setRegisteredFromFieldValue,

@@ -81,13 +81,26 @@ function userEvents(postmark) {
       );
   }
 
+  function onAccountActionUpdateAc(user) {
+    // updates AC when THAT profile is created or updated
+    dlog('onAccountActionUpdateAc');
+    acActions
+      .syncAcContactFromTHATUser(user)
+      .then(a => dlog('Account synced, ac id: %s', a))
+      .catch(err =>
+        process.nextTick(() => userEventEmitter.emit('error', err)),
+      );
+  }
+
   userEventEmitter.on('error', err => {
     throw new Error(err);
   });
 
+  userEventEmitter.on('accountCreated', onAccountActionUpdateAc);
   userEventEmitter.on('accountCreated', sendAccountCreatedEmail);
   userEventEmitter.on('accountCreated', sendAccountCreatedSlack);
   userEventEmitter.on('accountCreated', addAcProfileCompleteTag);
+  userEventEmitter.on('accountUpdated', onAccountActionUpdateAc);
   userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
 
   return userEventEmitter;
