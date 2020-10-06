@@ -12,8 +12,9 @@ function scrubProfile(profile, isNew) {
   if (isNew) {
     scrubbedProfile.createdAt = modifiedAtDate;
   }
-
   scrubbedProfile.lastUpdatedAt = modifiedAtDate;
+
+  if (!scrubbedProfile.interests) scrubbedProfile.interests = [];
 
   return scrubbedProfile;
 }
