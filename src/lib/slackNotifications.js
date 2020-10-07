@@ -57,7 +57,7 @@ export default {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*<https://www.thatconference.com/member/${user.profileSlug}|${user.firstName} ${user.lastName}>*`,
+                text: `*<https://that.us/members/${user.profileSlug}|${user.firstName} ${user.lastName}>*`,
               },
             },
             {
