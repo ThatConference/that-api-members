@@ -1,0 +1,8 @@
+enum AcceptedSessionFilter {
+  "All sessions, no filtering"
+  ALL
+  "Sessions today and forward"
+  UPCOMING
+  "Session before today"
+  PAST
+}

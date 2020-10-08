@@ -23,8 +23,6 @@ export const fieldResolvers = {
     ) => {
       dlog('sessions for %s with filter %s', id, filter);
 
-      let localFilter = 'UPCOMING';
-      if (filter) localFilter = filter;
       // today at 00:00:00.000 (in epoch number format)
       let parsableTime = new Date().setHours(0, 0, 0, 0);
       if (asOfDate) {
@@ -34,25 +32,29 @@ export const fieldResolvers = {
       const targetDate = new Date(parsableTime);
       dlog('as of date: %s', targetDate);
       let result;
-      if (localFilter === 'ALL') {
-        result = sessionStore(firestore).findMembersAcceptedSessions({
-          memberId: id,
-        });
-      } else if (localFilter === 'UPCOMING') {
-        result = sessionStore(firestore).findMembersAcceptedSessionsFromDate({
-          memberId: id,
-          fromDate: targetDate,
-        });
-      } else if (localFilter === 'PAST') {
-        result = sessionStore(firestore).findMembersAcceptedSessionsBeforeDate({
-          memberId: id,
-          beforeDate: targetDate,
-        });
-      } else
-        throw new Error(
-          'Unknown AcceptedSessionFilter value provided. %s',
-          filter,
-        );
+      switch (filter) {
+        case 'ALL':
+          result = sessionStore(firestore).findMembersAcceptedSessions({
+            memberId: id,
+          });
+          break;
+
+        case 'PAST':
+          result = sessionStore(
+            firestore,
+          ).findMembersAcceptedSessionsBeforeDate({
+            memberId: id,
+            beforeDate: targetDate,
+          });
+          break;
+
+        default:
+          // UPCOMING
+          result = sessionStore(firestore).findMembersAcceptedSessionsFromDate({
+            memberId: id,
+            fromDate: targetDate,
+          });
+      }
 
       return result;
     },
