@@ -14,8 +14,8 @@ type PublicProfile @key(fields: "id") {
   "Social media and other member links"
   profileLinks: [ProfileLink]
   thatSlackUsername: String
-  "Member's accepted sessions"
-  sessions: [AcceptedSession]
+  "Member's accepted sessions. Defaults: Filter: UPCOMING, asOfDate: server date now @ 00:00:00.000"
+  sessions(filter: AcceptedSessionFilter, asOfDate: Date): [AcceptedSession]
   "Member's earned Merit Badges"
   earnedMeritBadges: [MeritBadge]
   "Date and time member created"

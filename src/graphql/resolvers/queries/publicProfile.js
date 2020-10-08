@@ -16,11 +16,47 @@ export const fieldResolvers = {
       return user;
     },
     earnedMeritBadges: meritBadgesResolver.earnedMeritBadges,
-    sessions: ({ id }, __, { dataSources: { firestore } }) => {
-      dlog('sessions for %s', id);
-      return sessionStore(firestore).findMembersAcceptedSessions({
-        memberId: id,
-      });
+    sessions: (
+      { id },
+      { filter, asOfDate },
+      { dataSources: { firestore } },
+    ) => {
+      dlog('sessions for %s with filter %s', id, filter);
+
+      // today at 00:00:00.000 (in epoch number format)
+      let parsableTime = new Date().setHours(0, 0, 0, 0);
+      if (asOfDate) {
+        // dates from json are string formatted hopefully iso format
+        parsableTime = asOfDate;
+      }
+      const targetDate = new Date(parsableTime);
+      dlog('as of date: %s', targetDate);
+      let result;
+      switch (filter) {
+        case 'ALL':
+          result = sessionStore(firestore).findMembersAcceptedSessions({
+            memberId: id,
+          });
+          break;
+
+        case 'PAST':
+          result = sessionStore(
+            firestore,
+          ).findMembersAcceptedSessionsBeforeDate({
+            memberId: id,
+            beforeDate: targetDate,
+          });
+          break;
+
+        default:
+          // UPCOMING
+          result = sessionStore(firestore).findMembersAcceptedSessionsFromDate({
+            memberId: id,
+            fromDate: targetDate,
+          });
+      }
+
+      return result;
     },
   },
 };
