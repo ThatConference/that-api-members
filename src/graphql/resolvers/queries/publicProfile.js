@@ -1,9 +1,13 @@
 import debug from 'debug';
+import { dataSources } from '@thatconference/api';
 
 import meritBadgesResolver from './earnedMeritBadges';
 import sessionStore from '../../../dataSources/cloudFirestore/session';
+import memberStore from '../../../dataSources/cloudFirestore/member';
 
 const dlog = debug('that:api:members:query:PublicProfile');
+const favoriteStore = dataSources.cloudFirestore.favorites;
+const favoriteType = 'member';
 
 export const fieldResolvers = {
   PublicProfile: {
@@ -57,6 +61,37 @@ export const fieldResolvers = {
       }
 
       return result;
+    }, // sessions
+    followCount: ({ id }, __, { dataSources: { firestore } }) => {
+      dlog('followCount called');
+      return favoriteStore(firestore).getFavoriteCount({
+        favoritedId: id,
+        favoriteType,
+      });
+    },
+    followers: async (
+      { id },
+      { pageSize, cursor },
+      { dataSources: { firestore } },
+    ) => {
+      dlog('followers called');
+      const pagedFollowers = await favoriteStore(firestore).getFollowersPaged({
+        favoritedId: id,
+        favoriteType,
+        pageSize,
+        cursor,
+      });
+      // getFollowersPaged verifies returned members have canFeature and not
+      // isDeactivitated so that check isn't needed again
+      const profiles = await memberStore(firestore).batchFindMembers(
+        pagedFollowers.members.map(m => m.id),
+      );
+
+      return {
+        cursor: pagedFollowers.cursor,
+        count: profiles.length,
+        profiles,
+      };
     },
   },
 };

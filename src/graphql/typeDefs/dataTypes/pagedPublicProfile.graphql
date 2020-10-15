@@ -4,5 +4,5 @@ type PagedPublicProfile {
   "number of records in current page"
   count: Int
   "profiles in this page of data"
-  PublicProfiles: [PublicProfile]
+  profiles: [PublicProfile]
 }

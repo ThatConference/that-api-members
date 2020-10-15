@@ -1,0 +1,8 @@
+type MemberFollowingQuery {
+  "all member id's favorited by me (logged in member)"
+  ids: [ID] @auth(requires: "members")
+
+  "paged list of profiles favorited by me (logged in member)"
+  profiles(pageSize: Int, cursor: String): PagedPublicProfile
+    @auth(requires: "members")
+}
