@@ -59,7 +59,7 @@ const member = dbInstance => {
     const docRef = await membersCol.doc(id).get();
     let result = null;
     if (docRef.exists) {
-      if (docRef.get('canFeature')) {
+      if (docRef.get('canFeature') && !docRef.get('isDeactivated')) {
         const pl = docRef.get('profileLinks');
         result = {
           id: docRef.id,
@@ -109,24 +109,6 @@ const member = dbInstance => {
     return result;
   }
 
-  // async function findMeBySlug(slug) {
-  //   const { size, docs } = await membersCol
-  //     .where('profileSlug', '==', slug)
-  //     .get();
-
-  //   let result = null;
-  //   if (size === 1) {
-  //     const [doc] = docs;
-  //     result = {
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     };
-  //   } else if (size > 1)
-  //     throw new Error('Slug associated with mupliple members. %s', slug);
-
-  //   return result;
-  // }
-
   async function findIdFromSlug(slug) {
     dlog('findIdFromSlug %s', slug);
     const { size, docs } = await membersCol
@@ -152,12 +134,10 @@ const member = dbInstance => {
     const docRef = await membersCol.doc(id).get();
     let result = null;
     if (docRef.exists) {
-      if (docRef.get('canFeature')) {
-        result = {
-          id: docRef.id,
-          profileSlug: docRef.get('profileSlug'),
-        };
-      }
+      result = {
+        id: docRef.id,
+        profileSlug: docRef.get('profileSlug'),
+      };
     }
 
     return result;

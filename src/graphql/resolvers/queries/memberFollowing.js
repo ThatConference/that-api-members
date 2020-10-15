@@ -10,6 +10,7 @@ export const fieldResolvers = {
   MemberFollowingQuery: {
     ids: ({ id: memberId }, __, { dataSources: { firestore } }) => {
       dlog('ids called');
+      // Note this query may return ID's which are now private or deactivated
       return favoriteStore(firestore)
         .getFavoritedIdsForMember({
           memberId,
@@ -32,7 +33,10 @@ export const fieldResolvers = {
         cursor,
       });
       const ids = favorites.favorites.map(f => f.favoritedId);
-      const profiles = await memberStore(firestore).batchFindMembers(ids);
+      const allProfiles = await memberStore(firestore).batchFindMembers(ids);
+      const profiles = allProfiles.filter(
+        p => p.canFeature && !p.isDeactivated,
+      );
 
       return {
         cursor: favorites.cursor,

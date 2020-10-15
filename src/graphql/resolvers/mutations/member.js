@@ -73,14 +73,16 @@ export const fieldResolvers = {
       { target },
       { dataSources: { firestore } },
     ) => {
-      const { memberId: favoritedId, slug } = await memberFindBy(
+      const { memberId: favoritedId, profileSlug } = await memberFindBy(
         target,
         firestore,
       );
-      dlog('follow toggle called on %s or %s, %o', memberId, slug, target);
-      // look for favorite
-      // delete if exist
-      // add if not exist and is public
+      dlog(
+        'follow toggle called on %s or %s, %o',
+        memberId,
+        profileSlug,
+        target,
+      );
       const fav = await favoriteStore(firestore).findFavoriteForMember({
         favoritedId,
         favoriteType,
@@ -110,6 +112,8 @@ export const fieldResolvers = {
               `new favoriting of a member by member ${memberId} failded to create`,
             );
           result = publicMember;
+        } else {
+          dlog(`member isn't public, not setting favorite`);
         }
       }
 

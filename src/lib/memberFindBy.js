@@ -21,7 +21,7 @@ export default function memberFindBy(findBy, firestore) {
         if (m) {
           result = {
             memberId: m.id,
-            slug,
+            profileSlug: slug,
           };
         }
         dlog('slug/id result %o', result);

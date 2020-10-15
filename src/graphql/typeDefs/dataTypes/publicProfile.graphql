@@ -20,7 +20,7 @@ type PublicProfile @key(fields: "id") {
   earnedMeritBadges: [MeritBadge]
   "count of other members following this member"
   followCount: Int
-  "members with a public profile who are following this member (paged) Defaults: pageSize: 10"
+  "members with a public profile who are following this member (paged) Defaults: pageSize: 20"
   followers(pageSize: Int, cursor: String): PagedPublicProfile
   "Date and time member created"
   createdAt: Date!
