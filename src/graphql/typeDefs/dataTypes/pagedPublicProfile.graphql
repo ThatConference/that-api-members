@@ -1,0 +1,8 @@
+type PagedPublicProfile {
+  "value to pass back for more paged data"
+  cursor: String!
+  "number of records in current page"
+  count: Int
+  "profiles in this page of data"
+  profiles: [PublicProfile]
+}

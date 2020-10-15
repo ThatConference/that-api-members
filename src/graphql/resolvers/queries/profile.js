@@ -11,5 +11,10 @@ export const fieldResolvers = {
       return profileLoader.load(id);
     },
     earnedMeritBadges: meritBadgesResolver.earnedMeritBadges,
+
+    following: ({ id, profileSlug }) => {
+      dlog('following called');
+      return { id, profileSlug };
+    },
   },
 };

@@ -54,6 +54,24 @@ const member = dbInstance => {
     };
   }
 
+  async function findPublicById(id) {
+    dlog('findPublicById %s', id);
+    const docRef = await membersCol.doc(id).get();
+    let result = null;
+    if (docRef.exists) {
+      if (docRef.get('canFeature') && !docRef.get('isDeactivated')) {
+        const pl = docRef.get('profileLinks');
+        result = {
+          id: docRef.id,
+          ...docRef.data(),
+          profileLinks: pl ? pl.filter(p => p.isPublic) : [],
+        };
+      }
+    }
+
+    return result;
+  }
+
   async function findMember(slug) {
     const docSnapshot = await membersCol
       .where('profileSlug', '==', slug.toLowerCase())
@@ -85,6 +103,40 @@ const member = dbInstance => {
       return {
         id: docRef.id,
         ...docRef.data(),
+      };
+    }
+
+    return result;
+  }
+
+  async function findIdFromSlug(slug) {
+    dlog('findIdFromSlug %s', slug);
+    const { size, docs } = await membersCol
+      .where('profileSlug', '==', slug)
+      .select()
+      .get();
+
+    let result = null;
+    if (size === 1) {
+      const [doc] = docs;
+      result = {
+        id: doc.id,
+        profileSlug: slug,
+      };
+    } else if (size > 1)
+      throw new Error('Slug associated with mupliple members. %s', slug);
+
+    return result;
+  }
+
+  async function getSlug(id) {
+    dlog('getSlug from id %s', id);
+    const docRef = await membersCol.doc(id).get();
+    let result = null;
+    if (docRef.exists) {
+      result = {
+        id: docRef.id,
+        profileSlug: docRef.get('profileSlug'),
       };
     }
 
@@ -216,15 +268,18 @@ const member = dbInstance => {
   }
 
   return {
+    isProfileSlugTaken,
     create,
+    findMember,
+    findPublicById,
     findMe,
+    findIdFromSlug,
+    getSlug,
+    batchFindMembers,
     fetchPublicMembersByCreated,
     fetchPublicMembersByFirstName,
     update,
-    isProfileSlugTaken,
-    findMember,
     remove,
-    batchFindMembers,
   };
 };
 

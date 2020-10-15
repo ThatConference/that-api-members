@@ -18,6 +18,10 @@ type PublicProfile @key(fields: "id") {
   sessions(filter: AcceptedSessionFilter, asOfDate: Date): [AcceptedSession]
   "Member's earned Merit Badges"
   earnedMeritBadges: [MeritBadge]
+  "count of other members following this member"
+  followCount: Int
+  "members with a public profile who are following this member (paged) Defaults: pageSize: 20"
+  followers(pageSize: Int, cursor: String): PagedPublicProfile
   "Date and time member created"
   createdAt: Date!
   "Date and time last updated"

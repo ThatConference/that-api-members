@@ -1,10 +1,14 @@
 import debug from 'debug';
+import { dataSources } from '@thatconference/api';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
 import titoStore from '../../../dataSources/apis/tito';
 import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
+import memberFindBy from '../../../lib/memberFindBy';
 
 const dlog = debug('that:api:members:mutation');
+const favoriteStore = dataSources.cloudFirestore.favorites;
+const favoriteType = 'member';
 
 export const fieldResolvers = {
   MemberMutation: {
@@ -62,6 +66,58 @@ export const fieldResolvers = {
         }
       }
       return awardedBadge;
+    },
+
+    followToggle: async (
+      { memberId },
+      { target },
+      { dataSources: { firestore } },
+    ) => {
+      const { memberId: favoritedId, profileSlug } = await memberFindBy(
+        target,
+        firestore,
+      );
+      dlog(
+        'follow toggle called on %s or %s, %o',
+        memberId,
+        profileSlug,
+        target,
+      );
+      const fav = await favoriteStore(firestore).findFavoriteForMember({
+        favoritedId,
+        favoriteType,
+        user: { sub: memberId },
+      });
+
+      let result = null;
+      if (fav) {
+        dlog('favorite exists, removing');
+        await favoriteStore(firestore).removeFavorite({
+          favoriteId: fav.id,
+          user: { sub: memberId },
+        });
+      } else {
+        dlog(`favorite doesn't exist, ensure public and add`);
+        const publicMember = await memberStore(firestore).findPublicById(
+          favoritedId,
+        );
+        if (publicMember) {
+          const newFav = await favoriteStore(firestore).addFavoriteForMember({
+            favoritedId,
+            favoriteType,
+            user: { sub: memberId },
+          });
+          if (!newFav)
+            throw new Error(
+              `new favoriting of a member by member ${memberId} failded to create`,
+            );
+          result = publicMember;
+        } else {
+          dlog(`member isn't public, not setting favorite`);
+        }
+      }
+
+      return result;
     },
   },
 };
