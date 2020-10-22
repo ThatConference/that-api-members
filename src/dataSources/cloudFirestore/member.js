@@ -1,8 +1,10 @@
 import debug from 'debug';
-import moment from 'moment';
-import { isDate } from 'lodash';
+import * as Sentry from '@sentry/node';
+import { dataSources, utility } from '@thatconference/api';
 
 const dlog = debug('that:api:members:datasources:members');
+const slugStore = dataSources.cloudFirestore.slug;
+const { dateForge } = utility.firestoreDateForge;
 
 function scrubProfile(profile, isNew) {
   const scrubbedProfile = profile;
@@ -23,7 +25,7 @@ const member = dbInstance => {
   const collectionName = 'members';
   const membersCol = dbInstance.collection(collectionName);
 
-  async function isProfileSlugTaken(slug) {
+  async function isProfileSlugTakenLocal(slug) {
     dlog('db isProfileSlugUnique %o', slug);
 
     const requestedSlug = slug.toLowerCase();
@@ -35,7 +37,12 @@ const member = dbInstance => {
     return docSnapshot.size !== 0;
   }
 
-  async function create({ user, profile }) {
+  function isProfileSlugTaken(slug) {
+    dlog('isProfileSlugUnique', slug);
+    return slugStore(dbInstance).isSlugTaken(slug);
+  }
+
+  async function createLocal({ user, profile }) {
     dlog('created called for user %o, with profile %o', user, profile);
     const docRef = membersCol.doc(user.sub);
 
@@ -51,6 +58,54 @@ const member = dbInstance => {
     return {
       id: docRef.id,
       ...updatedDoc.data(),
+    };
+  }
+
+  async function create({ user, profile }) {
+    dlog('create called, user %o with profile %o', user, profile);
+    const docRef = membersCol.doc(user.sub);
+    const modifiedProfile = scrubProfile(profile, true);
+    dlog('modified profile %o', modifiedProfile);
+
+    const isSlugTaken = await isProfileSlugTaken(modifiedProfile.profileSlug);
+    if (isSlugTaken)
+      throw new Error(
+        'profile slug is taken it cannot be used to create a new profile',
+      );
+
+    const slugDoc = slugStore(dbInstance).makeSlugDoc({
+      slugName: modifiedProfile.profileSlug,
+      type: 'member',
+      referenceId: user.sub,
+    });
+    slugDoc.createdAt = modifiedProfile.createdAt;
+    const slugDocRef = slugStore(dbInstance).getSlugDocRef(
+      modifiedProfile.profileSlug,
+    );
+
+    const writeBatch = dbInstance.batch();
+    writeBatch.create(docRef, modifiedProfile);
+    writeBatch.create(slugDocRef, slugDoc);
+    let writeResult;
+    try {
+      writeResult = await writeBatch.commit();
+    } catch (err) {
+      dlog('failed batch write member profile and slug');
+      Sentry.withScope(scope => {
+        scope.setLevel('error');
+        scope.setContext(
+          'batch write of member profile and slug failed',
+          { docRef, modifiedProfile },
+          { slugDocRef, slugDoc },
+        );
+        Sentry.captureException(err);
+      });
+      throw new Error('failed batch write member profile and slug');
+    }
+    dlog('writeResult @O', writeResult);
+    return {
+      id: docRef.id,
+      ...modifiedProfile,
     };
   }
 
@@ -159,6 +214,7 @@ const member = dbInstance => {
   }
 
   async function fetchPublicMembersByCreated(limit, startAfter) {
+    // Start after is poorly named, it is the cursor for the paged request
     dlog('fetchPublicMember: limit: %d start after: %s', limit, startAfter);
     const truelimit = Math.min(limit || 20, 100);
     let query = membersCol
@@ -168,11 +224,12 @@ const member = dbInstance => {
       .limit(truelimit);
 
     if (startAfter) {
-      const validCursor = moment(startAfter, 'YYYY-MM-DDTHH:mm:ss').isValid();
-      dlog('cursor is valid date?', validCursor);
-      if (!validCursor) return null; // invalid cursor, return no records
+      const scursor = Buffer.from(startAfter, 'base64').toString('utf8');
+      const { curStartAfter } = JSON.parse(scursor);
+      if (!curStartAfter)
+        throw new Error('Invlid cursor value provied for startAfter');
 
-      query = query.startAfter(new Date(startAfter));
+      query = query.startAfter(new Date(curStartAfter));
     }
     const qrySnapshot = await query.get();
 
@@ -186,11 +243,11 @@ const member = dbInstance => {
 
     let cursor = '';
     const lastCreatedAt = memberSet[memberSet.length - 1].createdAt;
-    if (lastCreatedAt.toDate) {
-      dlog('converting Timestamp', lastCreatedAt);
-      cursor = lastCreatedAt.toDate().toISOString();
-    } else if (isDate(lastCreatedAt)) {
-      cursor = lastCreatedAt;
+    if (lastCreatedAt) {
+      const cpieces = JSON.stringify({
+        curStartAfter: dateForge(lastCreatedAt),
+      });
+      cursor = Buffer.from(cpieces, 'utf8').toString('base64');
     }
 
     return {
