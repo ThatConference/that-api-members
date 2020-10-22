@@ -5,6 +5,7 @@ import { dataSources, utility } from '@thatconference/api';
 const dlog = debug('that:api:members:datasources:members');
 const slugStore = dataSources.cloudFirestore.slug;
 const { dateForge } = utility.firestoreDateForge;
+const memberDateForge = utility.firestoreDateForge.members;
 
 function scrubProfile(profile, isNew) {
   const scrubbedProfile = profile;
@@ -25,6 +26,7 @@ const member = dbInstance => {
   const collectionName = 'members';
   const membersCol = dbInstance.collection(collectionName);
 
+  // is deprecated
   async function isProfileSlugTakenLocal(slug) {
     dlog('db isProfileSlugUnique %o', slug);
 
@@ -42,6 +44,7 @@ const member = dbInstance => {
     return slugStore(dbInstance).isSlugTaken(slug);
   }
 
+  // is deprecated
   async function createLocal({ user, profile }) {
     dlog('created called for user %o, with profile %o', user, profile);
     const docRef = membersCol.doc(user.sub);
@@ -103,10 +106,12 @@ const member = dbInstance => {
       throw new Error('failed batch write member profile and slug');
     }
     dlog('writeResult @O', writeResult);
-    return {
+    const out = {
       id: docRef.id,
       ...modifiedProfile,
     };
+
+    return memberDateForge(out);
   }
 
   async function findPublicById(id) {
@@ -121,6 +126,7 @@ const member = dbInstance => {
           ...docRef.data(),
           profileLinks: pl ? pl.filter(p => p.isPublic) : [],
         };
+        result = memberDateForge(result);
       }
     }
 
@@ -143,7 +149,7 @@ const member = dbInstance => {
         pl => pl.isPublic === true,
       );
 
-      results = profile;
+      results = memberDateForge(profile);
     }
 
     return results;
@@ -152,13 +158,14 @@ const member = dbInstance => {
   async function findMe(memberId) {
     const docRef = await dbInstance.doc(`${collectionName}/${memberId}`).get();
 
-    const result = null;
+    let result = null;
 
     if (docRef.exists) {
-      return {
+      result = {
         id: docRef.id,
         ...docRef.data(),
       };
+      result = memberDateForge(result);
     }
 
     return result;
@@ -206,10 +213,13 @@ const member = dbInstance => {
     );
 
     return Promise.all(docRefs.map(d => d.get())).then(res =>
-      res.map(r => ({
-        id: r.id,
-        ...r.data(),
-      })),
+      res.map(r => {
+        const result = {
+          id: r.id,
+          ...r.data(),
+        };
+        return memberDateForge(result);
+      }),
     );
   }
 
@@ -252,7 +262,7 @@ const member = dbInstance => {
 
     return {
       cursor,
-      members: memberSet,
+      members: memberSet.map(m => memberDateForge(m)),
     };
   }
 
@@ -298,7 +308,7 @@ const member = dbInstance => {
 
     return {
       cursor,
-      members: memberSet,
+      members: memberSet.map(m => memberDateForge(m)),
     };
   }
 
@@ -311,10 +321,12 @@ const member = dbInstance => {
     await docRef.update(modifiedProfile);
 
     const updatedDoc = await docRef.get();
-    return {
+    const out = {
       id: updatedDoc.id,
       ...updatedDoc.data(),
     };
+
+    return memberDateForge(out);
   }
 
   function remove(memberId) {
