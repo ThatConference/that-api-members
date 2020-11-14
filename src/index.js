@@ -93,8 +93,7 @@ const createUserContext = (req, res, next) => {
     const rxHost = /^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i;
     const refererHost = req.headers['x-forwarded-for'];
     const host = refererHost.match(rxHost);
-    // eslint-disable-next-line prefer-destructuring
-    if (host) site = host[1];
+    if (host) [, site] = host;
   } else {
     site = 'www.thatconference.com';
   }
