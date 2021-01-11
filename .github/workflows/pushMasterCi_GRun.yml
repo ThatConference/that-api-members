@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build member
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,10 +37,11 @@ jobs:
           name: tc-api
           path: __build__
       - name: Slack Notification
-        uses: 8398a7/action-slack@v2
+        uses: 8398a7/action-slack@v3
         with:
+          fields: repo,message,commit,author,eventName,ref,workflow,job,took
           status: ${{ job.status }}
-          author: Push Master CI
+          author_name: Push Master CI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DEV_NOTIFICATIONS }}
@@ -56,15 +57,12 @@ jobs:
         with:
           name: tc-api
           path: __build__
-      - name: Setup GCP Actions
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - name: Setup gcloud Actions
+        uses: google-github-actions/setup-gcloud@master
         with:
           version: '305.0.0'
           service_account_key: ${{ secrets.GCLOUD_AUTH }}
-      # - name: Load gcloud beta bits
-      #   run: gcloud components install beta
-      #   env:
-      #     CLOUDSDK_CORE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
       - name: gcloud docker cred helper
         run: gcloud auth configure-docker
         env:
@@ -86,10 +84,11 @@ jobs:
         env:
           CLOUDSDK_CORE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
       - name: Slack Notification
-        uses: 8398a7/action-slack@v2
+        uses: 8398a7/action-slack@v3
         with:
+          fields: repo,message,commit,author,eventName,ref,workflow,job,took
           status: ${{ job.status }}
-          author: Push Master CI
+          author_name: Push Master CI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DEV_NOTIFICATIONS }}
@@ -106,10 +105,11 @@ jobs:
           echo result $REFRESH_RESULT
           if [ $REFRESH_RESULT != '"reloaded"' ]; then exit 99; fi
       - name: Slack Notification
-        uses: 8398a7/action-slack@v2
+        uses: 8398a7/action-slack@v3
         with:
+          fields: repo,message,commit,author,eventName,ref,workflow,job,took
           status: ${{ job.status }}
-          author: Push Master CI
+          author_name: Push Master CI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DEV_NOTIFICATIONS }}

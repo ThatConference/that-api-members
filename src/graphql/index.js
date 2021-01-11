@@ -1,9 +1,5 @@
-import _ from 'lodash';
-import {
-  ApolloServer,
-  gql,
-  SchemaDirectiveVisitor,
-} from 'apollo-server-express';
+import { isNil } from 'lodash';
+import { ApolloServer, SchemaDirectiveVisitor } from 'apollo-server-express';
 import { buildFederatedSchema } from '@apollo/federation';
 import debug from 'debug';
 import DataLoader from 'dataloader';
@@ -11,7 +7,7 @@ import * as Sentry from '@sentry/node';
 import { security, graph } from '@thatconference/api';
 
 // Graph Types and Resolvers
-import typeDefsRaw from './typeDefs';
+import typeDefs from './typeDefs';
 import resolvers from './resolvers';
 import directives from './directives';
 import memberStore from '../dataSources/cloudFirestore/member';
@@ -19,11 +15,6 @@ import memberStore from '../dataSources/cloudFirestore/member';
 const dlog = debug('that:api:members:graphServer');
 const jwtClient = security.jwt();
 const { lifecycle } = graph.events;
-
-// convert our raw schema to gql
-const typeDefs = gql`
-  ${typeDefsRaw}
-`;
 
 const createServer = ({ dataSources }) => {
   dlog('creating graph server');
@@ -44,7 +35,22 @@ const createServer = ({ dataSources }) => {
       const profileLoader = new DataLoader(ids =>
         memberStore(firestore)
           .batchFindMembers(ids)
-          .then(members => ids.map(i => members.find(p => p.id === i))),
+          .then(members => {
+            if (members.includes(null)) {
+              Sentry.withScope(scope => {
+                scope.setLevel('error');
+                scope.setContext(
+                  `profile loader member(s) don't exist in members collection`,
+                  { ids },
+                  { members },
+                );
+                Sentry.captureMessage(
+                  `profile loader member(s) don't exist in members collection`,
+                );
+              });
+            }
+            return ids.map(i => members.find(p => p && p.id === i));
+          }),
       );
 
       return {
@@ -57,7 +63,7 @@ const createServer = ({ dataSources }) => {
       dlog('building graphql user context');
       let context = {};
 
-      if (!_.isNil(req.headers.authorization)) {
+      if (!isNil(req.headers.authorization)) {
         dlog('validating token for %o:', req.headers.authorization);
         Sentry.addBreadcrumb({
           category: 'graphql context',
@@ -106,15 +112,16 @@ const createServer = ({ dataSources }) => {
     ],
 
     formatError: err => {
+      dlog('formatError %O', err);
+
       Sentry.withScope(scope => {
         scope.setTag('formatError', true);
         scope.setLevel('warning');
-
         scope.setExtra('originalError', err.originalError);
         scope.setExtra('path', err.path);
-
         Sentry.captureException(err);
       });
+
       return err;
     },
   });
