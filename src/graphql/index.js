@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isNil } from 'lodash';
 import {
   ApolloServer,
   gql,
@@ -44,7 +44,22 @@ const createServer = ({ dataSources }) => {
       const profileLoader = new DataLoader(ids =>
         memberStore(firestore)
           .batchFindMembers(ids)
-          .then(members => ids.map(i => members.find(p => p.id === i))),
+          .then(members => {
+            if (members.includes(null)) {
+              Sentry.withScope(scope => {
+                scope.setLevel('error');
+                scope.setContext(
+                  `profile loader member(s) don't exist in members collection`,
+                  { ids },
+                  { members },
+                );
+                Sentry.captureMessage(
+                  `profile loader member(s) don't exist in members collection`,
+                );
+              });
+            }
+            return ids.map(i => members.find(p => p && p.id === i));
+          }),
       );
 
       return {
@@ -57,7 +72,7 @@ const createServer = ({ dataSources }) => {
       dlog('building graphql user context');
       let context = {};
 
-      if (!_.isNil(req.headers.authorization)) {
+      if (!isNil(req.headers.authorization)) {
         dlog('validating token for %o:', req.headers.authorization);
         Sentry.addBreadcrumb({
           category: 'graphql context',
@@ -106,15 +121,16 @@ const createServer = ({ dataSources }) => {
     ],
 
     formatError: err => {
+      dlog('formatError %O', err);
+
       Sentry.withScope(scope => {
         scope.setTag('formatError', true);
         scope.setLevel('warning');
-
         scope.setExtra('originalError', err.originalError);
         scope.setExtra('path', err.path);
-
         Sentry.captureException(err);
       });
+
       return err;
     },
   });

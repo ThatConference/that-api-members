@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 import apolloGraphServer from './graphql';
 import envConfig from './envConfig';
 import userEventEmitter from './events/user';
-// import { version } from '../package.json';
 
 let version;
 (async () => {
@@ -56,8 +55,8 @@ const graphServer = apolloGraphServer(createConfig());
 
 const useSentry = async (req, res, next) => {
   Sentry.addBreadcrumb({
-    category: 'root',
-    message: 'init',
+    category: 'that-api-members',
+    message: 'members init',
     level: Sentry.Severity.Info,
   });
   next();
@@ -77,9 +76,11 @@ const useSentry = async (req, res, next) => {
 const createUserContext = (req, res, next) => {
   dlog('creating user context');
 
-  const correlationId = req.headers['that-correlation-id']
-    ? req.headers['that-correlation-id']
-    : uuidv4();
+  const correlationId =
+    req.headers['that-correlation-id'] &&
+    req.headers['that-correlation-id'] !== 'undefined'
+      ? req.headers['that-correlation-id']
+      : uuidv4();
 
   Sentry.configureScope(scope => {
     scope.setTag('correlationId', correlationId);
