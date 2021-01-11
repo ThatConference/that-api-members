@@ -1,9 +1,5 @@
 import { isNil } from 'lodash';
-import {
-  ApolloServer,
-  gql,
-  SchemaDirectiveVisitor,
-} from 'apollo-server-express';
+import { ApolloServer, SchemaDirectiveVisitor } from 'apollo-server-express';
 import { buildFederatedSchema } from '@apollo/federation';
 import debug from 'debug';
 import DataLoader from 'dataloader';
@@ -11,7 +7,7 @@ import * as Sentry from '@sentry/node';
 import { security, graph } from '@thatconference/api';
 
 // Graph Types and Resolvers
-import typeDefsRaw from './typeDefs';
+import typeDefs from './typeDefs';
 import resolvers from './resolvers';
 import directives from './directives';
 import memberStore from '../dataSources/cloudFirestore/member';
@@ -19,11 +15,6 @@ import memberStore from '../dataSources/cloudFirestore/member';
 const dlog = debug('that:api:members:graphServer');
 const jwtClient = security.jwt();
 const { lifecycle } = graph.events;
-
-// convert our raw schema to gql
-const typeDefs = gql`
-  ${typeDefsRaw}
-`;
 
 const createServer = ({ dataSources }) => {
   dlog('creating graph server');
