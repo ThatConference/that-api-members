@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import debug from 'debug';
 
 import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
@@ -11,7 +10,7 @@ export const fieldResolvers = {
       dlog('update called', id);
       throw new Error('not implemented');
     },
-    deactivate: ({ id }, args, { dataSources: { firestore } }) => {
+    deactivate: () => {
       dlog('cancel called');
       throw new Error('not implemented');
     },
@@ -24,7 +23,7 @@ export const fieldResolvers = {
 
       return meritBadgeStore(firestore).awardMeritBadge(id, meritBadgeId);
     },
-    delete: (parent, { id }, { dataSources: { firestore } }) => {
+    delete: () => {
       dlog('delete called');
       throw new Error('not implemented yet');
     },

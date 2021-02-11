@@ -4,8 +4,9 @@ import { dataSources, utility } from '@thatconference/api';
 
 const dlog = debug('that:api:members:datasources:members');
 const slugStore = dataSources.cloudFirestore.slug;
-const { dateForge } = utility.firestoreDateForge;
-const memberDateForge = utility.firestoreDateForge.members;
+const { entityDateForge, dateForge } = utility.firestoreDateForge;
+const forgeFields = ['createdAt', 'lastUpdatedAt', 'membershipExpirationDate'];
+const memberDateForge = entityDateForge({ fields: forgeFields });
 
 function scrubProfile(profile, isNew) {
   const scrubbedProfile = profile;
@@ -26,42 +27,9 @@ const member = dbInstance => {
   const collectionName = 'members';
   const membersCol = dbInstance.collection(collectionName);
 
-  // is deprecated
-  async function isProfileSlugTakenLocal(slug) {
-    dlog('db isProfileSlugUnique %o', slug);
-
-    const requestedSlug = slug.toLowerCase();
-
-    const docSnapshot = await membersCol
-      .where('profileSlug', '==', requestedSlug)
-      .get();
-
-    return docSnapshot.size !== 0;
-  }
-
   function isProfileSlugTaken(slug) {
     dlog('isProfileSlugUnique', slug);
     return slugStore(dbInstance).isSlugTaken(slug);
-  }
-
-  // is deprecated
-  async function createLocal({ user, profile }) {
-    dlog('created called for user %o, with profile %o', user, profile);
-    const docRef = membersCol.doc(user.sub);
-
-    const modifiedProfile = scrubProfile(profile, true);
-    dlog('modified profile %o', modifiedProfile);
-
-    const isSlugTaken = await isProfileSlugTaken(modifiedProfile.profileSlug);
-    if (isSlugTaken) throw new Error('profile slug is taken');
-
-    await docRef.set(modifiedProfile, { merge: true });
-    const updatedDoc = await docRef.get();
-
-    return {
-      id: docRef.id,
-      ...updatedDoc.data(),
-    };
   }
 
   async function create({ user, profile }) {

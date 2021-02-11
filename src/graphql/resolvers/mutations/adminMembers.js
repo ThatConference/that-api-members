@@ -5,7 +5,7 @@ const dlog = debug('that:api:members:mutation:AdminMembersMutation');
 
 export const fieldResolvers = {
   AdminMembersMutation: {
-    create: (_, { member }) => {
+    create: () => {
       dlog('create called');
       return new Error('not implemented');
     },

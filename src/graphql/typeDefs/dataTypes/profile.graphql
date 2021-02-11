@@ -24,6 +24,12 @@ type Profile @key(fields: "id") {
   thatSlackUsername: String
   lifeHack: String
   interests: [String]
+  "is a THAT Member"
+  isMember: Boolean
+  "Expiration date of membership is still active"
+  membershipExpirationDate: Date
+  "Subscription id at Stripe for current Membership active or not"
+  stripeSubscriptionId: String
 
   createdAt: Date!
   lastUpdatedAt: Date!
