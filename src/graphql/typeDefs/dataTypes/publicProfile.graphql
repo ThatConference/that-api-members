@@ -22,6 +22,8 @@ type PublicProfile @key(fields: "id") {
   followCount: Int
   "members with a public profile who are following this member (paged) Defaults: pageSize: 20"
   followers(pageSize: Int, cursor: String): PagedPublicProfile
+  "is member a THAT Member"
+  isMember: Boolean
   "Date and time member created"
   createdAt: Date!
   "Date and time last updated"

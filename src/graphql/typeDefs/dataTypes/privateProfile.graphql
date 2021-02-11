@@ -1,0 +1,5 @@
+type PrivateProfile @key(fields: "id") {
+  id: ID!
+  firstName: String!
+  lastInitial: String!
+}
