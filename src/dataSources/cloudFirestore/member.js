@@ -4,7 +4,7 @@ import { dataSources, utility } from '@thatconference/api';
 
 const dlog = debug('that:api:members:datasources:members');
 const slugStore = dataSources.cloudFirestore.slug;
-const { entityDateForge } = utility.firestoreDateForge;
+const { entityDateForge, dateForge } = utility.firestoreDateForge;
 const forgeFields = ['createdAt', 'lastUpdatedAt', 'membershipExpirationDate'];
 const memberDateForge = entityDateForge({ fields: forgeFields });
 
