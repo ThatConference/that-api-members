@@ -1,0 +1,14 @@
+type DiscountCode {
+  "Identifier created from: `${memberId}_${code}`"
+  id: ID!
+  "Name which describes the code"
+  title: String!
+  "The code value of the discount code"
+  code: String!
+  "Type of code"
+  type: DiscountCodeType!
+  "When this code was created"
+  createdAt: Date!
+  "Expiration date of code (no longer shows)"
+  expiresAt: Date!
+}

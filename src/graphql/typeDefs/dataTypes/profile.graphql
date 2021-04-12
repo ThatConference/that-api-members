@@ -52,6 +52,9 @@ type Profile @key(fields: "id") {
   "Member's earned Merit Badges"
   earnedMeritBadges: [MeritBadge]
 
+  "Discount codes assigned to member"
+  discountCodes: [DiscountCode]!
+
   "other members me is following"
   following: MemberFollowingQuery
 }

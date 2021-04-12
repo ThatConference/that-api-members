@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { ForbiddenError } from 'apollo-server';
+import { ForbiddenError } from 'apollo-server-express';
 import _ from 'lodash';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
