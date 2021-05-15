@@ -1,6 +1,6 @@
 {
   "name": "that-api-members",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "THATConference.com members micro service.",
   "main": "index.js",
   "engines": {
@@ -19,13 +19,13 @@
     "validate": "concurrently npm:test npm:lint npm:build"
   },
   "dependencies": {
-    "@apollo/federation": "^0.22.0",
-    "@google-cloud/firestore": "^4.9.9",
+    "@apollo/federation": "0.22.0",
+    "@google-cloud/firestore": "^4.10.1",
     "@google-cloud/functions-framework": "^1.7.1",
-    "@graphql-tools/load-files": "^6.2.5",
-    "@graphql-tools/merge": "^6.2.7",
-    "@sentry/node": "^6.2.5",
-    "@thatconference/api": "~1.22.0",
+    "@graphql-tools/load-files": "6.2.7",
+    "@graphql-tools/merge": "6.2.10",
+    "@sentry/node": "^6.3.6",
+    "@thatconference/api": "~1.22.1",
     "apollo-server-express": "^2.22.2",
     "auth0": "^2.34.1",
     "dataloader": "^2.0.0",
@@ -33,7 +33,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "graphql": "^15.5.0",
-    "graphql-scalars": "^1.9.0",
+    "graphql-scalars": "^1.9.3",
     "graphql-type-json": "^0.3.2",
     "isomorphic-unfetch": "^3.1.0",
     "lodash": "^4.17.21",
