@@ -7,4 +7,6 @@ type SharedProfile @key(fields: "id") {
   lastName: String!
   "member email"
   email: EmailAddress!
+  "Member's active partner. Used when entering partner/us path"
+  activePartner: ID
 }
