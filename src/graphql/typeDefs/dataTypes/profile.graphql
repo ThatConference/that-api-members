@@ -46,15 +46,14 @@ type Profile @key(fields: "id") {
   acceptedCommitments: Boolean
   "account is deactivated and cannot be used"
   isDeactivated: Boolean!
-
+  "All sessions submitted by this member"
   sessions: [MySession]
-
   "Member's earned Merit Badges"
   earnedMeritBadges: [MeritBadge]
-
   "Discount codes assigned to member"
   discountCodes: [DiscountCode]!
-
   "other members me is following"
   following: MemberFollowingQuery
+  "Member's active partner. Used when entering partner/us path"
+  activePartner: ID
 }

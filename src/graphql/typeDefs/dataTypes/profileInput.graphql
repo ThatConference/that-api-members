@@ -34,6 +34,8 @@ input ProfileCreateInput {
   acceptedCommitments: Boolean
   "account is deactivated and cannot be used"
   isDeactivated: Boolean!
+  "Member's active partner. Used when entering partner/us path"
+  activePartnerId: ID
 }
 
 input ProfileUpdateInput {
@@ -66,4 +68,6 @@ input ProfileUpdateInput {
   acceptedCommitments: Boolean
   "account is deactivated and cannot be used"
   isDeactivated: Boolean
+  "Member's active partner. Used when entering partner/us path"
+  activePartnerId: ID
 }
