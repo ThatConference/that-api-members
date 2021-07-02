@@ -1,0 +1,10 @@
+type SharedProfile @key(fields: "id") {
+  "unique profile id"
+  id: ID!
+  "member first name"
+  firstName: String!
+  "member last name"
+  lastName: String!
+  "member email"
+  email: EmailAddress!
+}
