@@ -9,6 +9,5 @@ export const fieldResolvers = {
 
       return profileLoader.load(id);
     },
-    activePartner: ({ activePartnerId: id }) => id,
   },
 };

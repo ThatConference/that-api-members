@@ -8,5 +8,5 @@ type SharedProfile @key(fields: "id") {
   "member email"
   email: EmailAddress!
   "Member's active partner. Used when entering partner/us path"
-  activePartner: ID
+  activePartnerId: ID
 }

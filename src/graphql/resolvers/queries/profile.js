@@ -22,6 +22,6 @@ export const fieldResolvers = {
       dlog('discountCodes called');
       return dcStore(firestore).findCodesForMember(memberId);
     },
-    activePartner: ({ activePartnerId: id }) => id,
+    activePartnerId: ({ activePartnerId: id }) => id,
   },
 };
