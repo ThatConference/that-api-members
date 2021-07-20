@@ -1,0 +1,25 @@
+type RegistrationProfile @key(fields: "id") {
+  "Unique identifier"
+  id: ID!
+  "Member's first name"
+  firstName: String!
+  "member's last name"
+  lastName: String!
+  "member's slug"
+  profileSlug: Slug!
+  "email address"
+  email: EmailAddress!
+
+  "Member's profile image link"
+  profileImage: String
+  "The company the member works for, as entered by them"
+  company: String
+  "Username used in slack, per member's input"
+  thatSlackUsername: String
+  "is member a THAT Member"
+  isMember: Boolean
+  "Date and time member created"
+  createdAt: Date!
+  "Date and time last updated"
+  lastUpdatedAt: Date!
+}

@@ -55,5 +55,5 @@ type Profile @key(fields: "id") {
   "other members me is following"
   following: MemberFollowingQuery
   "Member's active partner. Used when entering partner/us path"
-  activePartner: ID
+  activePartnerId: ID
 }
