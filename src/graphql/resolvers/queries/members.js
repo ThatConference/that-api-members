@@ -41,5 +41,10 @@ export const fieldResolvers = {
       dlog('isProfileSlugUnique called');
       return memberStore(firestore).isProfileSlugTaken(slug);
     },
+
+    profiles: (_, __, { user }) => {
+      dlog('profiles path called for member %s', user.sub);
+      return { memberId: user.sub };
+    },
   },
 };

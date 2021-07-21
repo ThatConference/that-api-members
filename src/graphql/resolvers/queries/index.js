@@ -8,6 +8,7 @@ import { fieldResolvers as secureProfileFields } from './secureProfile';
 import { fieldResolvers as privateProfileFields } from './privateProfile';
 import { fieldResolvers as sharedProfileFields } from './sharedProfile';
 import { fieldResolvers as registrationProfileFields } from './registrationProfile';
+import { fieldResolvers as profilesFields } from './profiles';
 
 export default {
   ...root,
@@ -22,4 +23,5 @@ export const fieldResolvers = {
   ...privateProfileFields,
   ...sharedProfileFields,
   ...registrationProfileFields,
+  ...profilesFields,
 };

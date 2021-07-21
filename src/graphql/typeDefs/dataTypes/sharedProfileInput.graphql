@@ -1,0 +1,29 @@
+input SharedProfileCreateInput {
+  "member shared first name"
+  firstName: String!
+  "member shared last name"
+  lastName: String!
+  "member shared email"
+  email: EmailAddress!
+  "Phone shared Number"
+  phone: PhoneNumber
+  "shared City"
+  city: String
+  "shared State"
+  state: String
+}
+
+input SharedProfileUpdateInput {
+  "member shared first name"
+  firstName: String
+  "member shared last name"
+  lastName: String
+  "member shared email"
+  email: EmailAddress
+  "Phone shared Number"
+  phone: PhoneNumber
+  "shared City"
+  city: String
+  "shared State"
+  state: String
+}
