@@ -119,5 +119,7 @@ export const fieldResolvers = {
 
       return result;
     },
+
+    sharedProfile: ({ memberId }) => ({ memberId }),
   },
 };

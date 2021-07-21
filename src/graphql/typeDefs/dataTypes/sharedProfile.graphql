@@ -1,12 +1,16 @@
 type SharedProfile @key(fields: "id") {
   "unique profile id"
   id: ID!
-  "member first name"
+  "member shared first name"
   firstName: String!
-  "member last name"
+  "member shared last name"
   lastName: String!
-  "member email"
+  "member shared email"
   email: EmailAddress!
-  "Member's active partner. Used when entering partner/us path"
-  activePartnerId: ID
+  "Phone shared Number"
+  phone: PhoneNumber
+  "shared City"
+  city: String
+  "shared State"
+  state: String
 }

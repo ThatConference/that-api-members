@@ -1,28 +1,27 @@
 import debug from 'debug';
 import sharedProfileStore from '../../../dataSources/cloudFirestore/sharedProfile';
 
-const dlog = debug('that:api:members:query:SharedProfile');
+const dlog = debug('that:api:members:query:shared');
 
 export const fieldResolvers = {
-  SharedProfile: {
-    async __resolveReference(
-      { id },
+  ProfilesQuery: {
+    shared: (
+      { memberId },
+      __,
       { dataSources: { firestore, profileLoader } },
-    ) {
-      dlog('resolveReference SharedProfile');
-
-      // return profileLoader.load(id);
+    ) => {
+      dlog('shared profile for %s', memberId);
       return sharedProfileStore(firestore)
-        .get(id)
+        .get(memberId)
         .then(sharedProfile => {
           if (sharedProfile) {
             return {
               ...sharedProfile,
-              id,
+              id: memberId,
             };
           }
 
-          return profileLoader.load(id);
+          return profileLoader.load(memberId);
         });
     },
   },

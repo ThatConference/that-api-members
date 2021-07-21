@@ -1,0 +1,5 @@
+"Defined member profiles, e.g. shared profile"
+type ProfilesQuery {
+  "A profile shared with partners through leads"
+  shared: SharedProfile @auth(requires: "members")
+}

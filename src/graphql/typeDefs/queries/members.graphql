@@ -8,4 +8,7 @@ type MembersQuery {
 
   "Returns all members. Defaults: count: 20, limit: 100, orderby: CREATEDAT"
   members(orderBy: OrderBy, pageSize: Int, after: String): PagedMember
+
+  "Path to member's different profiles, e.g. shared profile"
+  profiles: ProfilesQuery @auth(requires: "members")
 }

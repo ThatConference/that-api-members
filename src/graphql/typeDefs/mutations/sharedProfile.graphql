@@ -1,0 +1,10 @@
+type SharedProfileMutation {
+  "Create a shared profile (1 per member)"
+  create(profile: SharedProfileCreateInput!): SharedProfile!
+    @auth(requires: "members")
+  "Update shared profile"
+  update(profile: SharedProfileUpdateInput!): SharedProfile!
+    @auth(requires: "members")
+  "Delete shared profile, main Profile data will be used instead"
+  delete: SharedProfile! @auth(requires: "members")
+}
