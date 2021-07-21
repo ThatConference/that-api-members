@@ -1,0 +1,3 @@
+type ProfilesMutation {
+  shared: SharedProfileMutation @auth(requires: "members")
+}

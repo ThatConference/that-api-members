@@ -8,6 +8,6 @@ type MemberMutation {
   "Logged in user toggles the following of the provided member value"
   followToggle(target: FindMemberInput!): PublicProfile
 
-  "Shared Profile Actions"
-  sharedProfile: SharedProfileMutation @auth(requires: "members")
+  "Profiles mutations path"
+  profiles: ProfilesMutation @auth(requires: "members")
 }

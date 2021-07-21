@@ -120,6 +120,6 @@ export const fieldResolvers = {
       return result;
     },
 
-    sharedProfile: ({ memberId }) => ({ memberId }),
+    profiles: ({ memberId }) => ({ memberId }),
   },
 };
