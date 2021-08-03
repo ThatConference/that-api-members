@@ -8,6 +8,8 @@ input ProfileCreateInput {
   profileSlug: Slug!
   profileImage: String
   bio: String
+  "Member's defined pronouns"
+  pronouns: String
 
   mobilePhone: PhoneNumber
   city: String
@@ -46,6 +48,8 @@ input ProfileUpdateInput {
   email: EmailAddress
   profileImage: String
   bio: String
+  "Member's defined pronouns"
+  pronouns: String
 
   mobilePhone: PhoneNumber
   city: String

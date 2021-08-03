@@ -9,7 +9,8 @@ type RegistrationProfile @key(fields: "id") {
   profileSlug: Slug!
   "email address"
   email: EmailAddress!
-
+  "Member's defined pronouns"
+  pronouns: String
   "Member's profile image link"
   profileImage: String
   "The company the member works for, as entered by them"
