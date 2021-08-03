@@ -4,11 +4,11 @@
 
 ## Dependencies
 
-- Node `10.15.0`
+- Node `14.8.0`
 
 ## Setup and Configuration
 
-- Install node.js v10.15.0 - `nodenv install 10.15.0`
+- Install node.js v14.8.0 - `nodenv install 14.8.0`
 
 setup notes:
 
