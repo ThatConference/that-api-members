@@ -9,6 +9,8 @@ type Profile @key(fields: "id") {
   email: EmailAddress!
   profileImage: String
   bio: String
+  "Member's defined pronouns"
+  pronouns: String
 
   mobilePhone: PhoneNumber
   city: String

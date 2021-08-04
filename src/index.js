@@ -66,7 +66,8 @@ const useSentry = async (req, res, next) => {
  * http middleware function
  * here we are intercepting the http call and building our own notion of a users context.
  * we then add it to the request so it can later be used by the gateway.
- * If you had something like a token that needs to be passed through to the gateways children this is how you intercept it and setup for later.
+ * If you had something like a token that needs to be passed through to
+ * the gateways children this is how you intercept it and setup for later.
  *
  * @param {string} req - http request
  * @param {string} res - http response

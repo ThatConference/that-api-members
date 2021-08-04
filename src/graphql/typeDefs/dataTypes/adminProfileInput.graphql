@@ -9,6 +9,8 @@ input AdminProfileCreateInput {
   profileSlug: Slug!
   profileImage: String
   bio: String
+  "Member's defined pronouns"
+  pronouns: String
 
   mobilePhone: PhoneNumber
   city: String
