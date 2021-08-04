@@ -1,14 +1,14 @@
 # template-graph-server
 
-[![Actions Status](https://github.com/ThatConference/that-api-members/workflows/Push%20Master%20CI/badge.svg)](https://github.com/ThatConference/that-api-members/workflows/actions)  
+[![Actions Status](https://github.com/ThatConference/that-api-members/workflows/Push%20Master%20CI/badge.svg)](https://github.com/ThatConference/that-api-members/workflows/actions)
 
 ## Dependencies
 
-- Node `10.15.0`
+- Node `14.8.0`
 
 ## Setup and Configuration
 
-- Install node.js v10.15.0 - `nodenv install 10.15.0`
+- Install node.js v14.8.0 - `nodenv install 14.8.0`
 
 setup notes:
 
