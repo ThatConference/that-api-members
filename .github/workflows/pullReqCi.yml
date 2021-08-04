@@ -1,9 +1,10 @@
 # Node Build and Validate on Pull Request
+# GitHub security update requires pull_request_target to allow secret access
+# from external PR's. Label used to ensure vetted first.
 name: PullReq CI
 
 on:
-  pull_request:
-    types: [labeled]
+  pull_request_target
 
 jobs:
   build:
@@ -26,7 +27,6 @@ jobs:
           npm run validate
         env:
           CI: true
-        if: contains(github.event.pull_request.labels.*.name, 'safe to test')
       - name: Slack Notification
         uses: 8398a7/action-slack@v3
         with:
