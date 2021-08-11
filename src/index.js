@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import 'dotenv/config';
 import connect from 'express';
 import debug from 'debug';
@@ -127,9 +128,16 @@ api
   .use(createUserContext)
   .use(failure);
 
-graphServer.applyMiddleware({ app: api, path: '/' });
-
-// const port = process.env.PORT || 8004;
-// api.listen({ port }, () => dlog(`members running on port %d`, port));
-
-export const handler = api;
+const port = process.env.PORT || 8004;
+graphServer
+  .start()
+  .then(() => {
+    graphServer.applyMiddleware({ app: api, path: '/' });
+    api.listen({ port }, () =>
+      console.log(`✨Garage 🛰 is running 🏃‍♂️ on port 🚢 ${port}`),
+    );
+  })
+  .catch(err => {
+    console.log(`graphServer.start() error 💥: ${err.message}`);
+    throw err;
+  });
