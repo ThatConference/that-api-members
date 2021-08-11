@@ -67,7 +67,17 @@ export const fieldResolvers = {
       }
       return awardedBadge;
     },
-
+    setFeaturedMeritBadge: (
+      { memberId },
+      { earnedRefId },
+      { dataSources: { firestore } },
+    ) => {
+      dlog('setFaturedMeritBadge called');
+      return meritBadgeStore(firestore).setFeaturedMeritBadge({
+        memberId,
+        earnedRefId,
+      });
+    },
     followToggle: async (
       { memberId },
       { target },

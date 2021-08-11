@@ -69,10 +69,12 @@ const meritBadge = dbInstance => {
         ...fb,
         earnedAt: e.earnedAt,
         earnedRefId: e.id,
+        isFeatured: e.isFeatured,
       };
     });
   }
 
+  // function only useful to determine if a badge is already awarded
   async function findEarnedMeritBadge(memberId, meritBadgeId) {
     dlog('findEarnedMeritBadge (id: %s) for member %s', meritBadgeId, memberId);
 
@@ -126,7 +128,56 @@ const meritBadge = dbInstance => {
     return result;
   }
 
-  return { findAllEarnedBadges, findMeritBadge, awardMeritBadge };
+  async function setFeaturedMeritBadge({ memberId, earnedRefId }) {
+    dlog('setFeaturedMeritBadge %s -> %s', memberId, earnedRefId);
+    const result = {
+      result: true,
+      message: 'ok',
+      meritBadge: null,
+    };
+    // get all earned badges
+    const earnedBadgeRef = await findAllEarnedBadgesReference(memberId);
+    const thisBadge = earnedBadgeRef.find(e => e.id === earnedRefId);
+    // see if referenced passed in exists
+    if (!thisBadge) {
+      result.message = `Earned Merit Badge for member not found`;
+      result.result = false;
+      return result;
+    }
+
+    const rawBadge = await findMeritBadge(thisBadge.meritBadgeId);
+    if (!rawBadge) {
+      result.message = `Unknown Merit Badge id encountered, ${thisBadge.meritBadgeId}`;
+      result.result = false;
+      return result;
+    }
+    result.meritBadge = {
+      ...rawBadge,
+      earnedAt: thisBadge.earnedAt,
+      earnedRefId: thisBadge.id,
+      isFeatured: true,
+    };
+
+    // update all references
+    const writeBatch = dbInstance.batch();
+    earnedBadgeRef.forEach(eb => {
+      const isFeatured = eb.id === earnedRefId;
+      writeBatch.set(
+        earnedBadgeCollection.doc(eb.id),
+        { isFeatured },
+        { merge: true },
+      );
+    });
+
+    return writeBatch.commit().then(() => result);
+  }
+
+  return {
+    findAllEarnedBadges,
+    findMeritBadge,
+    awardMeritBadge,
+    setFeaturedMeritBadge,
+  };
 };
 
 export default meritBadge;
