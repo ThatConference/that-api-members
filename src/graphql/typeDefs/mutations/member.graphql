@@ -5,6 +5,10 @@ type MemberMutation {
   "logged in user, claim ticket"
   claimTicket(ticketRef: String!): MeritBadge @auth(requires: "members")
 
+  "set featured merit badge. Provide earnedMeritBadges id (or MeritBadge.earnedRefId)"
+  setFeaturedMeritBadge(earnedRefId: ID!): MeritBadgeResult
+    @auth(requires: "members")
+
   "Logged in user toggles the following of the provided member value"
   followToggle(target: FindMemberInput!): PublicProfile
 

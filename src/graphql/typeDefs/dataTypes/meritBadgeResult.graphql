@@ -1,0 +1,8 @@
+type MeritBadgeResult {
+  "Success result of MeritBadge mutation"
+  result: Boolean!
+  "Result message"
+  message: String!
+  "The Merit Badge acted upon"
+  meritBadge: MeritBadge
+}

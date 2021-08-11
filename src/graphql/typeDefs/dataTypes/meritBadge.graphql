@@ -1,16 +1,17 @@
 type MeritBadge @key(fields: "id") {
+  "The ID of the merit badge itself in merit badge collection"
   id: ID!
-
   "Official Merit Badge name"
   name: String!
-  "Url poiting to Merit Badge Image"
-  image: URL
+  "Url pointing to Merit Badge Image (svg)"
+  image: URL!
   "Description of Merit Badge"
   description: String
-
   # Earned Merit Badge Details
-  "Date and time Merit Badge earned"
+  "Date and time Merit Badge earned or assigned"
   earnedAt: Date
   "earnedMeritBadge collection id"
   earnedRefId: ID
+  "Feature this MeritBatch on my profile"
+  isFeatured: Boolean!
 }

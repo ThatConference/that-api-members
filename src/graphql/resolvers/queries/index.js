@@ -9,6 +9,7 @@ import { fieldResolvers as privateProfileFields } from './privateProfile';
 import { fieldResolvers as sharedProfileFields } from './sharedProfile';
 import { fieldResolvers as registrationProfileFields } from './registrationProfile';
 import { fieldResolvers as profilesFields } from './profiles';
+import { fieldResolvers as meritBadgeFields } from './meritBadge';
 
 export default {
   ...root,
@@ -24,4 +25,5 @@ export const fieldResolvers = {
   ...sharedProfileFields,
   ...registrationProfileFields,
   ...profilesFields,
+  ...meritBadgeFields,
 };
