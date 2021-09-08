@@ -1,10 +1,10 @@
-import { isNil } from 'lodash';
 import { ApolloServer, SchemaDirectiveVisitor } from 'apollo-server-express';
 import { buildFederatedSchema } from '@apollo/federation';
 import debug from 'debug';
 import DataLoader from 'dataloader';
 import * as Sentry from '@sentry/node';
-import { security, graph } from '@thatconference/api';
+import { security } from '@thatconference/api';
+import { isNil } from 'lodash';
 
 // Graph Types and Resolvers
 import typeDefs from './typeDefs';
@@ -14,7 +14,6 @@ import memberStore from '../dataSources/cloudFirestore/member';
 
 const dlog = debug('that:api:members:graphServer');
 const jwtClient = security.jwt();
-const { lifecycle } = graph.events;
 
 const createServer = ({ dataSources }) => {
   dlog('creating graph server');
@@ -96,20 +95,7 @@ const createServer = ({ dataSources }) => {
       return context;
     },
 
-    plugins: [
-      {
-        requestDidStart() {
-          return {
-            executionDidStart(requestContext) {
-              lifecycle.emit('executionDidStart', {
-                service: 'that:api:members',
-                requestContext,
-              });
-            },
-          };
-        },
-      },
-    ],
+    plugins: [],
 
     formatError: err => {
       dlog('formatError %O', err);

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-unresolved */
 import 'dotenv/config';
-import connect from 'express';
+import express from 'express';
 import debug from 'debug';
 import { Firestore } from '@google-cloud/firestore';
 import { Client as Postmark } from 'postmark';
@@ -27,7 +27,7 @@ let version;
 const dlog = debug('that:api:members:index');
 const defaultVersion = `that-api-gateway@${version}`;
 const firestore = new Firestore();
-const api = connect();
+const api = express();
 
 const postmark = new Postmark(envConfig.postmarkApiToken);
 const userEvents = userEventEmitter(postmark);
@@ -103,6 +103,7 @@ const createUserContext = (req, res, next) => {
   }
 
   req.userContext = {
+    locale: req.headers.locale,
     authToken: req.headers.authorization,
     correlationId,
     site,
