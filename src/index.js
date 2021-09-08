@@ -134,7 +134,7 @@ graphServer
   .then(() => {
     graphServer.applyMiddleware({ app: api, path: '/' });
     api.listen({ port }, () =>
-      console.log(`✨Garage 🛰 is running 🏃‍♂️ on port 🚢 ${port}`),
+      console.log(`✨ Member 👪 is running 🏃‍♂️ on port 🚢 ${port}`),
     );
   })
   .catch(err => {
