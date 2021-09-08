@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+/* eslint-disable import/no-unresolved */
 import 'dotenv/config';
 import connect from 'express';
 import debug from 'debug';
@@ -116,17 +117,10 @@ function failure(err, req, res, next) {
   dlog(err);
   Sentry.captureException(err);
 
-  res
-    .set('Content-Type', 'application/json')
-    .status(500)
-    .json(err);
+  res.set('Content-Type', 'application/json').status(500).json(err);
 }
 
-api
-  .use(responseTime())
-  .use(useSentry)
-  .use(createUserContext)
-  .use(failure);
+api.use(responseTime()).use(useSentry).use(createUserContext).use(failure);
 
 const port = process.env.PORT || 8004;
 graphServer

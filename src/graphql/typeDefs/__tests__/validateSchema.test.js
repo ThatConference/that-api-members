@@ -5,13 +5,14 @@
 import { buildFederatedSchema } from '@apollo/federation';
 import typeDefs from '../../typeDefs';
 let resolvers;
+let originalEnv;
 
 describe('validate schema test', () => {
   beforeAll(() => {
-    process.env.INFLUX_TOKEN = 'TEST_INFLUX_TOKEN_VALUE';
-    process.env.INFLUX_ORG_ID = 'TEST_INFLUX_ORG_ID_VALUE';
-    process.env.INFLUX_BUCKET_ID = 'INFLUX_BUCKET_ID';
-    process.env.INFLUX_HOST = 'INFLUX_HOST';
+    // process.env.INFLUX_TOKEN = 'TEST_INFLUX_TOKEN_VALUE';
+    // process.env.INFLUX_ORG_ID = 'TEST_INFLUX_ORG_ID_VALUE';
+    // process.env.INFLUX_BUCKET_ID = 'INFLUX_BUCKET_ID';
+    // process.env.INFLUX_HOST = 'INFLUX_HOST';
     process.env.POSTMARK_API_TOKEN = 'POSTMARK_API_TOKEN';
     process.env.TITO_CHECKIN_SLUG = 'TITO_CHECKIN_SLUG';
     process.env.SLACK_WEBHOOK_URL = 'SLACK_WEBHOOK_URL';
