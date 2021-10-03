@@ -102,6 +102,7 @@ function userEvents(postmark) {
   userEventEmitter.on('accountCreated', addAcProfileCompleteTag);
   userEventEmitter.on('accountUpdated', onAccountActionUpdateAc);
   userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
+  userEventEmitter.on('accountUpdated', addAcProfileCompleteTag);
 
   return userEventEmitter;
 }
