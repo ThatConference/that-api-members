@@ -4,11 +4,10 @@ import envConfig from '../../envConfig';
 
 const dlog = debug('that:api:members:datasource:apis');
 
-const { titoCheckinSlug } = envConfig;
-const titocheckinbase = `https://checkin.tito.io/checkin_lists/${titoCheckinSlug}/`;
-
 const tito = () => {
   dlog('tito instance created');
+  const { titoCheckinSlug } = envConfig;
+  const titocheckinbase = `https://checkin.tito.io/checkin_lists/${titoCheckinSlug}/`;
 
   async function checkInTicket(ticketRef) {
     dlog('checkin ticket');
