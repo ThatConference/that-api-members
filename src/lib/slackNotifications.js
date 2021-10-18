@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import debug from 'debug';
 import envConfig from '../envConfig';
 
-const dlog = debug('that:api:sessions:slack-notifications');
+const dlog = debug('that:api:members:slack-notifications');
 
 function callSlackHook(hookBody) {
   dlog('calling Slack hook');
@@ -10,7 +10,7 @@ function callSlackHook(hookBody) {
     process.env.NODE_ENV === 'production' ||
     JSON.parse(process.env.TEST_SLACK_NOTIFICATIONS)
   ) {
-    const slackUrl = envConfig.slackWebhookUrl;
+    const slackUrl = envConfig.slack.webhookUrl;
     fetch(slackUrl, {
       method: 'post',
       body: JSON.stringify(hookBody),
@@ -45,7 +45,7 @@ export default {
     else userBio = user.bio;
 
     const slackBody = {
-      channel: envConfig.memberNotifSlackChannel,
+      channel: envConfig.slack.memberNotificationChannel,
       username: 'THAT.us Bot',
       icon_emoji: ':that-blue:',
       text: ':that-blue: Welcome a new member to THAT Community :heart:',

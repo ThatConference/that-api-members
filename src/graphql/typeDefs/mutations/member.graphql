@@ -12,6 +12,9 @@ type MemberMutation {
   "Logged in user toggles the following of the provided member value"
   followToggle(target: FindMemberInput!): PublicProfile
 
+  "Requests a Slack invite to user's email address"
+  requestSlackInvite: String!
+
   "Profiles mutations path"
   profiles: ProfilesMutation @auth(requires: "members")
 }

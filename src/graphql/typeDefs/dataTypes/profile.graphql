@@ -58,4 +58,6 @@ type Profile @key(fields: "id") {
   following: MemberFollowingQuery
   "Member's active partner. Used when entering partner/us path"
   activePartnerId: ID
+  "The last request made for a THAT Slack invitation"
+  requestSlackInviteAt: Date
 }

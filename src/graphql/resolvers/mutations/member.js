@@ -1,10 +1,12 @@
 import debug from 'debug';
+import * as Sentry from '@sentry/node';
 import { dataSources } from '@thatconference/api';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
 import titoStore from '../../../dataSources/apis/tito';
 import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
 import memberFindBy from '../../../lib/memberFindBy';
+import slackRequestInvite from '../../../lib/slackRequestInvite';
 
 const dlog = debug('that:api:members:mutation');
 const favoriteStore = dataSources.cloudFirestore.favorites;
@@ -129,7 +131,39 @@ export const fieldResolvers = {
 
       return result;
     },
+    requestSlackInvite: async (
+      { memberId },
+      __,
+      { dataSources: { firestore } },
+    ) => {
+      dlog('requestSlackInvite called');
 
+      const profile = { requestSlackInviteAt: new Date() };
+      const member = await memberStore(firestore).update({ memberId, profile });
+      dlog('member first name: %s', member.firstName);
+      Sentry.setTags({ memberId, email: member.email });
+
+      const r = await slackRequestInvite({ email: member.email });
+      Sentry.setContext('Slack Invite return', JSON.stringify(r));
+      dlog('slack invite return: %O', r);
+      let returnText = '';
+      if (r?.result?.ok === undefined) {
+        Sentry.captureMessage(
+          'Unknown return from Slack Invite',
+          Sentry.Severity.Error,
+        );
+        returnText = `Error while sending invite. Please contact us for your THAT Slack invite.`;
+      } else if (r.result.ok === false) {
+        if (r.toSentry)
+          Sentry.captureMessage(r.toSentry, Sentry.Severity.Warning);
+        returnText = r.toUser;
+      } else {
+        if (r.toSentry) Sentry.captureMessage(r.toSentry, Sentry.Severity.Info);
+        returnText = r.toUser;
+      }
+
+      return returnText;
+    },
     profiles: ({ memberId }) => ({ memberId }),
   },
 };

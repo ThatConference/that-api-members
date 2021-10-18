@@ -7,9 +7,6 @@ const requiredConfig = () => ({
     process.env.POSTMARK_API_TOKEN || configMissing('POSTMARK_API_TOKEN'),
   titoCheckinSlug:
     process.env.TITO_CHECKIN_SLUG || configMissing('TITO_CHECKIN_SLUG'),
-  slackWebhookUrl:
-    process.env.SLACK_WEBHOOK_URL || configMissing('SLACK_WEBHOOK_URL'),
-  memberNotifSlackChannel: '#introductions',
   defaultProfileImage:
     'https://images.that.tech/members/person-placeholder.jpg',
   activeCampaignApi:
@@ -17,6 +14,16 @@ const requiredConfig = () => ({
   activeCampaignKey:
     process.env.ACTIVE_CAMPAIGN_KEY || configMissing('ACTIVE_CAMPAIGN_KEY'),
   acRegisteredFromField: '20',
+  slack: {
+    webhookUrl:
+      process.env.SLACK_WEBHOOK_URL || configMissing('SLACK_WEBHOOK_URL'),
+    inviteUrl:
+      process.env.SLACK_INVITE_URL ||
+      'https://slack.com/api/users.admin.invite',
+    legacyToken:
+      process.env.SLACK_LEGACY_TOKEN || configMissing('SLACK_LEGACY_TOKEN'),
+    memberNotificationChannel: '#introductions',
+  },
 });
 
 export default requiredConfig();
