@@ -18,7 +18,7 @@ export default function slackRequestInvite({ email }) {
   params.append('token', slackToken);
   params.append('email', email);
 
-  const posttext = 'Please contact us for your THAT Slack invite.';
+  const posttext = 'Please contact us for your THAT Slack invite';
   const result = {
     toUser: '',
     toSentry: '',
@@ -36,33 +36,33 @@ export default function slackRequestInvite({ email }) {
     .then(res => {
       result.result = res;
       if (res.ok === true) {
-        result.toUser = `Invite successfully requested. Check your email for your THAT Slack invitation!`;
+        result.toUser = `Your invite is successfully requested. Check your email for your THAT Slack invitation!`;
       } else if (res.ok === false && res.error) {
         switch (res.error) {
           case 'already_in_team':
           case 'already_in_team_invited_user':
-            result.toUser = `User is already in THAT Slack`;
+            result.toUser = `You are already a member of THAT Slack with the email address in your profile.`;
             break;
           case 'invalid_email':
-            result.toUser = `Email address on file is invalid to Slack. ${posttext}.`;
+            result.toUser = `The email address in your profile is invalid for Slack. ${posttext}.`;
             result.toSentry = `email ${email} is invalid for Slack API.`;
             break;
           case 'user_disabled':
-            result.toUser = `Your email address is disabled in Slack. ${posttext}`;
+            result.toUser = `Your email address in your profile is disabled in Slack. ${posttext}.`;
             break;
           case 'invite_limit_reached':
           case 'not_allowed_token_type':
           case 'not_authed':
           case '':
-            result.toUser = `There is a Slack system issue. ${posttext}`;
+            result.toUser = `There has been a Slack system issue. ${posttext} or try again.`;
             result.toSentry = `Slack limit or auth issue`;
             break;
           default:
-            result.toUser = `Unknown response from slack. ${posttext} ${res.error}`;
+            result.toUser = `Unknown response from received from Slack. ${posttext}. ref:${res.error}`;
             result.toSentry = `unknown or unhandled response from slack: ${res.error}`;
         }
       } else {
-        result.toUser = `there was an unknown error requesting your invite. ${posttext}`;
+        result.toUser = `there was an error requesting your THAT Slack invite. ${posttext}`;
         result.toSentry = `unknown response from slack`;
       }
 
