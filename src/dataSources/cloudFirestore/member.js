@@ -5,7 +5,12 @@ import { dataSources, utility } from '@thatconference/api';
 const dlog = debug('that:api:members:datasources:members');
 const slugStore = dataSources.cloudFirestore.slug;
 const { entityDateForge, dateForge } = utility.firestoreDateForge;
-const forgeFields = ['createdAt', 'lastUpdatedAt', 'membershipExpirationDate'];
+const forgeFields = [
+  'createdAt',
+  'lastUpdatedAt',
+  'membershipExpirationDate',
+  'requestSlackInviteAt',
+];
 const memberDateForge = entityDateForge({ fields: forgeFields });
 
 function scrubProfile(profile, isNew) {
