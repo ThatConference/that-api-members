@@ -81,6 +81,21 @@ function userEvents(postmark) {
       );
   }
 
+  function addAcProfileCompleteTagOnly(user) {
+    // on profile update we only want to ensure there is a profile complete
+    // tag, not add them to the onboading list. The list add is only on new
+    // profiles
+    dlog('account updated, add THATProfileComplete tag in AC');
+    return acActions
+      .addTagToContact({ tagName: 'THAT.us New User Onboard', user })
+      .then(r => {
+        dlog('add tag to contact result %o', r);
+      })
+      .catch(err =>
+        process.nextTick(() => userEventEmitter.emit('error', err)),
+      );
+  }
+
   function onAccountActionUpdateAc(user) {
     // updates AC when THAT profile is created or updated
     dlog('onAccountActionUpdateAc');
@@ -102,7 +117,7 @@ function userEvents(postmark) {
   userEventEmitter.on('accountCreated', addAcProfileCompleteTag);
   userEventEmitter.on('accountUpdated', onAccountActionUpdateAc);
   userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
-  userEventEmitter.on('accountUpdated', addAcProfileCompleteTag);
+  userEventEmitter.on('accountUpdated', addAcProfileCompleteTagOnly);
 
   return userEventEmitter;
 }
