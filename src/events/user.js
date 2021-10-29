@@ -87,7 +87,7 @@ function userEvents(postmark) {
     // profiles
     dlog('account updated, add THATProfileComplete tag in AC');
     return acActions
-      .addTagToContact({ tagName: 'THAT.us New User Onboard', user })
+      .addTagToContact({ tagName: 'THATProfileComplete', user })
       .then(r => {
         dlog('add tag to contact result %o', r);
       })
