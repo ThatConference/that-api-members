@@ -25,5 +25,10 @@ export const fieldResolvers = {
           return profileLoader.load(id);
         });
     },
+    city: ({ city }) => city ?? null,
+    company: ({ company }) => company ?? null,
+    country: ({ country }) => country ?? null,
+    phone: ({ phone }) => phone ?? null,
+    state: ({ state }) => state ?? null,
   },
 };
