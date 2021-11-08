@@ -14,7 +14,7 @@ input SharedProfileCreateInput {
   "shared State"
   state: String
   "shared country"
-  country: String
+  country: CountryCode
 }
 
 input SharedProfileUpdateInput {
@@ -33,5 +33,5 @@ input SharedProfileUpdateInput {
   "shared State"
   state: String
   "shared country"
-  country: String
+  country: CountryCode
 }

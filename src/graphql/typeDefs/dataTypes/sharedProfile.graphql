@@ -16,5 +16,5 @@ type SharedProfile @key(fields: "id") {
   "shared State"
   state: String
   "shared country"
-  country: String
+  country: CountryCode
 }
