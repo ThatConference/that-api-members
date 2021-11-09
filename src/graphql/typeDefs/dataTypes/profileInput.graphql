@@ -14,7 +14,7 @@ input ProfileCreateInput {
   mobilePhone: PhoneNumber
   city: String
   state: String
-  country: String
+  country: CountryCode
 
   company: String
   jobTitle: String
@@ -54,7 +54,7 @@ input ProfileUpdateInput {
   mobilePhone: PhoneNumber
   city: String
   state: String
-  country: String
+  country: CountryCode
 
   company: String
   jobTitle: String

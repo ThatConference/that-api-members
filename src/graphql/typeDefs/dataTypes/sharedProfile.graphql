@@ -7,10 +7,14 @@ type SharedProfile @key(fields: "id") {
   lastName: String!
   "member shared email"
   email: EmailAddress!
+  "Shared company"
+  company: String
   "Phone shared Number"
   phone: PhoneNumber
   "shared City"
   city: String
   "shared State"
   state: String
+  "shared country"
+  country: CountryCode
 }
