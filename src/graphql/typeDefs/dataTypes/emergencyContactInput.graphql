@@ -1,0 +1,26 @@
+input EmergencyContactCreateInput {
+  "Full name of your emergency contact"
+  fullName: String!
+  "best phone number in case of emergency"
+  phoneNumber: PhoneNumber!
+  "best email address in case of emergency"
+  email: EmailAddress
+  "Your contacts relationship to you. Spouse, mom, etc."
+  relationship: String!
+  "Is your emergency contact traveling with you?"
+  travelingWithYou: Boolean!
+}
+
+# Update fields required to keep from them being cleared out on update
+input EmergencyContactUpdateInput {
+  "Full name of your emergency contact"
+  fullName: String!
+  "best phone number in case of emergency"
+  phoneNumber: PhoneNumber!
+  "best email address in case of emergency"
+  email: EmailAddress
+  "Your contacts relationship to you. Spouse, mom, etc."
+  relationship: String!
+  "Is your emergency contact traveling with you?"
+  travelingWithYou: Boolean!
+}

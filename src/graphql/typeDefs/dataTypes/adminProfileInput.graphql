@@ -39,6 +39,8 @@ input AdminProfileCreateInput {
   isDeactivated: Boolean!
   "Member's active partner. Used when entering partner/us path"
   activePartnerId: ID
+  "Member's emergency contact information"
+  emergencyContact: EmergencyContactUpdateInput
 }
 
 input AdminProfileUpdateInput {
@@ -79,4 +81,6 @@ input AdminProfileUpdateInput {
   isDeactivated: Boolean
   "Member's active partner. Used when entering partner/us path"
   activePartnerId: ID
+  "Member's emergency contact information"
+  emergencyContact: EmergencyContactUpdateInput
 }
