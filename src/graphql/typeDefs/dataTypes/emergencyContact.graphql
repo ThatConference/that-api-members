@@ -1,0 +1,12 @@
+type EmergencyContact {
+  "Full name of your emergency contact"
+  fullName: String!
+  "best phone number in case of emergency"
+  phoneNumber: PhoneNumber!
+  "best email address in case of emergency"
+  email: EmailAddress
+  "Your contacts relationship to you. Spouse, mom, etc."
+  relationship: String!
+  "Is your emergency contact traveling with you?"
+  travelingWithYou: Boolean!
+}

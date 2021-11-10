@@ -1,6 +1,6 @@
 {
   "name": "that-api-members",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "THATConference.com members service.",
   "main": "index.js",
   "engines": {
@@ -54,15 +54,15 @@
     "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
-    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-babel": "^5.3.1",
-    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jest": "^25.2.4",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
     "jest-cli": "^27.3.1",
-    "nodemon": "^2.0.14",
+    "nodemon": "^2.0.15",
     "prettier-eslint": "^13.0.0",
     "prettier-eslint-cli": "^5.0.1"
   },

@@ -23,4 +23,6 @@ type RegistrationProfile @key(fields: "id") {
   createdAt: Date!
   "Date and time last updated"
   lastUpdatedAt: Date!
+  "Member's emergency contact"
+  emergencyContact: EmergencyContact
 }

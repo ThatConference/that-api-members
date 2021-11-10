@@ -60,4 +60,6 @@ type Profile @key(fields: "id") {
   activePartnerId: ID
   "The last request made for a THAT Slack invitation"
   requestSlackInviteAt: Date
+  "Member's emergency contact"
+  emergencyContact: EmergencyContact
 }
