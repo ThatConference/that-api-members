@@ -115,7 +115,7 @@ function userEvents(postmark) {
   userEventEmitter.on('error', ({ err, user }) => {
     Sentry.addTag('section', 'userEventEmitter');
     Sentry.setContext('user object', { user });
-    Sentry.captureException(new Error(err));
+    Sentry.captureException(err);
   });
 
   userEventEmitter.on('accountCreated', onAccountActionUpdateAc);
