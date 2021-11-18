@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import * as Sentry from '@sentry/node';
 import debug from 'debug';
 import moment from 'moment';
 import slackNotifications from '../lib/slackNotifications';
@@ -28,7 +29,9 @@ function userEvents(postmark) {
         },
       })
       .then(dlog('email sent'))
-      .catch(e => process.nextTick(() => userEventEmitter.emit('error', e)));
+      .catch(err =>
+        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
+      );
   }
 
   function sendAccountUpdatedEmail(user) {
@@ -51,7 +54,9 @@ function userEvents(postmark) {
         },
       })
       .then(dlog('email sent'))
-      .catch(e => process.nextTick(() => userEventEmitter.emit('error', e)));
+      .catch(err =>
+        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
+      );
   }
 
   function sendAccountCreatedSlack(user) {
@@ -77,7 +82,7 @@ function userEvents(postmark) {
       })
       .then(r => dlog('add contact to list result %o', r))
       .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', err)),
+        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
       );
   }
 
@@ -92,7 +97,7 @@ function userEvents(postmark) {
         dlog('add tag to contact result %o', r);
       })
       .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', err)),
+        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
       );
   }
 
@@ -103,12 +108,14 @@ function userEvents(postmark) {
       .syncAcContactFromTHATUser(user)
       .then(a => dlog('Account synced, ac id: %s', a))
       .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', err)),
+        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
       );
   }
 
-  userEventEmitter.on('error', err => {
-    throw new Error(err);
+  userEventEmitter.on('error', ({ err, user }) => {
+    Sentry.addTag('section', 'userEventEmitter');
+    Sentry.setContext('user object', { user });
+    Sentry.captureException(new Error(err));
   });
 
   userEventEmitter.on('accountCreated', onAccountActionUpdateAc);
