@@ -113,7 +113,7 @@ function userEvents(postmark) {
   }
 
   userEventEmitter.on('error', ({ err, user }) => {
-    Sentry.addTag('section', 'userEventEmitter');
+    Sentry.setTag('section', 'userEventEmitter');
     Sentry.setContext('user object', { user });
     Sentry.captureException(err);
   });
