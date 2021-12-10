@@ -1,6 +1,6 @@
 {
   "name": "that-api-members",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "description": "THATConference.com members service.",
   "main": "index.js",
   "engines": {
@@ -21,10 +21,11 @@
   },
   "dependencies": {
     "@apollo/federation": "0.22.0",
-    "@google-cloud/firestore": "^4.15.1",
+    "@google-cloud/firestore": "^5.0.1",
+    "@google-cloud/trace-agent": "^5.1.6",
     "@graphql-tools/load-files": "6.2.7",
     "@graphql-tools/merge": "6.2.10",
-    "@sentry/node": "^6.14.1",
+    "@sentry/node": "^6.16.1",
     "@thatconference/api": "~2.3.0",
     "apollo-server-express": "2.22.2",
     "auth0": "^2.37.0",
@@ -32,7 +33,7 @@
     "debug": "^4.3.2",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "graphql": "^15.7.2",
+    "graphql": "^15.8.0",
     "graphql-scalars": "^1.13.6",
     "graphql-type-json": "^0.3.2",
     "isomorphic-unfetch": "^3.1.0",
