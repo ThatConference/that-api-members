@@ -8,6 +8,8 @@ import memberStore from '../../../dataSources/cloudFirestore/member';
 const dlog = debug('that:api:members:query:PublicProfile');
 const favoriteStore = dataSources.cloudFirestore.favorites;
 const favoriteType = 'member';
+const assetStore = dataSources.cloudFirestore.assets;
+const entityType = 'MEMBER';
 
 export const fieldResolvers = {
   PublicProfile: {
@@ -62,6 +64,13 @@ export const fieldResolvers = {
 
       return result;
     }, // sessions
+    assets: ({ id: entityId }, __, { dataSources: { firestore } }) => {
+      dlog('assets for event called');
+      return assetStore(firestore).findEntityAssets({
+        entityId,
+        entityType,
+      });
+    },
     followCount: ({ id }, __, { dataSources: { firestore } }) => {
       dlog('followCount called');
       return favoriteStore(firestore).getFavoriteCount({

@@ -54,6 +54,8 @@ type Profile @key(fields: "id") {
   earnedMeritBadges: [MeritBadge]
   "Discount codes assigned to member"
   discountCodes: [DiscountCode]!
+  "assets assigned to this Member"
+  assets: [Asset]
   "other members me is following"
   following: MemberFollowingQuery
   "Member's active partner. Used when entering partner/us path"
