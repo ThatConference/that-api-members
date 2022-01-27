@@ -7,6 +7,7 @@ import titoStore from '../../../dataSources/apis/tito';
 import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
 import memberFindBy from '../../../lib/memberFindBy';
 import slackRequestInvite from '../../../lib/slackRequestInvite';
+import constants from '../../../constants';
 
 const dlog = debug('that:api:members:mutation');
 const favoriteStore = dataSources.cloudFirestore.favorites;
@@ -20,7 +21,7 @@ export const fieldResolvers = {
       {
         dataSources: {
           firestore,
-          events: { userEvents },
+          events: { userEvents, graphCdnEvents },
         },
       },
     ) => {
@@ -32,6 +33,11 @@ export const fieldResolvers = {
       });
 
       userEvents.emit('accountUpdated', updatedMember);
+      graphCdnEvents.emit(
+        constants.GRAPHCDN.EVENT_NAME.PURGE,
+        constants.GRAPHCDN.PURGE.MEMBER,
+        memberId,
+      );
 
       return updatedMember;
     },

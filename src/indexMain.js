@@ -7,6 +7,7 @@ import { Client as Postmark } from 'postmark';
 import responseTime from 'response-time';
 import * as Sentry from '@sentry/node';
 import { v4 as uuidv4 } from 'uuid';
+import { events as apiEvents } from '@thatconference/api';
 
 import apolloGraphServer from './graphql';
 import envConfig from './envConfig';
@@ -27,9 +28,11 @@ const dlog = debug('that:api:members:index');
 const defaultVersion = `that-api-gateway@${version}`;
 const firestore = new Firestore();
 const api = express();
+const graphCdnEmitter = apiEvents.graphCdn;
 
 const postmark = new Postmark(envConfig.postmarkApiToken);
 const userEvents = userEventEmitter(postmark);
+const graphCdnEvents = graphCdnEmitter(Sentry);
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -48,6 +51,7 @@ const createConfig = () => ({
     postmark,
     events: {
       userEvents,
+      graphCdnEvents,
     },
   },
 });
