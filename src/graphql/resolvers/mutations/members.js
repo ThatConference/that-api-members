@@ -3,6 +3,7 @@ import { ForbiddenError } from 'apollo-server-express';
 import _ from 'lodash';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
+import constants from '../../../constants';
 
 const dlog = debug('that:api:members:mutation');
 
@@ -14,7 +15,7 @@ export const fieldResolvers = {
       {
         dataSources: {
           firestore,
-          events: { userEvents },
+          events: { userEvents, graphCdnEvents },
         },
         user,
       },
@@ -31,6 +32,11 @@ export const fieldResolvers = {
       });
 
       userEvents.emit('accountCreated', memberProfile);
+      graphCdnEvents.emit(
+        constants.GRAPHCDN.EVENT_NAME.PURGE,
+        constants.GRAPHCDN.PURGE.MEMBER,
+        user.sub,
+      );
 
       return memberProfile;
     },
