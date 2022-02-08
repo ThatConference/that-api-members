@@ -32,7 +32,7 @@ export const fieldResolvers = {
         profile,
       });
 
-      userEvents.emit('accountUpdated', updatedMember);
+      userEvents.emit('accountUpdated', updatedMember, firestore);
       graphCdnEvents.emit(
         constants.GRAPHCDN.EVENT_NAME.PURGE,
         constants.GRAPHCDN.PURGE.MEMBER,

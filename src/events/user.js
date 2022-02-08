@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import * as Sentry from '@sentry/node';
 import debug from 'debug';
 import moment from 'moment';
+import { orbitLove } from '@thatconference/api';
 import slackNotifications from '../lib/slackNotifications';
 import acActions from '../lib/activeCampaignActions';
 
@@ -112,6 +113,34 @@ function userEvents(postmark) {
       );
   }
 
+  function sendOrbitLoveActivityOnCreate(user, firestore) {
+    dlog('sendOrbitLoveActicityOnCreate for %s', user.id);
+    const orbitLoveApi = orbitLove.orbitLoveApi({ firestore });
+
+    return orbitLoveApi
+      .addProfileActivity({
+        activityType: orbitLove.activityTypes.profile.update(),
+        member: user,
+      })
+      .catch(err =>
+        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
+      );
+  }
+
+  function sendOrbitLoveActivityOnUpdate(user, firestore) {
+    dlog('sendOrbitLoveActivityOnUpdate for %s', user.id);
+    const orbitLoveApi = orbitLove.orbitLoveApi({ firestore });
+
+    return orbitLoveApi
+      .addProfileActivity({
+        activityType: orbitLove.activityTypes.profile.update(),
+        member: user,
+      })
+      .catch(err =>
+        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
+      );
+  }
+
   userEventEmitter.on('error', ({ err, user }) => {
     Sentry.setTag('section', 'userEventEmitter');
     Sentry.setContext('user object', { user });
@@ -125,6 +154,9 @@ function userEvents(postmark) {
   userEventEmitter.on('accountUpdated', onAccountActionUpdateAc);
   userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
   userEventEmitter.on('accountUpdated', addAcProfileCompleteTagOnly);
+
+  userEventEmitter.on('accountCreated', sendOrbitLoveActivityOnCreate);
+  userEventEmitter.on('accountUpdated', sendOrbitLoveActivityOnUpdate);
 
   return userEventEmitter;
 }
