@@ -31,7 +31,7 @@ export const fieldResolvers = {
         profile: modifiedProfile,
       });
 
-      userEvents.emit('accountCreated', memberProfile);
+      userEvents.emit('accountCreated', memberProfile, firestore);
       graphCdnEvents.emit(
         constants.GRAPHCDN.EVENT_NAME.PURGE,
         constants.GRAPHCDN.PURGE.MEMBER,
