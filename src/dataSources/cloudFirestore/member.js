@@ -186,6 +186,7 @@ const member = dbInstance => {
     const docRefs = memberIds.map(id =>
       dbInstance.doc(`${collectionName}/${id}`),
     );
+    if (docRefs.length < 1) return [];
 
     return dbInstance.getAll(...docRefs).then(docSnaps =>
       docSnaps.map(r => {
