@@ -179,18 +179,21 @@ const member = dbInstance => {
   }
 
   async function batchFindMembers(memberIds) {
-    dlog('batchFindMembers %o', memberIds);
+    dlog('batchFindMembers called on %d ids', memberIds?.length);
+    if (!Array.isArray(memberIds))
+      throw new Error('batchFindMembers parameter must be an array');
 
     const docRefs = memberIds.map(id =>
       dbInstance.doc(`${collectionName}/${id}`),
     );
 
-    return Promise.all(docRefs.map(d => d.get())).then(res =>
-      res.map(r => {
+    return dbInstance.getAll(...docRefs).then(docSnaps =>
+      docSnaps.map(r => {
         const result = {
           id: r.id,
           ...r.data(),
         };
+
         return memberDateForge(result);
       }),
     );
