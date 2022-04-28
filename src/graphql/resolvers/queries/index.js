@@ -10,6 +10,7 @@ import { fieldResolvers as sharedProfileFields } from './sharedProfile';
 import { fieldResolvers as registrationProfileFields } from './registrationProfile';
 import { fieldResolvers as profilesFields } from './profiles';
 import { fieldResolvers as meritBadgeFields } from './meritBadge';
+import { fieldResolvers as leadGenMemberFields } from './extend-leadGenMember';
 
 export default {
   ...root,
@@ -26,4 +27,5 @@ export const fieldResolvers = {
   ...registrationProfileFields,
   ...profilesFields,
   ...meritBadgeFields,
+  ...leadGenMemberFields,
 };
