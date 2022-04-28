@@ -313,6 +313,23 @@ const member = dbInstance => {
     return documentRef.delete().then(res => memberId);
   }
 
+  function findLeadGenMembers(partnerId) {
+    dlog('findLeadGenMembers for %s', partnerId);
+    return membersCol
+      .where('activePartnerId', '==', partnerId)
+      .get()
+      .then(querySnap =>
+        querySnap.docs.map(m => {
+          const result = {
+            id: m.id,
+            ...m.data(),
+          };
+
+          return memberDateForge(result);
+        }),
+      );
+  }
+
   return {
     isProfileSlugTaken,
     create,
@@ -326,6 +343,7 @@ const member = dbInstance => {
     fetchPublicMembersByFirstName,
     update,
     remove,
+    findLeadGenMembers,
   };
 };
 
