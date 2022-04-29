@@ -2,7 +2,7 @@ type AdminMemberMutation {
   "update a session"
   update(member: AdminProfileUpdateInput): Profile @auth(requires: "admin")
 
-  "deactiveate a member"
+  "deactivate a member"
   deactivate: Profile @auth(requires: "admin")
 
   "Award a Merit Badge to a member"

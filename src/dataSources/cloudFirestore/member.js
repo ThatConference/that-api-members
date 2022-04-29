@@ -20,10 +20,9 @@ function scrubProfile(profile, isNew) {
 
   if (isNew) {
     scrubbedProfile.createdAt = modifiedAtDate;
+    if (!scrubbedProfile.interests) scrubbedProfile.interests = [];
   }
   scrubbedProfile.lastUpdatedAt = modifiedAtDate;
-
-  if (!scrubbedProfile.interests) scrubbedProfile.interests = [];
 
   return scrubbedProfile;
 }
@@ -290,7 +289,7 @@ const member = dbInstance => {
   }
 
   async function update({ memberId, profile }) {
-    dlog('db update called');
+    dlog('update called on member %o', profile);
 
     const docRef = dbInstance.doc(`${collectionName}/${memberId}`);
 
@@ -304,6 +303,15 @@ const member = dbInstance => {
     };
 
     return memberDateForge(out);
+  }
+
+  function deactivate(memberId) {
+    dlog('deactivate member %s', memberId);
+
+    const upProfile = { isDeactivated: true };
+    scrubProfile(upProfile);
+    const docRef = membersCol.doc(memberId);
+    return docRef.update(upProfile).then(() => findMe(memberId));
   }
 
   function remove(memberId) {
@@ -342,6 +350,7 @@ const member = dbInstance => {
     fetchPublicMembersByCreated,
     fetchPublicMembersByFirstName,
     update,
+    deactivate,
     remove,
     findLeadGenMembers,
   };
