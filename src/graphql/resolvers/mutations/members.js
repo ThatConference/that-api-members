@@ -1,9 +1,11 @@
 import debug from 'debug';
 import { ForbiddenError } from 'apollo-server-express';
-import _ from 'lodash';
+import { isNil } from 'lodash';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
 import constants from '../../../constants';
+import acActions from '../../../lib/activeCampaignActions';
+import envConfig from '../../../envConfig';
 
 const dlog = debug('that:api:members:mutation');
 
@@ -22,14 +24,44 @@ export const fieldResolvers = {
     ) => {
       dlog('MembersMutation:create %o', profile);
       const modifiedProfile = profile;
-
-      // set some default values.
+      const userContext = user;
+      userContext.email = profile.email;
+      userContext.firstName = profile.firstName;
+      userContext.lastName = profile.lastName;
+      const listName = envConfig.activeCampaign.newsLetterName;
+      const hasNewsletterField = 'isSubscribedNewsletter' in modifiedProfile;
+      const isSubscribedNewsletter =
+        modifiedProfile?.isSubscribedNewsletter ?? false;
+      // We don't want to write this to the database
+      delete modifiedProfile.isSubscribedNewsletter;
+      let acFunc = false;
+      if (hasNewsletterField === true) {
+        if (isSubscribedNewsletter === true) {
+          acFunc = acActions.addContactToList({
+            user: userContext,
+            listName,
+          });
+        } else {
+          acFunc = acActions.removeContactFromList({
+            user: userContext,
+            listName,
+          });
+        }
+      }
+      // set some default profile values.
       modifiedProfile.isDeactivated = false;
 
-      const memberProfile = await memberStore(firestore).create({
-        user,
-        profile: modifiedProfile,
-      });
+      const [memberProfile, acResult] = await Promise.all([
+        memberStore(firestore).create({
+          user,
+          profile: modifiedProfile,
+        }),
+        acFunc,
+      ]);
+
+      if (acResult !== null && acResult !== undefined) {
+        memberProfile.isSubscribedNewsletter = isSubscribedNewsletter;
+      }
 
       userEvents.emit('accountCreated', memberProfile, firestore);
       graphCdnEvents.emit(
@@ -46,7 +78,7 @@ export const fieldResolvers = {
 
       let memberId = user.sub;
 
-      if (!_.isNil(id)) {
+      if (!isNil(id)) {
         if (user.permissions.includes('admin')) {
           memberId = id;
         } else {

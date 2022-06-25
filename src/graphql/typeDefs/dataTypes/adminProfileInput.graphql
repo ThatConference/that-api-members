@@ -41,6 +41,8 @@ input AdminProfileCreateInput {
   activePartnerId: ID
   "Member's emergency contact information"
   emergencyContact: EmergencyContactUpdateInput
+  "is member subscribed to newsletter (queries AC)"
+  isSubscribedNewsletter: Boolean
 }
 
 input AdminProfileUpdateInput {
@@ -83,4 +85,6 @@ input AdminProfileUpdateInput {
   activePartnerId: ID
   "Member's emergency contact information"
   emergencyContact: EmergencyContactUpdateInput
+  "is member subscribed to newsletter (queries AC)"
+  isSubscribedNewsletter: Boolean
 }

@@ -64,4 +64,6 @@ type Profile @key(fields: "id") {
   requestSlackInviteAt: Date
   "Member's emergency contact"
   emergencyContact: EmergencyContact
+  "is member subscribed to newsletter (queries AC)"
+  isSubscribedNewsletter: Boolean
 }

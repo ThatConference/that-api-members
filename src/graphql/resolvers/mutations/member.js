@@ -6,7 +6,9 @@ import memberStore from '../../../dataSources/cloudFirestore/member';
 import titoStore from '../../../dataSources/apis/tito';
 import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
 import memberFindBy from '../../../lib/memberFindBy';
+import acActions from '../../../lib/activeCampaignActions';
 import slackRequestInvite from '../../../lib/slackRequestInvite';
+import envConfig from '../../../envConfig';
 import constants from '../../../constants';
 
 const dlog = debug('that:api:members:mutation');
@@ -26,11 +28,47 @@ export const fieldResolvers = {
       },
     ) => {
       dlog(`MembersMutation:update for ${memberId}, %o`, profile);
+      const modifiedProfile = profile;
+      const listName = envConfig.activeCampaign.newsLetterName;
+      const hasNewsletterField = 'isSubscribedNewsletter' in modifiedProfile;
+      const isSubscribedNewsletter =
+        modifiedProfile?.isSubscribedNewsletter ?? false;
+      // We don't want to write this to the database
+      delete modifiedProfile.isSubscribedNewsletter;
 
       const updatedMember = await memberStore(firestore).update({
         memberId,
-        profile,
+        profile: modifiedProfile,
       });
+      const user = {
+        email: updatedMember.email,
+        firstName: updatedMember.firstName,
+        lastName: updatedMember.lastName,
+      };
+      if (hasNewsletterField === true) {
+        let acResult;
+        try {
+          if (isSubscribedNewsletter === true) {
+            acResult = await acActions.addContactToList({
+              user,
+              listName,
+            });
+          } else {
+            acResult = await acActions.removeContactFromList({
+              user,
+              listName,
+            });
+          }
+        } catch (err) {
+          Sentry.addContext('ac user', user);
+          Sentry.addContext('ac list', listName);
+          Sentry.captureException(err);
+        }
+
+        if (acResult !== null && acResult !== undefined) {
+          updatedMember.isSubscribedNewsletter = isSubscribedNewsletter;
+        }
+      }
 
       userEvents.emit('accountUpdated', updatedMember, firestore);
       graphCdnEvents.emit(

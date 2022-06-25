@@ -6,12 +6,12 @@ import envConfig from '../envConfig';
 
 const dlog = debug('that:api:members:activeCampaign');
 
-let acBaseUrl = envConfig.activeCampaignApi;
+let acBaseUrl = envConfig.activeCampaign.api;
 if (acBaseUrl.endsWith('/'))
   acBaseUrl = acBaseUrl.substring(0, acBaseUrl.length - 1);
 const fetchBaseOptions = {
   headers: {
-    'Api-Token': envConfig.activeCampaignKey,
+    'Api-Token': envConfig.activeCampaign.key,
     'Content-Type': 'application/json',
   },
 };
@@ -310,7 +310,16 @@ function setContactToList({ acId, listId, status = '1' }) {
   return fetch(url, reqOptions)
     .then(res => {
       if (!res.ok) {
-        dlog('issue setting contact to list %d %s', res.status, res.statusText);
+        dlog(
+          'issue setting contact to list %d %s',
+          res?.status,
+          res?.statusText,
+        );
+        const e = new Error(
+          `Unable to add contact to list ${{ acId }},${{ listId }}:${
+            res.status
+          },${res.statusText}`,
+        );
         Sentry.withScope(scope => {
           scope.setLevel('error');
           scope.setContext(
@@ -320,17 +329,59 @@ function setContactToList({ acId, listId, status = '1' }) {
             { status },
             { res },
           );
-          Sentry.captureMessage('issue setting contact to list');
+          Sentry.captureException(e);
         });
-        throw new Error(
-          `Unable to add contact to list ${{ acId }},${{ listId }}:${
-            res.status
-          },${res.statusText}`,
-        );
+        throw e;
       }
       return res.json();
     })
     .then(json => json);
+}
+
+function isContactInList({ acId, listId }) {
+  // https://developers.activecampaign.com/reference/retrieve-contact-list-memberships
+  // statuses: '1': subscribe, '2': unsubscribe, '3': email bounced, '0': unconfirmed
+  dlog(`call isContactInList for id %s, list %s`, acId, listId);
+  const url = `${acBaseUrl}/contacts/${acId}/contactLists`;
+  const reqOptions = {
+    method: 'GET',
+    ...fetchBaseOptions,
+  };
+
+  return fetch(url, reqOptions)
+    .then(res => {
+      if (!res.ok) {
+        dlog(
+          'Unable to query Active Campaign API for contact list info id: %s, list: %s',
+          acId,
+          listId,
+        );
+        const e = new Error(
+          `Unable to query AC API for contact list membership (id, list): ${{
+            acId,
+          }},${{ listId }}`,
+        );
+        Sentry.withScope(scope => {
+          scope.setLevel('error');
+          scope.setContext(
+            'Issue querying list membership',
+            { acId },
+            { listId },
+          );
+          Sentry.captureException(e);
+        });
+        throw e;
+      }
+      return res.json();
+    })
+    .then(json => {
+      const { contactLists } = json;
+      // eslint-disable-next-line eqeqeq
+      const targetList = contactLists.find(l => l?.list == listId);
+      dlog('targetList found: %o', targetList);
+      // eslint-disable-next-line eqeqeq
+      return targetList?.status == 1;
+    });
 }
 
 export default {
@@ -341,4 +392,5 @@ export default {
   addTagToContact,
   searchForList,
   setContactToList,
+  isContactInList,
 };
