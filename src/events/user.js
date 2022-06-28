@@ -5,6 +5,7 @@ import moment from 'moment';
 import { orbitLove } from '@thatconference/api';
 import slackNotifications from '../lib/slackNotifications';
 import acActions from '../lib/activeCampaignActions';
+import envConfig from '../envConfig';
 
 const dlog = debug('that:api:members:events:user');
 
@@ -71,14 +72,13 @@ function userEvents(postmark) {
     // On contact adds tag and includes them in list.
     // contact created if doesn't exist.
     dlog('accountCreated Add THATProfileComplete tag in AC');
-    const THAT_ONBOARDING_LIST = 'THAT.us New User Onboard';
     acActions
       .addTagToContact({ tagName: 'THATProfileComplete', user })
       .then(r => {
         dlog('add tag to contact result %o', r);
         return acActions.addContactToList({
           user,
-          listName: THAT_ONBOARDING_LIST,
+          listId: envConfig.activeCampaign.onboardingListId,
         });
       })
       .then(r => dlog('add contact to list result %o', r))

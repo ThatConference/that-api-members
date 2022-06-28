@@ -51,7 +51,7 @@ export const fieldResolvers = {
 
       return acActions.isContactSubscribedToList({
         user: userContext,
-        listName: envConfig.activeCampaign.newsLetterName,
+        listId: envConfig.activeCampaign.newsLetterListId,
       });
     },
   },

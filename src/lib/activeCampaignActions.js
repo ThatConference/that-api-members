@@ -103,46 +103,37 @@ async function addTagToContact({ tagName, user }) {
   return taggedContact;
 }
 
-function addContactToList({ user, listName }) {
+function addContactToList({ user, listId }) {
   const isAddToList = true;
-  return changeListSubscription({ user, listName, isAddToList });
+  return changeListSubscription({ user, listId, isAddToList });
 }
 
-function removeContactFromList({ user, listName }) {
+function removeContactFromList({ user, listId }) {
   const isAddToList = false;
-  return changeListSubscription({ user, listName, isAddToList });
+  return changeListSubscription({ user, listId, isAddToList });
 }
 
-async function changeListSubscription({ user, listName, isAddToList }) {
+async function changeListSubscription({ user, listId, isAddToList }) {
   // add a contact, based on email address, to a list
   // if the user isn't an AC contanct they will be added.
   // ---
   // Returning null during failures to ensure the AC platform doesn't interfere
   // with our platform. We'll gracefully deal with AC failing.
-  dlog('call addContactToList for %o into list %s', user, listName);
+  dlog('call addContactToList for %o into list %s', user, listId);
   let contactResult = null;
-  let listResult = null;
   try {
-    [contactResult, listResult] = await Promise.all([
-      ac.findContactByEmail(user.email),
-      ac.searchForList(listName),
-    ]);
+    contactResult = await ac.findContactByEmail(user.email);
   } catch (err) {
     Sentry.setContext('email', user.email);
-    Sentry.setContext('AC listName', listName);
+    Sentry.setContext('user', JSON.stringify(user));
+    Sentry.setContext('AC listId', listId);
     Sentry.captureException(err);
     return null;
   }
   dlog('contactResult %o', contactResult);
-  dlog('listResult %o', listResult);
-  if (!listResult || (listResult && !listResult.id)) {
-    dlog(`list, ${listName}, not found in AC`);
-    Sentry.captureMessage(`List ${listName} not found in AC`, 'error');
-    return null;
-  }
-  const listId = listResult.id;
+
   let contactId = '';
-  if (!contactResult || (contactResult && !contactResult.id)) {
+  if (!contactResult?.id) {
     contactId = await syncAcContactFromTHATUser(user);
   } else {
     contactId = contactResult.id;
@@ -160,18 +151,20 @@ async function changeListSubscription({ user, listName, isAddToList }) {
       status,
     });
   } catch (err) {
-    Sentry.setContext('listName', listName);
+    Sentry.setContext('listId', listId);
     Sentry.setContext('list status', status);
+    Sentry.setContext('AC contactId', contactId);
+    Sentry.setContext('user', JSON.stringify(user));
     Sentry.captureException(err);
     return null;
   }
   if (!contactInList) {
-    dlog(`contact %o wasn't added to list %s`, user, listName);
+    dlog(`contact %o wasn't update in list %s`, user, listId);
     Sentry.setContext('email', user.email);
     Sentry.setContext('contactId', contactId);
     Sentry.setContext('listId', listId);
     const e = new Error(
-      `Failed adding contact to list in AC, contactId: ${contactId}, listId: ${listId},`,
+      `Failed updating contact in list in AC, contactId: ${contactId}, listId: ${listId},`,
     );
     Sentry.captureException(e);
     return null;
@@ -201,36 +194,21 @@ function setRegisteredFromFieldValue(email, fieldValue) {
   return ac.syncContact(contact).then(r => r);
 }
 
-async function isContactSubscribedToList({ user, listName }) {
+async function isContactSubscribedToList({ user, listId }) {
   // returns bool of List active membership
   // ---
   // Returning null during failures to ensure the AC platform doesn't interfere
   // with our platform. We'll gracefully deal with AC failing.
   Sentry.setContext('email', user.email);
   let contactResult;
-  let listResult;
   try {
-    [contactResult, listResult] = await Promise.all([
-      ac.findContactByEmail(user.email),
-      ac.searchForList(listName),
-    ]);
+    contactResult = await ac.findContactByEmail(user.email);
   } catch (err) {
-    Sentry.setContext('AC listName', listName);
     Sentry.captureException(err);
     return null;
   }
 
-  dlog('contactResult %o', contactResult);
-  dlog('listResult %o', listResult);
-  if (!listResult?.id) {
-    dlog(`list, ${listName}, not found in AC`);
-    const e = new Error('unable to find list in AC. Cannot continue', {
-      listName,
-    });
-    Sentry.captureException(e);
-    return null;
-  }
-  const listId = listResult.id;
+  dlog('contactResult id: %s', contactResult?.id);
   let contactId = '';
   if (!contactResult?.id) {
     return Promise.resolve(false);

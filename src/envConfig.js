@@ -15,7 +15,8 @@ const requiredConfig = () => ({
     key:
       process.env.ACTIVE_CAMPAIGN_KEY || configMissing('ACTIVE_CAMPAIGN_KEY'),
     RegisteredFromField: '20',
-    newsLetterName: 'THAT Newsletter',
+    newsLetterListId: '1',
+    onboardingListId: '22',
   },
   slack: {
     webhookUrl:

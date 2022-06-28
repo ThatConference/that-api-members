@@ -29,7 +29,7 @@ export const fieldResolvers = {
     ) => {
       dlog(`MembersMutation:update for ${memberId}, %o`, profile);
       const modifiedProfile = profile;
-      const listName = envConfig.activeCampaign.newsLetterName;
+      const listId = envConfig.activeCampaign.newsLetterListId;
       const hasNewsletterField = 'isSubscribedNewsletter' in modifiedProfile;
       const isSubscribedNewsletter =
         modifiedProfile?.isSubscribedNewsletter ?? false;
@@ -51,17 +51,17 @@ export const fieldResolvers = {
           if (isSubscribedNewsletter === true) {
             acResult = await acActions.addContactToList({
               user,
-              listName,
+              listId,
             });
           } else {
             acResult = await acActions.removeContactFromList({
               user,
-              listName,
+              listId,
             });
           }
         } catch (err) {
           Sentry.addContext('ac user', user);
-          Sentry.addContext('ac list', listName);
+          Sentry.addContext('ac list id', listId);
           Sentry.captureException(err);
         }
 

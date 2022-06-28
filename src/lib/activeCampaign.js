@@ -381,7 +381,7 @@ function isContactInList({ acId, listId }) {
       const { contactLists } = json;
       // eslint-disable-next-line eqeqeq
       const targetList = contactLists.find(l => l?.list == listId);
-      dlog('targetList found: %o', targetList);
+      dlog('contact targetList found: %o', targetList);
       // eslint-disable-next-line eqeqeq
       return targetList?.status == 1;
     });

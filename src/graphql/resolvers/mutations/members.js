@@ -28,7 +28,7 @@ export const fieldResolvers = {
       userContext.email = profile.email;
       userContext.firstName = profile.firstName;
       userContext.lastName = profile.lastName;
-      const listName = envConfig.activeCampaign.newsLetterName;
+      const listId = envConfig.activeCampaign.newsLetterListId;
       const hasNewsletterField = 'isSubscribedNewsletter' in modifiedProfile;
       const isSubscribedNewsletter =
         modifiedProfile?.isSubscribedNewsletter ?? false;
@@ -39,12 +39,12 @@ export const fieldResolvers = {
         if (isSubscribedNewsletter === true) {
           acFunc = acActions.addContactToList({
             user: userContext,
-            listName,
+            listId,
           });
         } else {
           acFunc = acActions.removeContactFromList({
             user: userContext,
-            listName,
+            listId,
           });
         }
       }
