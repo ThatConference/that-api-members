@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node';
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
+import fetch from '@adobe/node-fetch-retry';
 import debug from 'debug';
 
 import envConfig from '../envConfig';
@@ -14,6 +15,8 @@ const fetchBaseOptions = {
     'Api-Token': envConfig.activeCampaign.key,
     'Content-Type': 'application/json',
   },
+  retryInitialDelay: 250,
+  retryBackoff: 2.0,
 };
 dlog('AC url: %s', acBaseUrl);
 

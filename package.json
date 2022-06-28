@@ -20,6 +20,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@adobe/node-fetch-retry": "^2.2.0",
     "@apollo/federation": "0.22.0",
     "@google-cloud/firestore": "^5.0.2",
     "@google-cloud/trace-agent": "^5.1.6",
@@ -40,7 +41,6 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "node-fetch": "~2.6.7",
-    "node-fetch-retry": "^2.0.0",
     "postmark": "^3.0.1",
     "response-time": "^2.3.2",
     "uuid": "^8.3.2"
