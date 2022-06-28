@@ -3,6 +3,8 @@ import { dataSources } from '@thatconference/api';
 
 import meritBadgesResolver from './earnedMeritBadges';
 import dcStore from '../../../dataSources/cloudFirestore/discountCode';
+import acActions from '../../../lib/activeCampaignActions';
+import envConfig from '../../../envConfig';
 
 const dlog = debug('that:api:members:query:Profile');
 const assetStore = dataSources.cloudFirestore.assets;
@@ -32,5 +34,25 @@ export const fieldResolvers = {
       return dcStore(firestore).findCodesForMember(memberId);
     },
     activePartnerId: ({ activePartnerId: id }) => id,
+    isSubscribedNewsletter: (
+      { isSubscribedNewsletter, email },
+      __,
+      { user },
+    ) => {
+      // Only a lookup for now I guess
+
+      dlog('isSubscribedNewsletter called');
+      dlog(
+        'isSubscribedNewsLetter sent value (not used)',
+        isSubscribedNewsletter,
+      );
+      const userContext = user;
+      userContext.email = email;
+
+      return acActions.isContactSubscribedToList({
+        user: userContext,
+        listId: envConfig.activeCampaign.newsLetterListId,
+      });
+    },
   },
 };

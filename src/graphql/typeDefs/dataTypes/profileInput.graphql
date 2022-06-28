@@ -40,6 +40,8 @@ input ProfileCreateInput {
   activePartnerId: ID
   "Member's emergency contact information"
   emergencyContact: EmergencyContactCreateInput
+  "is member subscribed to newsletter (queries AC)"
+  isSubscribedNewsletter: Boolean
 }
 
 input ProfileUpdateInput {
@@ -78,4 +80,6 @@ input ProfileUpdateInput {
   activePartnerId: ID
   "Member's emergency contact information"
   emergencyContact: EmergencyContactUpdateInput
+  "is member subscribed to newsletter (queries AC)"
+  isSubscribedNewsletter: Boolean
 }

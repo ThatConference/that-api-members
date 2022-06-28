@@ -9,11 +9,15 @@ const requiredConfig = () => ({
     process.env.TITO_CHECKIN_SLUG || configMissing('TITO_CHECKIN_SLUG'),
   defaultProfileImage:
     'https://images.that.tech/members/person-placeholder.jpg',
-  activeCampaignApi:
-    process.env.ACTIVE_CAMPAIGN_API || configMissing('ACTIVE_CAMPAIGN_API'),
-  activeCampaignKey:
-    process.env.ACTIVE_CAMPAIGN_KEY || configMissing('ACTIVE_CAMPAIGN_KEY'),
-  acRegisteredFromField: '20',
+  activeCampaign: {
+    api:
+      process.env.ACTIVE_CAMPAIGN_API || configMissing('ACTIVE_CAMPAIGN_API'),
+    key:
+      process.env.ACTIVE_CAMPAIGN_KEY || configMissing('ACTIVE_CAMPAIGN_KEY'),
+    RegisteredFromField: '20',
+    newsLetterListId: '1',
+    onboardingListId: '22',
+  },
   slack: {
     webhookUrl:
       process.env.SLACK_WEBHOOK_URL || configMissing('SLACK_WEBHOOK_URL'),
