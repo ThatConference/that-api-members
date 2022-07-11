@@ -23,6 +23,8 @@ function scrubProfile(profile, isNew) {
     if (!scrubbedProfile.interests) scrubbedProfile.interests = [];
   }
   scrubbedProfile.lastUpdatedAt = modifiedAtDate;
+  if (scrubbedProfile.email)
+    scrubbedProfile.email = scrubbedProfile.email.toLowerCase();
 
   return scrubbedProfile;
 }
