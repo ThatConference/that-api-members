@@ -60,8 +60,8 @@ export const fieldResolvers = {
             });
           }
         } catch (err) {
-          Sentry.addContext('ac user', user);
-          Sentry.addContext('ac list id', listId);
+          Sentry.setContext('ac user', { user });
+          Sentry.setContext('ac list id', { listId });
           Sentry.captureException(err);
         }
 
@@ -188,7 +188,7 @@ export const fieldResolvers = {
       Sentry.setTags({ memberId, email: member.email });
 
       const r = await slackRequestInvite({ email: member.email });
-      Sentry.setContext('Slack Invite return', JSON.stringify(r));
+      Sentry.setContext('Slack Invite return', { result: JSON.stringify(r) });
       dlog('slack invite return: %O', r);
       let returnText = '';
       if (r?.result?.ok === undefined) {

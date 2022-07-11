@@ -20,7 +20,7 @@ async function createNewAcContact(user) {
   const newContact = await ac.createContact(contact);
   if (!newContact) {
     dlog(`failed creating contact in AC %o`, contact);
-    Sentry.setContext('AC Contact', contact);
+    Sentry.setContext('AC Contact', { contact });
     Sentry.captureMessage('failed creating contact in AC', 'error');
     throw new Error(
       `Failed creating contact in AC, ${JSON.stringify(contact)}`,
@@ -48,14 +48,14 @@ async function syncAcContactFromTHATUser(user) {
   try {
     newContact = await ac.syncContact(contact);
   } catch (err) {
-    Sentry.setContext('AC Contact', contact);
+    Sentry.setContext('AC Contact', { contact });
     Sentry.captureException(err);
     return null;
   }
 
   if (!newContact) {
     dlog(`failed synching contact in AC %o`, contact);
-    Sentry.setContext('AC Contact', contact);
+    Sentry.setContext('AC Contact', { contact });
     Sentry.captureException(
       new Error(
         `Failed synching contact in AC (no result), ${JSON.stringify(contact)}`,
@@ -124,9 +124,11 @@ async function changeListSubscription({ user, listId, isAddToList }) {
   try {
     contactResult = await ac.findContactByEmail(user.email);
   } catch (err) {
-    Sentry.setContext('email', user.email);
-    Sentry.setContext('user', JSON.stringify(user));
-    Sentry.setContext('AC listId', listId);
+    Sentry.setContext('add contact to list', {
+      email: user.email,
+      user: JSON.stringify(user),
+      listId,
+    });
     Sentry.captureException(err);
     return null;
   }
@@ -151,18 +153,22 @@ async function changeListSubscription({ user, listId, isAddToList }) {
       status,
     });
   } catch (err) {
-    Sentry.setContext('listId', listId);
-    Sentry.setContext('list status', status);
-    Sentry.setContext('AC contactId', contactId);
-    Sentry.setContext('user', JSON.stringify(user));
+    Sentry.setContext('add contact to list', {
+      listId,
+      status,
+      contactId,
+      user,
+    });
     Sentry.captureException(err);
     return null;
   }
   if (!contactInList) {
     dlog(`contact %o wasn't update in list %s`, user, listId);
-    Sentry.setContext('email', user.email);
-    Sentry.setContext('contactId', contactId);
-    Sentry.setContext('listId', listId);
+    Sentry.setContext('contact add to list', {
+      email: user.email,
+      contactId,
+      listId,
+    });
     const e = new Error(
       `Failed updating contact in list in AC, contactId: ${contactId}, listId: ${listId},`,
     );
@@ -199,7 +205,10 @@ async function isContactSubscribedToList({ user, listId }) {
   // ---
   // Returning null during failures to ensure the AC platform doesn't interfere
   // with our platform. We'll gracefully deal with AC failing.
-  Sentry.setContext('email', user.email);
+  Sentry.setTags({
+    email: user?.email,
+    listId,
+  });
   let contactResult;
   try {
     contactResult = await ac.findContactByEmail(user.email);
@@ -219,8 +228,7 @@ async function isContactSubscribedToList({ user, listId }) {
   try {
     result = ac.isContactInList({ acId: contactId, listId });
   } catch (err) {
-    Sentry.setContext('AC id', contactId);
-    Sentry.setContext('AC list id', listId);
+    Sentry.setContext('contact subscribed to list', { contactId, listId });
     Sentry.captureException(err);
     return null;
   }
