@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from '@adobe/node-fetch-retry';
 import debug from 'debug';
 import envConfig from '../envConfig';
 
@@ -15,6 +15,9 @@ function callSlackHook(hookBody) {
       method: 'post',
       body: JSON.stringify(hookBody),
       headers: { 'Content-Type': 'application/json' },
+      retryInitialDelay: 500,
+      retryBackoff: 4.0,
+      retryMaxDuration: 30000,
     })
       .then(res => res.text())
       .then(res => dlog('Slack webhood response: %o', res))

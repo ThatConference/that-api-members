@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-// import fetch from 'node-fetch';
 import fetch from '@adobe/node-fetch-retry';
 import debug from 'debug';
 
