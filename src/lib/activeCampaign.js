@@ -14,15 +14,25 @@ const fetchBaseOptions = {
   headers: {
     'Api-Token': envConfig.activeCampaign.key,
     'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
   retryInitialDelay: 250,
   retryBackoff: 2.0,
+};
+const sentryBreadcrumbBase = {
+  category: 'activeCampaignRequests',
+  level: 'info',
 };
 dlog('AC url: %s', acBaseUrl);
 
 function findContactByEmail(email) {
   dlog('call findContactByEmail for %s', email);
   const url = `${acBaseUrl}/contacts?`;
+  Sentry.addBreadcrumb({
+    ...sentryBreadcrumbBase,
+    message: 'findContactByEmail Called',
+    data: { email, url },
+  });
   const params = new URLSearchParams({ email });
   const reqOptions = {
     method: 'GET',
@@ -35,11 +45,10 @@ function findContactByEmail(email) {
         dlog('non-200 result from contact query by email %s', email);
         Sentry.withScope(scope => {
           scope.setLevel('warning');
-          scope.setContext(
-            'non-200 result from  contact query by email',
-            { email },
-            { res },
-          );
+          scope.setContext('non-200 result from  contact query by email', {
+            email,
+            res,
+          });
           Sentry.captureMessage('non-200 result from contact query by email');
         });
         throw new Error(
@@ -57,11 +66,10 @@ function findContactByEmail(email) {
         );
         Sentry.withScope(scope => {
           scope.setLevel('error');
-          scope.setContext(
-            'query by email return > 1 contact',
-            { email },
-            { contacts: json.contacts },
-          );
+          scope.setContext('query by email return > 1 contact', {
+            email,
+            contacts: json.contacts,
+          });
           Sentry.captureMessage('query by email returned > 1 contact');
         });
         throw new Error(
@@ -84,6 +92,11 @@ function createContact(contact) {
   */
   dlog('call createContact for %o', contact);
   const url = `${acBaseUrl}/contacts`;
+  Sentry.addBreadcrumb({
+    ...sentryBreadcrumbBase,
+    message: 'findContactByEmail Called',
+    data: { contact, url },
+  });
   const reqOptions = {
     method: 'POST',
     ...fetchBaseOptions,
@@ -96,11 +109,10 @@ function createContact(contact) {
         dlog('non-200 result from create contact %o', contact);
         Sentry.withScope(scope => {
           scope.setLevel('warning');
-          scope.setContext(
-            'non-200 result from  create AC contact',
-            { contact },
-            { res },
-          );
+          scope.setContext('non-200 result from  create AC contact', {
+            contact,
+            res,
+          });
           Sentry.captureMessage('non-200 result from sync AC contact');
         });
         throw new Error(
@@ -117,6 +129,11 @@ function syncContact(contact) {
   // contact key, email address
   dlog('call syncContact for %o', contact);
   const url = `${acBaseUrl}/contact/sync`;
+  Sentry.addBreadcrumb({
+    ...sentryBreadcrumbBase,
+    message: 'syncContact Called',
+    data: { contact, url },
+  });
   const reqOptions = {
     method: 'POST',
     ...fetchBaseOptions,
@@ -129,11 +146,10 @@ function syncContact(contact) {
         dlog('non-200 result from sync contact %o', contact);
         Sentry.withScope(scope => {
           scope.setLevel('warning');
-          scope.setContext(
-            'non-200 result from  syc AC contact',
-            { contact },
-            { res },
-          );
+          scope.setContext('non-200 result from  syc AC contact', {
+            contact,
+            res,
+          });
           Sentry.captureMessage('non-200 result from sync AC contact');
         });
         throw new Error(
@@ -148,6 +164,11 @@ function syncContact(contact) {
 function searchForTag(tagName) {
   dlog('search for tag %s', tagName);
   const url = `${acBaseUrl}/tags?`;
+  Sentry.addBreadcrumb({
+    ...sentryBreadcrumbBase,
+    message: 'searchForTag Called',
+    data: { tagName, url },
+  });
   const params = new URLSearchParams({ search: tagName });
   const reqOptions = {
     method: 'GET',
@@ -160,11 +181,10 @@ function searchForTag(tagName) {
         dlog('non-200 result from search for tag %s', tagName);
         Sentry.withScope(scope => {
           scope.setLevel('warning');
-          scope.setContext(
-            'non-200 result from search for tag',
-            { tagName },
-            { res },
-          );
+          scope.setContext('non-200 result from search for tag', {
+            tagName,
+            res,
+          });
           Sentry.captureMessage('non-200 result from search for tag');
         });
         throw new Error(
@@ -182,11 +202,10 @@ function searchForTag(tagName) {
         );
         Sentry.withScope(scope => {
           scope.setLevel('error');
-          scope.setContext(
-            'Tag search return > 1 contact',
-            { tagName },
-            { tags: json.tags },
-          );
+          scope.setContext('Tag search return > 1 contact', {
+            tagName,
+            tags: json.tags,
+          });
           Sentry.captureMessage('query for tag returned > 1 contact');
         });
         throw new Error(
@@ -201,6 +220,11 @@ function searchForTag(tagName) {
 function addTagToContact(acId, tagId) {
   dlog('call addTagToContact for id %s adding tag %s', acId, tagId);
   const url = `${acBaseUrl}/contactTags`;
+  Sentry.addBreadcrumb({
+    ...sentryBreadcrumbBase,
+    message: 'addTagToContact Called',
+    data: { acId, tagId, url },
+  });
   const bodyval = {
     contactTag: {
       contact: acId,
@@ -219,12 +243,7 @@ function addTagToContact(acId, tagId) {
         dlog('issue adding tag to contact %d %s', res.status, res.statusText);
         Sentry.withScope(scope => {
           scope.setLevel('error');
-          scope.setContext(
-            'Issue adding tag to contact',
-            { acId },
-            { tagId },
-            { res },
-          );
+          scope.setContext('Issue adding tag to contact', { acId, tagId, res });
           Sentry.captureMessage('issue adding tag to contact');
         });
         throw new Error(
@@ -241,6 +260,11 @@ function addTagToContact(acId, tagId) {
 function searchForList(listName) {
   dlog('search for list %s', listName);
   const url = `${acBaseUrl}/lists?`;
+  Sentry.addBreadcrumb({
+    ...sentryBreadcrumbBase,
+    message: 'searchForList Called',
+    data: { listName, url },
+  });
   const params = new URLSearchParams({ 'filters[name]': listName });
   const reqOptions = {
     method: 'GET',
@@ -253,11 +277,10 @@ function searchForList(listName) {
         dlog('non-200 result from search for list %s', listName);
         Sentry.withScope(scope => {
           scope.setLevel('warning');
-          scope.setContext(
-            'non-200 result from search for list',
-            { listName },
-            { res },
-          );
+          scope.setContext('non-200 result from search for list', {
+            listName,
+            res,
+          });
           Sentry.captureMessage('non-200 result from search for list');
         });
         throw new Error(
@@ -275,11 +298,10 @@ function searchForList(listName) {
         );
         Sentry.withScope(scope => {
           scope.setLevel('error');
-          scope.setContext(
-            'list search return > 1 contact',
-            { listName },
-            { lists: json.lists },
-          );
+          scope.setContext('list search return > 1 contact', {
+            listName,
+            lists: json.lists,
+          });
           Sentry.captureMessage('query for list returned > 1 contact');
         });
         throw new Error(
@@ -296,6 +318,11 @@ function setContactToList({ acId, listId, status = '1' }) {
   // statuses: '1': subscribe, '2': unsubscribe
   dlog('call setContactToList for id %s to list %s', acId, listId);
   const url = `${acBaseUrl}/contactLists`;
+  Sentry.addBreadcrumb({
+    ...sentryBreadcrumbBase,
+    message: 'setContactToList Called',
+    data: { acId, listId, status, url },
+  });
   const bodyval = {
     contactList: {
       list: listId,
@@ -325,13 +352,12 @@ function setContactToList({ acId, listId, status = '1' }) {
         );
         Sentry.withScope(scope => {
           scope.setLevel('error');
-          scope.setContext(
-            'Issue setting contact to list',
-            { acId },
-            { listId },
-            { status },
-            { res },
-          );
+          scope.setContext('Issue setting contact to list', {
+            acId,
+            listId,
+            status,
+            res,
+          });
           Sentry.captureException(e);
         });
         throw e;
@@ -346,6 +372,11 @@ function isContactInList({ acId, listId }) {
   // statuses: '1': subscribe, '2': unsubscribe, '3': email bounced, '0': unconfirmed
   dlog(`call isContactInList for id %s, list %s`, acId, listId);
   const url = `${acBaseUrl}/contacts/${acId}/contactLists`;
+  Sentry.addBreadcrumb({
+    ...sentryBreadcrumbBase,
+    message: 'isContactInList Called',
+    data: { acId, listId, url },
+  });
   const reqOptions = {
     method: 'GET',
     ...fetchBaseOptions,
@@ -366,11 +397,7 @@ function isContactInList({ acId, listId }) {
         );
         Sentry.withScope(scope => {
           scope.setLevel('error');
-          scope.setContext(
-            'Issue querying list membership',
-            { acId },
-            { listId },
-          );
+          scope.setContext('Issue querying list membership', { acId, listId });
           Sentry.captureException(e);
         });
         throw e;
