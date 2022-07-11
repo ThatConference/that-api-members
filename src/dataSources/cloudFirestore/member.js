@@ -23,6 +23,8 @@ function scrubProfile(profile, isNew) {
     if (!scrubbedProfile.interests) scrubbedProfile.interests = [];
   }
   scrubbedProfile.lastUpdatedAt = modifiedAtDate;
+  if (scrubbedProfile.email)
+    scrubbedProfile.email = scrubbedProfile.email.toLowerCase();
 
   return scrubbedProfile;
 }
@@ -68,11 +70,12 @@ const member = dbInstance => {
       dlog('failed batch write member profile and slug');
       Sentry.withScope(scope => {
         scope.setLevel('error');
-        scope.setContext(
-          'batch write of member profile and slug failed',
-          { docRef, modifiedProfile },
-          { slugDocRef, slugDoc },
-        );
+        scope.setContext('batch write of member profile and slug failed', {
+          docRef,
+          modifiedProfile,
+          slugDocRef,
+          slugDoc,
+        });
         Sentry.captureException(err);
       });
       throw new Error('failed batch write member profile and slug');

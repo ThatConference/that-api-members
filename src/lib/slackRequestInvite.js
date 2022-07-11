@@ -3,7 +3,7 @@
  * This is an undocumented Slack API call.
  * reference: https://github.com/ErikKalkoken/slackApiDoc/blob/master/users.admin.invite.md
  */
-import fetch from 'node-fetch';
+import fetch from '@adobe/node-fetch-retry';
 import debug from 'debug';
 import envConfig from '../envConfig';
 
@@ -31,6 +31,9 @@ export default function slackRequestInvite({ email }) {
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'application/json',
     },
+    retryInitialDelay: 500,
+    retryBackoff: 4.0,
+    retryMaxDuration: 30000,
   })
     .then(res => res.json())
     .then(res => {

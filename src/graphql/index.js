@@ -40,8 +40,7 @@ const createServer = ({ dataSources }) => {
                 scope.setLevel('error');
                 scope.setContext(
                   `profile loader member(s) don't exist in members collection`,
-                  { ids },
-                  { members },
+                  { ids, members },
                 );
                 Sentry.captureMessage(
                   `profile loader member(s) don't exist in members collection`,
