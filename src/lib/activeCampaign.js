@@ -146,7 +146,7 @@ function syncContact(contact) {
         Sentry.withScope(scope => {
           scope.setLevel('warning');
           scope.setContext('non-200 result from  syc AC contact', {
-            contact,
+            contact: JSON.stringify(contact),
             res,
           });
           Sentry.captureMessage('non-200 result from sync AC contact');
