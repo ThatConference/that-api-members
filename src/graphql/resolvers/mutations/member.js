@@ -192,17 +192,13 @@ export const fieldResolvers = {
       dlog('slack invite return: %O', r);
       let returnText = '';
       if (r?.result?.ok === undefined) {
-        Sentry.captureMessage(
-          'Unknown return from Slack Invite',
-          Sentry.Severity.Error,
-        );
+        Sentry.captureMessage('Unknown return from Slack Invite', 'error');
         returnText = `Error while sending invite. Please contact us for your THAT Slack invite.`;
       } else if (r.result.ok === false) {
-        if (r.toSentry)
-          Sentry.captureMessage(r.toSentry, Sentry.Severity.Warning);
+        if (r.toSentry) Sentry.captureMessage(r.toSentry, 'warning');
         returnText = r.toUser;
       } else {
-        if (r.toSentry) Sentry.captureMessage(r.toSentry, Sentry.Severity.Info);
+        if (r.toSentry) Sentry.captureMessage(r.toSentry, 'info');
         returnText = r.toUser;
       }
 

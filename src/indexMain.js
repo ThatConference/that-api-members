@@ -62,7 +62,7 @@ const useSentry = async (req, res, next) => {
   Sentry.addBreadcrumb({
     category: 'that-api-members',
     message: 'members init',
-    level: Sentry.Severity.Info,
+    level: 'info',
   });
   next();
 };
