@@ -4,7 +4,6 @@ import { isNil } from 'lodash';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
 import constants from '../../../constants';
-import envConfig from '../../../envConfig';
 
 const dlog = debug('that:api:members:mutation');
 

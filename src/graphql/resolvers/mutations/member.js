@@ -7,7 +7,6 @@ import titoStore from '../../../dataSources/apis/tito';
 import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
 import memberFindBy from '../../../lib/memberFindBy';
 import slackRequestInvite from '../../../lib/slackRequestInvite';
-import envConfig from '../../../envConfig';
 import constants from '../../../constants';
 
 const dlog = debug('that:api:members:mutation');
@@ -33,11 +32,6 @@ export const fieldResolvers = {
         memberId,
         profile: modifiedProfile,
       });
-      const user = {
-        email: updatedMember.email,
-        firstName: updatedMember.firstName,
-        lastName: updatedMember.lastName,
-      };
 
       userEvents.emit('accountUpdated', updatedMember, firestore);
       graphCdnEvents.emit(

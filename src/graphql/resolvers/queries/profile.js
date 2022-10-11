@@ -33,7 +33,7 @@ export const fieldResolvers = {
       return dcStore(firestore).findCodesForMember(memberId);
     },
     activePartnerId: ({ activePartnerId: id }) => id,
-    newsletterSubscriptionStatus: ({ email }, __) => {
+    newsletterSubscriptionStatus: ({ email }) => {
       // Only a lookup for now
 
       dlog('isSubscribedNewsletter called');

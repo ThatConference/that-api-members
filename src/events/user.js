@@ -4,9 +4,7 @@ import debug from 'debug';
 import moment from 'moment';
 import { orbitLove } from '@thatconference/api';
 import slackNotifications from '../lib/slackNotifications';
-import acActions from '../lib/activeCampaignActions';
 import hsActions from '../lib/hubSpotActions';
-import envConfig from '../envConfig';
 
 const dlog = debug('that:api:members:events:user');
 
@@ -67,51 +65,6 @@ function userEvents(postmark) {
     if (user.canFeature) {
       slackNotifications.memberCreated({ user });
     }
-  }
-
-  function addAcProfileCompleteTag(user) {
-    // On contact adds tag and includes them in list.
-    // contact created if doesn't exist.
-    dlog('accountCreated Add THATProfileComplete tag in AC');
-    acActions
-      .addTagToContact({ tagName: 'THATProfileComplete', user })
-      .then(r => {
-        dlog('add tag to contact result %o', r);
-        return acActions.addContactToList({
-          user,
-          listId: envConfig.activeCampaign.onboardingListId,
-        });
-      })
-      .then(r => dlog('add contact to list result %o', r))
-      .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
-      );
-  }
-
-  function addAcProfileCompleteTagOnly(user) {
-    // on profile update we only want to ensure there is a profile complete
-    // tag, not add them to the onboading list. The list add is only on new
-    // profiles
-    dlog('account updated, add THATProfileComplete tag in AC');
-    return acActions
-      .addTagToContact({ tagName: 'THATProfileComplete', user })
-      .then(r => {
-        dlog('add tag to contact result %o', r);
-      })
-      .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
-      );
-  }
-
-  function onAccountActionUpdateAc(user) {
-    // updates AC when THAT profile is created or updated
-    dlog('onAccountActionUpdateAc');
-    return acActions
-      .syncAcContactFromTHATUser(user)
-      .then(a => dlog('Account synced, ac id: %s', a))
-      .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
-      );
   }
 
   function onAccountActionUpdateHubSpot(user) {
