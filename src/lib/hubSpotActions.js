@@ -12,7 +12,7 @@ function syncContactFromTHATUser(user) {
   // syncing assumes THAT profile exists
   dlog('syncContactFromTHATUser, user: %o', user);
   const properties = {
-    memberId: user.id,
+    THATmemberId: user.id,
     THATProfileComplete: true,
     SetAsMarketingContact: true,
   };

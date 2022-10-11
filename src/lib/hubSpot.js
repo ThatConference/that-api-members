@@ -67,27 +67,44 @@ function createOrUpdateContact({ email, properties }) {
     ...sharedOptions,
     body: JSON.stringify(data),
   };
-  return fetch(url, options).then(response => {
-    const { status } = response;
-    if (!response.ok) {
-      dlog('Non-200 result, createOrUpdateContact, %s', status);
-      let msg;
-      if (status === 409) {
-        // email address conflict
-        msg = `status 409, email address conflict updating ${email}`;
-      }
-      Sentry.withScope(scope => {
-        scope.setTags({
-          email,
-          status,
+  return fetch(url, options)
+    .then(response => {
+      const { status } = response;
+      if (!response.ok) {
+        dlog('Non-200 result, createOrUpdateContact, %s', status);
+        let msg;
+        if (status === 409) {
+          // email address conflict
+          msg = `status 409, email address conflict updating ${email}`;
+        }
+        Sentry.withScope(scope => {
+          scope.setTags({
+            url,
+            email,
+            status,
+          });
+          scope.setContext('options', options);
+          Sentry.captureException(new Error(msg));
         });
-        Sentry.captureException(new Error(msg));
-      });
-      return {};
-    }
-    // e.g. { vid: 15251, isNew: false }
-    return response.json();
-  });
+        // return {};
+      }
+      // e.g. { vid: 15251, isNew: false }
+      return response.json();
+    })
+    .then(json => {
+      if (!json?.vid) {
+        Sentry.withScope(scope => {
+          scope.setTags({
+            email,
+            function: 'createOrUpdateContact',
+            url,
+          });
+          scope.setContext('returned json', { json: JSON.stringify(json) });
+          scope.setContext('options', options);
+          Sentry.captureException(new Error('Error response from HubSpot'));
+        });
+      }
+    });
 }
 
 function subscribeContact({ email, subscriptionId }) {

@@ -81,8 +81,8 @@ function userEvents(postmark) {
   }
 
   function onAccountUpdateEnsureNoProfileUnsubscribe(user) {
-    dlog(onAccountUpdateEnsureNoProfileUnsubscribe);
-    return hsActions.setContactWithCompleteProfile(user.email);
+    dlog('onAccountUpdateEnsureNoProfileUnsubscribe called');
+    return hsActions.unsubscribeNoProfileOnboarding(user.email);
   }
 
   function sendOrbitLoveActivityOnCreate(user, firestore) {
