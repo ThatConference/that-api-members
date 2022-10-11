@@ -4,8 +4,7 @@ import debug from 'debug';
 import moment from 'moment';
 import { orbitLove } from '@thatconference/api';
 import slackNotifications from '../lib/slackNotifications';
-import acActions from '../lib/activeCampaignActions';
-import envConfig from '../envConfig';
+import hsActions from '../lib/hubSpotActions';
 
 const dlog = debug('that:api:members:events:user');
 
@@ -68,49 +67,22 @@ function userEvents(postmark) {
     }
   }
 
-  function addAcProfileCompleteTag(user) {
-    // On contact adds tag and includes them in list.
-    // contact created if doesn't exist.
-    dlog('accountCreated Add THATProfileComplete tag in AC');
-    acActions
-      .addTagToContact({ tagName: 'THATProfileComplete', user })
-      .then(r => {
-        dlog('add tag to contact result %o', r);
-        return acActions.addContactToList({
-          user,
-          listId: envConfig.activeCampaign.onboardingListId,
-        });
-      })
-      .then(r => dlog('add contact to list result %o', r))
-      .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
-      );
+  function onAccountActionUpdateHubSpot(user) {
+    // updates HubSpot when THAT profile is created or updated
+    dlog('calling onAccountActionUpdateHubSpot');
+    return hsActions
+      .syncContactFromTHATUser(user)
+      .then(r => dlog('onAccountActionUpdateHubSpot result: %o', r));
   }
 
-  function addAcProfileCompleteTagOnly(user) {
-    // on profile update we only want to ensure there is a profile complete
-    // tag, not add them to the onboading list. The list add is only on new
-    // profiles
-    dlog('account updated, add THATProfileComplete tag in AC');
-    return acActions
-      .addTagToContact({ tagName: 'THATProfileComplete', user })
-      .then(r => {
-        dlog('add tag to contact result %o', r);
-      })
-      .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
-      );
+  function onAccountCreateOptInNewUserOnboarding(user) {
+    dlog('onAccountCreateOptInNewUserOnboarding called');
+    return hsActions.subscribeNewUserOnboarding(user.email);
   }
 
-  function onAccountActionUpdateAc(user) {
-    // updates AC when THAT profile is created or updated
-    dlog('onAccountActionUpdateAc');
-    acActions
-      .syncAcContactFromTHATUser(user)
-      .then(a => dlog('Account synced, ac id: %s', a))
-      .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
-      );
+  function onAccountUpdateEnsureNoProfileUnsubscribe(user) {
+    dlog('onAccountUpdateEnsureNoProfileUnsubscribe called');
+    return hsActions.unsubscribeNoProfileOnboarding(user.email);
   }
 
   function sendOrbitLoveActivityOnCreate(user, firestore) {
@@ -147,13 +119,17 @@ function userEvents(postmark) {
     Sentry.captureException(err);
   });
 
-  userEventEmitter.on('accountCreated', onAccountActionUpdateAc);
+  userEventEmitter.on('accountCreated', onAccountActionUpdateHubSpot);
   userEventEmitter.on('accountCreated', sendAccountCreatedEmail);
   userEventEmitter.on('accountCreated', sendAccountCreatedSlack);
-  userEventEmitter.on('accountCreated', addAcProfileCompleteTag);
-  userEventEmitter.on('accountUpdated', onAccountActionUpdateAc);
+  userEventEmitter.on('accountCreated', onAccountCreateOptInNewUserOnboarding);
+
+  userEventEmitter.on('accountUpdated', onAccountActionUpdateHubSpot);
   userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
-  userEventEmitter.on('accountUpdated', addAcProfileCompleteTagOnly);
+  userEventEmitter.on(
+    'accountUpdated',
+    onAccountUpdateEnsureNoProfileUnsubscribe,
+  );
 
   userEventEmitter.on('accountCreated', sendOrbitLoveActivityOnCreate);
   userEventEmitter.on('accountUpdated', sendOrbitLoveActivityOnUpdate);

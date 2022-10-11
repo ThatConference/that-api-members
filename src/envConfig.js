@@ -28,6 +28,24 @@ const requiredConfig = () => ({
       process.env.SLACK_LEGACY_TOKEN || configMissing('SLACK_LEGACY_TOKEN'),
     memberNotificationChannel: '#introductions',
   },
+  hubspot: {
+    api: process.env.HUBSPOT_API || configMissing('HUBSPOT_API'),
+    token: process.env.HUBSPOT_TOKEN || configMissing('HUBSPOT_TOKEN'),
+    newUserOnboardingId:
+      process.env.HUBSPOT_NEWUSER_ONBOARDING_ID ||
+      configMissing('HUBSPOT_NEWUSER_ONBOARDING_ID'),
+    profileOnboardingId:
+      process.env.HUBSPOT_PROFILE_ONBOARDING_ID ||
+      configMissing('HUBSPOT_PROFILE_ONBOARDING_ID'),
+    newsletterId:
+      process.env.HUBSPOT_NEWSLETTER_ID ||
+      configMissing('HUBSPOT_NEWSLETTER_ID'),
+    subs: {
+      newUserOnboarding: 'New User Onboarding',
+      noProfileOnboarding: 'No Profile Onboarding',
+      thatNewsletter: 'THAT Newsletter',
+    },
+  },
 });
 
 export default requiredConfig();
