@@ -6,7 +6,6 @@ import memberStore from '../../../dataSources/cloudFirestore/member';
 import titoStore from '../../../dataSources/apis/tito';
 import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
 import memberFindBy from '../../../lib/memberFindBy';
-import acActions from '../../../lib/activeCampaignActions';
 import slackRequestInvite from '../../../lib/slackRequestInvite';
 import envConfig from '../../../envConfig';
 import constants from '../../../constants';
@@ -29,12 +28,6 @@ export const fieldResolvers = {
     ) => {
       dlog(`MembersMutation:update for ${memberId}, %o`, profile);
       const modifiedProfile = profile;
-      const listId = envConfig.activeCampaign.newsLetterListId;
-      const hasNewsletterField = 'isSubscribedNewsletter' in modifiedProfile;
-      const isSubscribedNewsletter =
-        modifiedProfile?.isSubscribedNewsletter ?? false;
-      // We don't want to write this to the database
-      delete modifiedProfile.isSubscribedNewsletter;
 
       const updatedMember = await memberStore(firestore).update({
         memberId,
@@ -45,30 +38,6 @@ export const fieldResolvers = {
         firstName: updatedMember.firstName,
         lastName: updatedMember.lastName,
       };
-      if (hasNewsletterField === true) {
-        let acResult;
-        try {
-          if (isSubscribedNewsletter === true) {
-            acResult = await acActions.addContactToList({
-              user,
-              listId,
-            });
-          } else {
-            acResult = await acActions.removeContactFromList({
-              user,
-              listId,
-            });
-          }
-        } catch (err) {
-          Sentry.setContext('ac user', { user });
-          Sentry.setContext('ac list id', { listId });
-          Sentry.captureException(err);
-        }
-
-        if (acResult !== null && acResult !== undefined) {
-          updatedMember.isSubscribedNewsletter = isSubscribedNewsletter;
-        }
-      }
 
       userEvents.emit('accountUpdated', updatedMember, firestore);
       graphCdnEvents.emit(

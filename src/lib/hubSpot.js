@@ -245,13 +245,13 @@ function findOptStatus({ email, subscriptionId }) {
       return response.json();
     })
     .then(json => {
-      dlog('optStatus: %o', json);
       if (json === null) return json;
 
       const { subscriptionStatuses } = json;
       const subscription = subscriptionStatuses.find(
-        s => s.id === subscriptionId,
+        s => s?.id?.toString() === subscriptionId?.toString(),
       );
+      dlog('subscription found: %o', subscription);
       let result = 'NOT_SPECIFIED';
       if (subscription?.optState === 'OPT_IN') result = 'OPT_IN';
       else if (subscription?.optState === 'OUT_OUT') result = 'OPT_OUT';

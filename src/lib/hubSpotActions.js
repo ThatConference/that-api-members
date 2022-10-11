@@ -74,9 +74,19 @@ function setContactWithCompleteProfile(user) {
     });
 }
 
+function findContactNewletterSubscription(email) {
+  dlog('isContactSubscribedToNewletter, %s', email);
+  const subscriptionId = envConfig.hubspot.newsletterId;
+  return hubspot.findOptStatus({ email, subscriptionId }).catch(err => {
+    Sentry.setTags({ email, subscriptionId });
+    Sentry.captureException(err);
+  });
+}
+
 export default {
   syncContactFromTHATUser,
   subscribeNewUserOnboarding,
   unsubscribeNoProfileOnboarding,
   setContactWithCompleteProfile,
+  findContactNewletterSubscription,
 };

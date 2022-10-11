@@ -37,6 +37,9 @@ const requiredConfig = () => ({
     profileOnboardingId:
       process.env.HUBSPOT_PROFILE_ONBOARDING_ID ||
       configMissing('HUBSPOT_PROFILE_ONBOARDING_ID'),
+    newsletterId:
+      process.env.HUBSPOT_NEWSLETTER_ID ||
+      configMissing('HUBSPOT_NEWSLETTER_ID'),
     subs: {
       newUserOnboarding: 'New User Onboarding',
       noProfileOnboarding: 'No Profile Onboarding',

@@ -65,5 +65,5 @@ type Profile @key(fields: "id") {
   "Member's emergency contact"
   emergencyContact: EmergencyContact
   "is member subscribed to newsletter (queries AC)"
-  isSubscribedNewsletter: Boolean
+  newsletterSubscriptionStatus: String
 }
