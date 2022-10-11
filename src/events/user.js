@@ -5,6 +5,7 @@ import moment from 'moment';
 import { orbitLove } from '@thatconference/api';
 import slackNotifications from '../lib/slackNotifications';
 import acActions from '../lib/activeCampaignActions';
+import hsActions from '../lib/hubSpotActions';
 import envConfig from '../envConfig';
 
 const dlog = debug('that:api:members:events:user');
@@ -105,12 +106,30 @@ function userEvents(postmark) {
   function onAccountActionUpdateAc(user) {
     // updates AC when THAT profile is created or updated
     dlog('onAccountActionUpdateAc');
-    acActions
+    return acActions
       .syncAcContactFromTHATUser(user)
       .then(a => dlog('Account synced, ac id: %s', a))
       .catch(err =>
         process.nextTick(() => userEventEmitter.emit('error', { err, user })),
       );
+  }
+
+  function onAccountActionUpdateHubSpot(user) {
+    // updates HubSpot when THAT profile is created or updated
+    dlog('calling onAccountActionUpdateHubSpot');
+    return hsActions
+      .syncContactFromTHATUser(user)
+      .then(r => dlog('onAccountActionUpdateHubSpot result: %o', r));
+  }
+
+  function onAccountCreateOptInNewUserOnboarding(user) {
+    dlog('onAccountCreateOptInNewUserOnboarding called');
+    return hsActions.subscribeNewUserOnboarding(user.email);
+  }
+
+  function onAccountUpdateEnsureNoProfileUnsubscribe(user) {
+    dlog(onAccountUpdateEnsureNoProfileUnsubscribe);
+    return hsActions.setContactWithCompleteProfile(user.email);
   }
 
   function sendOrbitLoveActivityOnCreate(user, firestore) {
@@ -147,13 +166,17 @@ function userEvents(postmark) {
     Sentry.captureException(err);
   });
 
-  userEventEmitter.on('accountCreated', onAccountActionUpdateAc);
+  userEventEmitter.on('accountCreated', onAccountActionUpdateHubSpot);
   userEventEmitter.on('accountCreated', sendAccountCreatedEmail);
   userEventEmitter.on('accountCreated', sendAccountCreatedSlack);
-  userEventEmitter.on('accountCreated', addAcProfileCompleteTag);
-  userEventEmitter.on('accountUpdated', onAccountActionUpdateAc);
+  userEventEmitter.on('accountCreated', onAccountCreateOptInNewUserOnboarding);
+
+  userEventEmitter.on('accountUpdated', onAccountActionUpdateHubSpot);
   userEventEmitter.on('accountUpdated', sendAccountUpdatedEmail);
-  userEventEmitter.on('accountUpdated', addAcProfileCompleteTagOnly);
+  userEventEmitter.on(
+    'accountUpdated',
+    onAccountUpdateEnsureNoProfileUnsubscribe,
+  );
 
   userEventEmitter.on('accountCreated', sendOrbitLoveActivityOnCreate);
   userEventEmitter.on('accountUpdated', sendOrbitLoveActivityOnUpdate);
