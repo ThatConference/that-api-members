@@ -48,7 +48,7 @@ async function syncAcContactFromTHATUser(user) {
   try {
     newContact = await ac.syncContact(contact);
   } catch (err) {
-    Sentry.setContext('AC Contact', { contact: JSON.stringify(contact) });
+    Sentry.setContext('AC Contact', { contact });
     Sentry.captureException(err);
     return null;
   }
