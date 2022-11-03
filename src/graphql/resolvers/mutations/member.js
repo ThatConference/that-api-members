@@ -148,10 +148,14 @@ export const fieldResolvers = {
       const profile = { requestSlackInviteAt: new Date() };
       const member = await memberStore(firestore).update({ memberId, profile });
       dlog('member first name: %s', member.firstName);
-      Sentry.setTags({ memberId, email: member.email });
+      Sentry.configureScope(scope =>
+        scope.setTags({ memberId, email: member.email }),
+      );
 
       const r = await slackRequestInvite({ email: member.email });
-      Sentry.setContext('Slack Invite return', { result: JSON.stringify(r) });
+      Sentry.configureScope(scope =>
+        scope.setContext('Slack Invite return', { result: JSON.stringify(r) }),
+      );
       dlog('slack invite return: %O', r);
       let returnText = '';
       if (r?.result?.ok === undefined) {

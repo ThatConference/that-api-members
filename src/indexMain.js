@@ -39,6 +39,7 @@ Sentry.init({
   environment: process.env.THAT_ENVIRONMENT,
   release: process.env.SENTRY_VERSION || defaultVersion,
   debug: process.env.NODE_ENV === 'development',
+  normalizeDepth: 6,
 });
 
 Sentry.configureScope(scope => {

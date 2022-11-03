@@ -70,10 +70,10 @@ const member = dbInstance => {
       dlog('failed batch write member profile and slug');
       Sentry.withScope(scope => {
         scope.setLevel('error');
+        scope.setTag('memberId', user.sub);
+        scope.setTag('profileSlug', modifiedProfile?.profileSlug);
         scope.setContext('batch write of member profile and slug failed', {
-          docRef,
           modifiedProfile,
-          slugDocRef,
           slugDoc,
         });
         Sentry.captureException(err);
