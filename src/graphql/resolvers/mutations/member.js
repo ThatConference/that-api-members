@@ -8,6 +8,7 @@ import meritBadgeStore from '../../../dataSources/cloudFirestore/meritBadge';
 import memberFindBy from '../../../lib/memberFindBy';
 import slackRequestInvite from '../../../lib/slackRequestInvite';
 import constants from '../../../constants';
+import iCalendarUrl from '../../../lib/iCalendarUrl';
 
 const dlog = debug('that:api:members:mutation');
 const favoriteStore = dataSources.cloudFirestore.favorites;
@@ -172,5 +173,10 @@ export const fieldResolvers = {
       return returnText;
     },
     profiles: ({ memberId }) => ({ memberId }),
+    rotateICalenarUrl: ({ memberId }, __, { dataSources: { firestore } }) => {
+      dlog('rotating iCalendarUrl for %s', memberId);
+      const ical = iCalendarUrl({ memberId, firestore });
+      return ical.writeNewIcalKey().then(() => ical.getICalendarUrl());
+    },
   },
 };

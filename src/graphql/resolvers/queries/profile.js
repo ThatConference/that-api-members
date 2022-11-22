@@ -4,6 +4,7 @@ import { dataSources } from '@thatconference/api';
 import meritBadgesResolver from './earnedMeritBadges';
 import dcStore from '../../../dataSources/cloudFirestore/discountCode';
 import hubSpotActions from '../../../lib/hubSpotActions';
+import iCalendarUrl from '../../../lib/iCalendarUrl';
 
 const dlog = debug('that:api:members:query:Profile');
 const assetStore = dataSources.cloudFirestore.assets;
@@ -38,6 +39,14 @@ export const fieldResolvers = {
 
       dlog('isSubscribedNewsletter called');
       return hubSpotActions.findContactNewletterSubscription(email);
+    },
+    favoritesICalendarUrl: (
+      { id: memberId },
+      __,
+      { dataSources: { firestore } },
+    ) => {
+      dlog('iCalendar property called');
+      return iCalendarUrl({ memberId, firestore }).getICalendarUrl();
     },
   },
 };
