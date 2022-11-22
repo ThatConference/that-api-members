@@ -9,6 +9,8 @@ const requiredConfig = () => ({
     process.env.TITO_CHECKIN_SLUG || configMissing('TITO_CHECKIN_SLUG'),
   defaultProfileImage:
     'https://images.that.tech/members/person-placeholder.jpg',
+  icalUrlBase:
+    process.env.THAT_ICAL_URL_BASE || 'https://bulletin.that.us/sessions',
   activeCampaign: {
     api:
       process.env.ACTIVE_CAMPAIGN_API || configMissing('ACTIVE_CAMPAIGN_API'),

@@ -19,4 +19,7 @@ type MemberMutation {
 
   "Profiles mutations path"
   profiles: ProfilesMutation @auth(requires: "members")
+
+  "Rotate iCalendarUrl (changes key)"
+  rotateICalenarUrl: String!
 }
