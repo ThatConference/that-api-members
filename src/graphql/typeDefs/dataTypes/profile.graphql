@@ -67,5 +67,5 @@ type Profile @key(fields: "id") {
   "is member subscribed to newsletter (queries AC)"
   newsletterSubscriptionStatus: String
   "Custom iCalendar address for favorite sessions"
-  favoritesICalendarUrl: String!
+  favoritesICalendarUrl: URL!
 }
