@@ -218,7 +218,11 @@ const member = dbInstance => {
       if (!curStartAfter)
         throw new Error('Invlid cursor value provied for startAfter');
 
-      query = query.startAfter(new Date(curStartAfter));
+      const curCreatedDate = new Date(curStartAfter);
+      if (curCreatedDate instanceof Date && !Number.isNaN(curCreatedDate))
+        return null; // invalid date
+
+      query = query.startAfter(curCreatedDate);
     }
     const qrySnapshot = await query.get();
 
@@ -267,8 +271,12 @@ const member = dbInstance => {
       dlog('decoded cursor: %s, %s', scursor[0], scursor[1]);
       if (!scursor[1]) return null; // invalid cursor, return no records
 
-      query = query.startAfter(scursor[0], scursor[1] || '');
+      const createdAt = new Date(scursor[1]);
+      if (createdAt instanceof Date && !Number.isNaN(createdAt)) return null; // invalid date
+
+      query = query.startAfter(scursor[0], createdAt || '');
     }
+
     const qrySnapshot = await query.get();
     dlog('fetchPublicMembersByFirstName query size? %s', qrySnapshot.size);
     if (!qrySnapshot.size || qrySnapshot.size === 0) return null;
@@ -279,9 +287,11 @@ const member = dbInstance => {
     }));
 
     // base64 encode new composite cursor
-    const cpieces = `${memberSet[memberSet.length - 1].firstName}||${
-      memberSet[memberSet.length - 1].createdAt
-    }`;
+    const curFirstName = memberSet[memberSet.length - 1].firstName;
+    const curCreatedDate = memberSet[memberSet.length - 1].createdAt
+      .toDate()
+      .toISOString();
+    const cpieces = `${curFirstName}||${curCreatedDate}`;
     const cursor = Buffer.from(cpieces, 'utf8').toString('base64');
     dlog('encoded cursor %s', cursor);
 
