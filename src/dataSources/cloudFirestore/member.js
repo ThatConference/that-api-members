@@ -29,6 +29,11 @@ function scrubProfile(profile, isNew) {
   return scrubbedProfile;
 }
 
+function isValidDate(d) {
+  // eslint-disable-next-line no-restricted-globals
+  return d instanceof Date && !isNaN(d);
+}
+
 const member = dbInstance => {
   const collectionName = 'members';
   const membersCol = dbInstance.collection(collectionName);
@@ -219,8 +224,7 @@ const member = dbInstance => {
         throw new Error('Invlid cursor value provied for startAfter');
 
       const curCreatedDate = new Date(curStartAfter);
-      if (curCreatedDate instanceof Date && !Number.isNaN(curCreatedDate))
-        return null; // invalid date
+      if (!isValidDate(curCreatedDate)) return null; // invalid cursor, return no records
 
       query = query.startAfter(curCreatedDate);
     }
@@ -272,7 +276,7 @@ const member = dbInstance => {
       if (!scursor[1]) return null; // invalid cursor, return no records
 
       const createdAt = new Date(scursor[1]);
-      if (createdAt instanceof Date && !Number.isNaN(createdAt)) return null; // invalid date
+      if (!isValidDate) return null; // invalid cursor, return no records
 
       query = query.startAfter(scursor[0], createdAt || '');
     }
