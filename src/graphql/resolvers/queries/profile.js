@@ -51,7 +51,7 @@ export const fieldResolvers = {
     notificationPreferences: ({ notificationPreferences }) => {
       dlog('notificationPreferences');
       const defaultValues = {
-        meetThat: false,
+        meetThatCamper: false,
         profileUpdates: true,
       };
 
