@@ -308,9 +308,29 @@ const member = dbInstance => {
   async function update({ memberId, profile }) {
     dlog('update called on member %o', profile);
 
-    const docRef = dbInstance.doc(`${collectionName}/${memberId}`);
-
+    const docRef = membersCol.doc(memberId);
     const modifiedProfile = scrubProfile(profile);
+    // new map types can be added to this as they are added to the member document.
+    // using the same pre-document fetch to fill in existing object data
+    // (called `map` in Firestore)
+    if (
+      typeof modifiedProfile?.notificationPreferences === 'object' &&
+      modifiedProfile?.notificationPreferences !== null
+    ) {
+      dlog(
+        '✉️  update to notificationPreferences identified: %o',
+        modifiedProfile,
+      );
+      const preMember = await docRef
+        .get()
+        .then(r => ({ id: r.id, ...r.data() }));
+      const np = preMember.notificationPreferences ?? {};
+      modifiedProfile.notificationPreferences = {
+        ...np,
+        ...modifiedProfile.notificationPreferences,
+      };
+    }
+
     await docRef.update(modifiedProfile);
 
     const updatedDoc = await docRef.get();
