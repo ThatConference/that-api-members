@@ -48,5 +48,20 @@ export const fieldResolvers = {
       dlog('iCalendar property called');
       return iCalendarUrl({ memberId, firestore }).getICalendarUrl();
     },
+    notificationPreferences: ({ notificationPreferences }) => {
+      dlog('notificationPreferences');
+      const defaultValues = {
+        meetThat: false,
+        profileUpdates: true,
+      };
+
+      const np = notificationPreferences ?? {};
+
+      return {
+        ...defaultValues,
+        ...np,
+      };
+    },
+    profiles: ({ id: memberId }) => ({ memberId }),
   },
 };

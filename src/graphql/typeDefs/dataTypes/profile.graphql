@@ -68,4 +68,8 @@ type Profile @key(fields: "id") {
   newsletterSubscriptionStatus: String
   "Custom iCalendar address for favorite sessions"
   favoritesICalendarUrl: URL!
+  "Member's notification preferences"
+  notificationPreferences: NotificationPreferences!
+  "Member's definable profiles"
+  profiles: ProfilesQuery
 }
