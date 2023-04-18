@@ -1,6 +1,6 @@
 {
   "name": "that-api-members",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "THATConference.com members service.",
   "main": "index.js",
   "engines": {
