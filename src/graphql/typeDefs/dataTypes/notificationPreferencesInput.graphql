@@ -1,13 +1,13 @@
 input NotificationPreferencesCreateInput {
   "Subscribe to Meet THAT (default: false)"
-  meetThat: Boolean
+  meetThatCamper: Boolean
   "Subscribe to profile updates (default: true)"
   profileUpdates: Boolean
 }
 
 input NotificationPreferencesUpdateInput {
   "Subscribe to Meet THAT (default: false)"
-  meetThat: Boolean
+  meetThatCamper: Boolean
   "Subscribe to profile updates (default: true)"
   profileUpdates: Boolean
 }
