@@ -1,0 +1,7 @@
+type NotificationPreferences {
+  "Subscribed to Meet THAT"
+  meetThat: Boolean!
+
+  "Subscribed to profile updates"
+  profileUpdates: Boolean!
+}
