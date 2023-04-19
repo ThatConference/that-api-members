@@ -35,31 +35,6 @@ const createServerParts = ({ dataSources, httpServer }) => {
     schema,
   );
 
-  dlog('🚜 assembling datasources');
-  const { firestore } = dataSources;
-  const amendedDataSources = {
-    ...dataSources,
-    profileLoader: new DataLoader(ids =>
-      memberStore(firestore)
-        .batchFindMembers(ids)
-        .then(members => {
-          if (members.includes(null)) {
-            Sentry.withScope(scope => {
-              scope.setLevel('error');
-              scope.setContext(
-                `profile loader member(s) don't exist in members collection`,
-                { ids, members },
-              );
-              Sentry.captureMessage(
-                `profile loader member(s) don't exist in members collection`,
-              );
-            });
-          }
-          return ids.map(i => members.find(p => p && p.id === i));
-        }),
-    ),
-  };
-
   dlog('🚜 creating new apollo server instance');
   const graphQlServer = new ApolloServer({
     schema,
@@ -84,16 +59,38 @@ const createServerParts = ({ dataSources, httpServer }) => {
   });
 
   dlog('🚜 creating createContext function');
-  const createContext = async ({ req, res }) => {
-    dlog('building graphql user context');
+  const createContext = async ({ req }) => {
+    dlog('🚜 building graphql user context');
+    dlog('🚜 assembling datasources');
+    const { firestore } = dataSources;
+
     let context = {
       dataSources: {
-        ...amendedDataSources,
+        ...dataSources,
+        profileLoader: new DataLoader(ids =>
+          memberStore(firestore)
+            .batchFindMembers(ids)
+            .then(members => {
+              if (members.includes(null)) {
+                Sentry.withScope(scope => {
+                  scope.setLevel('error');
+                  scope.setContext(
+                    `profile loader member(s) don't exist in members collection`,
+                    { ids, members },
+                  );
+                  Sentry.captureMessage(
+                    `profile loader member(s) don't exist in members collection`,
+                  );
+                });
+              }
+              return ids.map(i => members.find(p => p && p.id === i));
+            }),
+        ),
       },
     };
 
     if (!isNil(req.headers.authorization)) {
-      dlog('validating token for %o:', req.headers.authorization);
+      dlog('🚜 validating token for %o:', req.headers.authorization);
       Sentry.addBreadcrumb({
         category: 'graphql context',
         message: 'user has authToken',
@@ -109,7 +106,7 @@ const createServerParts = ({ dataSources, httpServer }) => {
         });
       });
 
-      dlog('validated token: %o', validatedToken);
+      dlog('🚜 validated token: %o', validatedToken);
       context = {
         ...context,
         user: {
