@@ -3,12 +3,13 @@
  * resulting schema from the build.
  */
 import { buildSubgraphSchema } from '@apollo/subgraph';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer } from '@apollo/server';
 import typeDefs from '../../typeDefs';
 import directives from '../../directives';
 
 let resolvers;
 let originalEnv;
+let schema;
 
 describe('validate schema test', () => {
   beforeAll(() => {
@@ -26,7 +27,11 @@ describe('validate schema test', () => {
     process.env = originalEnv;
   });
 
-  let schema = buildSubgraphSchema([{ typeDefs, resolvers }]);
+  beforeEach(() => (schema = buildSubgraphSchema([{ typeDefs, resolvers }])));
+
+  afterEach(() => (schema = null));
+
+  //let schema = buildSubgraphSchema([{ typeDefs, resolvers }]);
 
   describe('Validate graphql schema', () => {
     it('schema has successfully build and is and object', () => {
@@ -37,9 +42,10 @@ describe('validate schema test', () => {
     it('will add auth directive successfully', () => {
       const { authDirectiveTransformer } = directives.auth('auth');
       schema = authDirectiveTransformer(schema);
-      // TODO: find other ways to validate schema
+
       expect(typeof schema).toBe('object');
       expect(schema).toBeInstanceOf(Object);
+      expect(schema?._directives?.length).toBeGreaterThan(0);
     });
     it('will add lowerCase directive successfully', () => {
       const { lowerCaseDirectiveTransformer } =
@@ -48,6 +54,7 @@ describe('validate schema test', () => {
       // TODO: find other ways to validate schema
       expect(typeof schema).toBe('object');
       expect(schema).toBeInstanceOf(Object);
+      expect(schema?._directives?.length).toBeGreaterThan(0);
     });
     it('will add upperCase directive successfully', () => {
       const { upperCaseDirectiveTransformer } =
@@ -56,12 +63,20 @@ describe('validate schema test', () => {
       // TODO: find other ways to validate schema
       expect(typeof schema).toBe('object');
       expect(schema).toBeInstanceOf(Object);
+      expect(schema?._directives?.length).toBeGreaterThan(0);
     });
     it('will run in server correctly', () => {
       const serv = new ApolloServer({ schema });
-      expect(typeof serv).toBe('object');
-      expect(serv?.graphqlPath).toBe('/graphql');
-      expect(serv?.requestOptions?.nodeEnv).toBe('test');
+
+      expect(serv).toBeInstanceOf(ApolloServer);
+      expect(serv?.internals?.nodeEnv).toBe('test');
+
+      const csrfPreventionRequestHeaders =
+        serv?.internals?.csrfPreventionRequestHeaders;
+      const expected = ['x-apollo-operation-name', 'apollo-require-preflight'];
+      expect(csrfPreventionRequestHeaders).toEqual(
+        expect.arrayContaining(expected),
+      );
     });
   });
 });

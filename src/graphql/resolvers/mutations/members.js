@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { ForbiddenError } from 'apollo-server-express';
+import { GraphQLError } from 'graphql';
 import { isNil } from 'lodash';
 
 import memberStore from '../../../dataSources/cloudFirestore/member';
@@ -53,7 +53,9 @@ export const fieldResolvers = {
         if (user.permissions.includes('admin')) {
           memberId = id;
         } else {
-          throw new ForbiddenError('Permissions Denied.');
+          throw new GraphQLError('Permission Denied.', {
+            extensions: { code: 'UNAUTHENTICATED' },
+          });
         }
       }
 
