@@ -30,6 +30,11 @@ type Profile @key(fields: "id") {
   isMember: Boolean
   "Expiration date of membership is still active"
   membershipExpirationDate: Date
+  """
+  Initial membership signup date.
+  This date will be reset with a creation of a new subscription in Strip
+  """
+  membershipCreationdate: Date
   "Subscription id at Stripe for current Membership active or not"
   stripeSubscriptionId: String
 

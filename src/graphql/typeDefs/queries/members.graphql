@@ -11,4 +11,7 @@ type MembersQuery {
 
   "Path to member's different profiles, e.g. shared profile"
   profiles: ProfilesQuery @auth(requires: "members")
+
+  "Admin-centric queries"
+  admin: AdminMembersQuery @auth(requires: "admin")
 }

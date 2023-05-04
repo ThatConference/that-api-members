@@ -46,5 +46,7 @@ export const fieldResolvers = {
       dlog('profiles path called for member %s', user.sub);
       return { memberId: user.sub };
     },
+
+    admin: () => ({}),
   },
 };

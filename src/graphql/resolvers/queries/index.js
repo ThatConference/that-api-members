@@ -11,6 +11,7 @@ import { fieldResolvers as registrationProfileFields } from './registrationProfi
 import { fieldResolvers as profilesFields } from './profiles';
 import { fieldResolvers as meritBadgeFields } from './meritBadge';
 import { fieldResolvers as leadGenMemberFields } from './extend-leadGenMember';
+import { fieldResolvers as adminMembersFields } from './adminMembers';
 
 export default {
   ...root,
@@ -28,4 +29,5 @@ export const fieldResolvers = {
   ...profilesFields,
   ...meritBadgeFields,
   ...leadGenMemberFields,
+  ...adminMembersFields,
 };
