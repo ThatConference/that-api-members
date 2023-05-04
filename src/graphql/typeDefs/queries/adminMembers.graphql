@@ -1,0 +1,8 @@
+type AdminMembersQuery {
+  "Admin-centric queries"
+  members(orderBy: OrderBy, pageSize: Int, cursor: String): PagedMemberProfile
+    @auth(requires: "admin")
+
+  "List of any Patron members (past or present)"
+  patrons: [Profile]! @auth(requires: "admin")
+}

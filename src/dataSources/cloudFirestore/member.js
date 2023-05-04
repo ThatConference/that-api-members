@@ -305,6 +305,98 @@ const member = dbInstance => {
     };
   }
 
+  async function fetchAnyMembersPaged({ orderBy, cursor, pageSize = 20 }) {
+    dlog(
+      'fetchAnyMembersPaged:: orderBy: %s, pageSize: %d, cursor: %s',
+      orderBy,
+      pageSize,
+      cursor,
+    );
+    let query = membersCol;
+    if (orderBy === 'FIRSTNAME') {
+      query = query.orderBy('firstName', 'asc');
+    }
+    query = query.orderBy('createdAt', 'asc').limit(pageSize);
+
+    if (cursor) {
+      const scursor = Buffer.from(cursor, 'base64').toString('utf8');
+      dlog('scursor: %o', scursor);
+      let curCreatedAt;
+      let curFirstName;
+      try {
+        ({ curCreatedAt, curFirstName } = JSON.parse(scursor));
+      } catch (err) {
+        Sentry.setTags({
+          rawCursor: cursor,
+          cursor: scursor,
+        });
+        throw new Error('Invalid cursor provided');
+      }
+      if (orderBy === 'FIRSTNAME' && !curFirstName)
+        throw new Error('Invalid cursor provided (fn)');
+      const startAfterDate = new Date(curCreatedAt);
+      if (!isValidDate(startAfterDate)) {
+        Sentry.setTags({
+          rawCursor: cursor,
+          cursor: scursor,
+        });
+        throw new Error('Invalid cursor provided (date)');
+      }
+      if (orderBy === 'FIRSTNAME') {
+        query = query.startAfter(curFirstName, startAfterDate);
+      } else {
+        query = query.startAfter(startAfterDate);
+      }
+    }
+    const { size, docs } = await query.get();
+    dlog('found %d members', size);
+
+    const memberPage = docs.map(doc => {
+      const r = {
+        id: doc.id,
+        ...doc.data(),
+      };
+
+      return memberDateForge(r);
+    });
+
+    const lastMember = memberPage[memberPage.length - 1];
+    let newCursor = '';
+    if (lastMember && memberPage.length >= pageSize) {
+      dlog('lastMember:: %o', lastMember);
+      const curCreatedAt = new Date(lastMember.createdAt);
+      const curFirstName = lastMember.firstname;
+      const curObj = { curCreatedAt };
+      if (orderBy === 'FIRSTNAME') {
+        curObj.curFirstName = curFirstName;
+      }
+      const cpieces = JSON.stringify(curObj);
+      newCursor = Buffer.from(cpieces, 'utf8').toString('base64');
+    }
+
+    return {
+      profiles: memberPage,
+      cursor: newCursor,
+      count: memberPage.length,
+    };
+  }
+
+  function fetchAnyPatronMember() {
+    dlog('fetchAnyPatronMember called');
+    return membersCol
+      .where('membershipExpirationDate', '>', new Date('01/01/2020'))
+      .get()
+      .then(querySnap =>
+        querySnap.docs.map(doc => {
+          const r = {
+            id: doc.id,
+            ...doc.data(),
+          };
+          return memberDateForge(r);
+        }),
+      );
+  }
+
   async function update({ memberId, profile }) {
     dlog('update called on member %o', profile);
 
@@ -386,6 +478,8 @@ const member = dbInstance => {
     batchFindMembers,
     fetchPublicMembersByCreated,
     fetchPublicMembersByFirstName,
+    fetchAnyMembersPaged,
+    fetchAnyPatronMember,
     update,
     deactivate,
     remove,
