@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-unresolved */
-import express from 'express';
-
-import debug from 'debug';
 import http from 'node:http';
+import express from 'express';
+import debug from 'debug';
 import { json } from 'body-parser';
 import { expressMiddleware } from '@apollo/server/express4';
 import cors from 'cors';
@@ -19,16 +18,7 @@ import apolloGraphServer from './graphql';
 import envConfig from './envConfig';
 import userEventEmitter from './events/user';
 
-let version;
-(async () => {
-  let p;
-  try {
-    p = await import('./package.json');
-  } catch {
-    p = await import('../package.json');
-  }
-  version = p.version;
-})();
+import { version } from './package.json';
 
 const dlog = debug('that:api:members:index');
 const defaultVersion = `that-api-members@${version}`;
@@ -126,6 +116,11 @@ const createUserContext = (req, res, next) => {
   next();
 };
 
+function getVersion(req, res) {
+  dlog('method %s, defaultVersion %s', req.method, defaultVersion);
+  return res.json({ version: defaultVersion });
+}
+
 function failure(err, req, res, next) {
   dlog(err);
   Sentry.captureException(err);
@@ -142,6 +137,7 @@ api.use(
   sentryMark,
   createUserContext,
 );
+api.use('/version', getVersion);
 
 const { graphQlServer, createContext } = graphServerParts;
 
