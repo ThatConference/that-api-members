@@ -102,5 +102,6 @@ export const fieldResolvers = {
         profiles,
       };
     },
+    profileLinks: ({ profileLinks }) => profileLinks ?? [],
   },
 };
