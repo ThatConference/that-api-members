@@ -63,5 +63,6 @@ export const fieldResolvers = {
       };
     },
     profiles: ({ id: memberId }) => ({ memberId }),
+    profileLinks: ({ profileLinks }) => profileLinks ?? [],
   },
 };

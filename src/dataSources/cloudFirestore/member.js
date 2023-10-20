@@ -125,9 +125,8 @@ const member = dbInstance => {
     if (docSnapshot.size === 1) {
       const profile = docSnapshot.docs[0].data();
       profile.id = docSnapshot.docs[0].id;
-      profile.profileLinks = profile.profileLinks.filter(
-        pl => pl.isPublic === true,
-      );
+      profile.profileLinks =
+        profile.profileLinks?.filter(pl => pl.isPublic === true) ?? [];
 
       results = memberDateForge(profile);
     }
