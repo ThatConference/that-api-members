@@ -28,7 +28,7 @@
     "@graphql-tools/load-files": "^7.0.0",
     "@graphql-tools/merge": "^9.0.0",
     "@sentry/node": "^7.80.0",
-    "@thatconference/api": "^4.3.0",
+    "@thatconference/api": "^4.4.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dataloader": "^2.2.2",
