@@ -1,0 +1,10 @@
+input ShareWithByPinInput {
+  "PIN provided during event registration/check-in"
+  pin: String!
+  "Event id associated with the PIN"
+  eventId: String!
+  "A message to send the person sharing with"
+  messageToShareWith: String
+  "Private notes about this share"
+  notes: String
+}

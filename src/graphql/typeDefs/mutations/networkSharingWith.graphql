@@ -1,0 +1,8 @@
+type NetworkSharingWithMutation {
+  "update current focused sharing"
+  update(shareWith: ShareWithUpdateInput!): NetworkShareByMe!
+    @auth(requires: "members")
+
+  "remove current focused sharing"
+  remove(sharedWithId: ID!): ID! @auth(requires: "members")
+}

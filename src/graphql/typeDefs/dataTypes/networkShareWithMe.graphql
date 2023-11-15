@@ -1,0 +1,9 @@
+"members who are sharing their information with me"
+type NetworkShareWithMe {
+  "Member's online profile as secured profile (limited if public)"
+  sharedWithMeProfile: SecureProfile!
+  "member shared profile"
+  sharedWithMeSharedProfile: SharedProfile!
+  "created date"
+  createdAt: Date
+}

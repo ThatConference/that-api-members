@@ -1,6 +1,6 @@
 import debug from 'debug';
 
-const dlog = debug('that:api:members:query:privateProfile');
+const dlog = debug('that:api:members:query:secureProfile');
 
 export const fieldResolvers = {
   SecureProfile: {

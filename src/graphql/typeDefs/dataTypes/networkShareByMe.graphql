@@ -1,0 +1,11 @@
+"Members me is sharing my information with"
+type NetworkShareByMe {
+  "Notes on this share"
+  notes: String
+  "Secure profile of person I am sharing with"
+  sharingWithProfile: SecureProfile
+  "created date"
+  createdAt: Date
+  "sharing data last updated"
+  lastUpdatedAt: Date
+}

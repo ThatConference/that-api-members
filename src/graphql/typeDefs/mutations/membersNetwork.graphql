@@ -1,0 +1,11 @@
+type MembersNetworkMutation {
+  "add a new network sharing for logged in member"
+  add: ShareWithAddByMutation @auth(requires: "members")
+
+  """
+  Actions specific for provided share
+  shareWithId: memberId to share logged in member with
+  """
+  sharingWith(sharedWithId: ID!): NetworkSharingWithMutation
+    @auth(requires: "members")
+}

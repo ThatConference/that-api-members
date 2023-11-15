@@ -113,6 +113,35 @@ function userEvents(postmark) {
       );
   }
 
+  function sendNewShareEmail({
+    sharingWith,
+    sharingSharedProfile,
+    messageToShareWith = null,
+  }) {
+    dlog('sendNewShareEmail');
+    return postmark
+      .sendEmailWithTemplate({
+        TemplateAlias: 'network-new-share-with-you',
+        From: 'hello@thatconference.com',
+        To: sharingWith.email,
+        Tag: 'network-sharing',
+        TemplateModel: {
+          sharingWith: {
+            firstName: sharingWith.firstName,
+            lastName: sharingWith.lastName,
+            email: sharingWith.email,
+          },
+          sharingSharedProfile,
+          messageToShareWith,
+        },
+      })
+      .catch(err =>
+        process.nextTick(() =>
+          userEventEmitter.emit('error', { err, user: sharingSharedProfile }),
+        ),
+      );
+  }
+
   userEventEmitter.on('error', ({ err, user }) => {
     Sentry.setTag('section', 'userEventEmitter');
     Sentry.setContext('user object', { user });
@@ -133,6 +162,8 @@ function userEvents(postmark) {
 
   userEventEmitter.on('accountCreated', sendOrbitLoveActivityOnCreate);
   userEventEmitter.on('accountUpdated', sendOrbitLoveActivityOnUpdate);
+
+  userEventEmitter.on('addNewSharingWith', sendNewShareEmail);
 
   return userEventEmitter;
 }

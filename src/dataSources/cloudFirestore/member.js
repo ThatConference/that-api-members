@@ -150,6 +150,8 @@ const member = dbInstance => {
     return result;
   }
 
+  const get = memberId => findMe(memberId);
+
   async function findIdFromSlug(slug) {
     dlog('findIdFromSlug %s', slug);
     const { size, docs } = await membersCol
@@ -472,6 +474,7 @@ const member = dbInstance => {
     findMember,
     findPublicById,
     findMe,
+    get,
     findIdFromSlug,
     getSlug,
     batchFindMembers,

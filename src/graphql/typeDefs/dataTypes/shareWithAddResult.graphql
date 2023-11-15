@@ -1,0 +1,8 @@
+type ShareWithAddResult {
+  "Was adding the share successful"
+  isSuccess: Boolean!
+  "pertinent result message"
+  message: String
+  "ShareWith result when successful"
+  sharedWith: NetworkShareByMe
+}

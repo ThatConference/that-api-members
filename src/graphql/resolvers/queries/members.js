@@ -37,6 +37,8 @@ export const fieldResolvers = {
       return memberStore(firestore).findMe(user.sub);
     },
 
+    network: () => ({}),
+
     isProfileSlugTaken: (_, { slug }, { dataSources: { firestore } }) => {
       dlog('isProfileSlugUnique called');
       return memberStore(firestore).isProfileSlugTaken(slug);

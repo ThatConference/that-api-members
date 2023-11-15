@@ -12,6 +12,9 @@ import { fieldResolvers as profilesFields } from './profiles';
 import { fieldResolvers as meritBadgeFields } from './meritBadge';
 import { fieldResolvers as leadGenMemberFields } from './extend-leadGenMember';
 import { fieldResolvers as adminMembersFields } from './adminMembers';
+import { fieldResolvers as membersNetworkFields } from './membersNetwork';
+import { fieldResolvers as networkShareByMeFields } from './networkShareByMe';
+import { fieldResolvers as networkShareWitMeFields } from './networkShareWithMe';
 
 export default {
   ...root,
@@ -30,4 +33,7 @@ export const fieldResolvers = {
   ...meritBadgeFields,
   ...leadGenMemberFields,
   ...adminMembersFields,
+  ...membersNetworkFields,
+  ...networkShareByMeFields,
+  ...networkShareWitMeFields,
 };
