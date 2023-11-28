@@ -4,5 +4,5 @@ type NetworkSharingWithMutation {
     @auth(requires: "members")
 
   "remove current focused sharing"
-  remove(sharedWithId: ID!): ID! @auth(requires: "members")
+  remove: ID! @auth(requires: "members")
 }

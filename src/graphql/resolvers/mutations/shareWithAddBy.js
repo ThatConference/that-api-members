@@ -1,4 +1,5 @@
 import debug from 'debug';
+import * as Sentry from '@sentry/node';
 import { dataSources } from '@thatconference/api';
 import memberStore from '../../../dataSources/cloudFirestore/member';
 import sharingWithStore from '../../../dataSources/cloudFirestore/sharingWith';
@@ -58,28 +59,40 @@ export const fieldResolvers = {
             lastName,
             email,
           };
-          const storeResult = await sharingWithStore(firestore).add({
-            sharedById: user.sub,
-            sharedWithId: memberId,
-            sharingData: {
-              notes: notes ?? '',
-            },
-          });
-          dlog('storeResult %o', storeResult);
-          const sharedProfile = await findSharedProfile({
-            memberId: user.sub,
-            firestore,
-          });
-          userEvents.emit('addNewSharingWith', {
-            sharingWith,
-            sharingSharedProfile: sharedProfile ?? {},
-            messageToShareWith,
-          });
-          addResult.isSuccess = true;
-          addResult.sharedWith = {
-            ...storeResult,
-            sharingWithProfile: shareWithMemberRecord,
-          };
+          let storeResult;
+          try {
+            storeResult = await sharingWithStore(firestore).add({
+              sharedById: user.sub,
+              sharedWithId: memberId,
+              sharingData: {
+                notes: notes ?? '',
+              },
+            });
+          } catch (err) {
+            if (err.code === 6)
+              addResult.message = `A share is already estabished for that member`;
+            else {
+              const issueId = Sentry.captureException(err);
+              addResult.message = `Exception occured creating new share (ref. ${issueId})`;
+            }
+          }
+          if (addResult.message === null) {
+            dlog('storeResult %o', storeResult);
+            const sharedProfile = await findSharedProfile({
+              memberId: user.sub,
+              firestore,
+            });
+            userEvents.emit('addNewSharingWith', {
+              sharingWith,
+              sharingSharedProfile: sharedProfile ?? {},
+              messageToShareWith,
+            });
+            addResult.isSuccess = true;
+            addResult.sharedWith = {
+              ...storeResult,
+              sharingWithProfile: shareWithMemberRecord,
+            };
+          }
         } else {
           addResult.message =
             'Invalid PIN reference, no member found. Unable to share information';

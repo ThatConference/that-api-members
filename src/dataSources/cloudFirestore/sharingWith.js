@@ -123,14 +123,14 @@ const sharingWith = dbInstance => {
       .collection(subCollectionName)
       .doc(sharedWithId)
       .update(updateSharingData)
-      .then(() => get(sharedById, sharedWithId));
+      .then(() => get({ sharedById, sharedWithId }));
   }
 
   function remove({ sharedById, sharedWithId }) {
     dlog('remove sharing by %s for %s', sharedById, sharedWithId);
     if (!sharedById || !sharedWithId)
       throw new Error(
-        'SharedById and SharedWidthId are both required to remove a sharing',
+        'sharedById and sharedWidthId are both required to remove a sharing',
       );
     return memberCollection
       .doc(sharedById)
