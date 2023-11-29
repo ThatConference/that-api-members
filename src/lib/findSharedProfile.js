@@ -27,3 +27,27 @@ export const findSharedProfile = async ({ memberId, firestore }) => {
 
   return sharedProfile;
 };
+
+export const findSharedProfileProfileLoader = async ({
+  memberId,
+  firestore,
+  profileLoader,
+}) => {
+  dlog('finding shared profile for %s (pl)', memberId);
+  let sharedProfile;
+  sharedProfile = await sharedProfileStore(firestore).get(memberId);
+  if (sharedProfile === null) {
+    const memberRecord = await profileLoader.load(memberId);
+    if (memberRecord) {
+      sharedProfile = {
+        id: memberRecord.id,
+        firstName: memberRecord.firstName,
+        lastName: memberRecord.lastName,
+        email: memberRecord.lastName,
+        company: memberRecord.company,
+      };
+    }
+  }
+
+  return sharedProfile;
+};

@@ -3,7 +3,10 @@ import * as Sentry from '@sentry/node';
 import { dataSources } from '@thatconference/api';
 import memberStore from '../../../dataSources/cloudFirestore/member';
 import sharingWithStore from '../../../dataSources/cloudFirestore/sharingWith';
-import { findSharedProfile } from '../../../lib/findSharedProfile';
+import {
+  findSharedProfile,
+  findSharedProfileProfileLoader,
+} from '../../../lib/findSharedProfile';
 
 const dlog = debug('that:api:members:mutation:share-with-add-by');
 const orderStore = dataSources.cloudFirestore.order;
@@ -17,6 +20,7 @@ export const fieldResolvers = {
       {
         dataSources: {
           firestore,
+          profileLoader,
           events: { userEvents },
         },
         user,
@@ -79,9 +83,10 @@ export const fieldResolvers = {
           }
           if (addResult.message === null) {
             dlog('storeResult %o', storeResult);
-            const sharedProfile = await findSharedProfile({
+            const sharedProfile = await findSharedProfileProfileLoader({
               memberId: user.sub,
               firestore,
+              profileLoader,
             });
             userEvents.emit('addNewSharingWith', {
               sharingWith,
@@ -109,6 +114,7 @@ export const fieldResolvers = {
       {
         dataSources: {
           firestore,
+          profileLoader,
           events: { userEvents },
         },
         user,
@@ -152,9 +158,10 @@ export const fieldResolvers = {
           },
         });
         dlog('storeResult %o', storeResult);
-        const sharedProfile = await findSharedProfile({
+        const sharedProfile = await findSharedProfileProfileLoader({
           memberId: user.sub,
           firestore,
+          profileLoader,
         });
 
         userEvents.emit('addNewSharingWith', {
