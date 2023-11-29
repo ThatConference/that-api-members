@@ -22,6 +22,7 @@ export const fieldResolvers = {
         user,
       },
     ) => {
+      dlog('resolving for pin');
       const { pin, eventId, messageToShareWith, notes } = shareWith;
       const addResult = {
         isSuccess: false,
@@ -113,7 +114,7 @@ export const fieldResolvers = {
         user,
       },
     ) => {
-      // const { shareWithMember, messageToShareWith, notes } = shareWith;
+      dlog('resolving for profile');
       const { shareWithMember, notes } = shareWith;
       const { id, slug } = shareWithMember;
       let shareWithMemberRecord;

@@ -1,6 +1,6 @@
 import debug from 'debug';
 
-const dlog = debug('that:api:members:query:shared-by-me');
+const dlog = debug('that:api:members:query:netork-share-by-me');
 
 export const fieldResolvers = {
   NetworkShareByMe: {
@@ -9,6 +9,7 @@ export const fieldResolvers = {
       __,
       { dataSources: { profileLoader } },
     ) => {
+      dlog('resolving sharingWithProfile');
       const profile = await profileLoader.load(sharedWithId);
       let result = null;
       if (profile?.id && profile?.firstName) {

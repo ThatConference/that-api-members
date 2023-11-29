@@ -15,7 +15,7 @@ export const fieldResolvers = {
       __,
       { dataSources: { profileLoader } },
     ) => {
-      dlog('sharedWithMeSharedProfile spr:: %O', sharedProfileRecord);
+      dlog('resolving sharedWithMeSharedProfile');
       let sharedProfile;
       if (sharedProfileRecord.exists) {
         sharedProfile = sharedProfileRecord;
