@@ -1,6 +1,0 @@
-type InvalidMember {
-  "The member id in error"
-  memberId: ID!
-  "message about member id"
-  message: String
-}
