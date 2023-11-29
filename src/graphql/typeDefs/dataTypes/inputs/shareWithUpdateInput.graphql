@@ -1,0 +1,4 @@
+input ShareWithUpdateInput {
+  "notes for share"
+  notes: String
+}

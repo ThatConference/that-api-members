@@ -1,0 +1,7 @@
+type MembersNetworkQuery {
+  "me sharing profile with Members"
+  sharedByMe: [NetworkShareByMe]!
+
+  "members sharing profile with me"
+  sharedWithMe: [NetworkShareWithMe]!
+}

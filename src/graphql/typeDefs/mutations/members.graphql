@@ -3,6 +3,8 @@ type MembersMutation {
   create(profile: ProfileCreateInput!): Profile! @auth(requires: "members")
   "Actions specific for the logged in user"
   member: MemberMutation @auth(requires: "members")
+  "enters network path for members sharing profiles"
+  network: MembersNetworkMutation @auth(requires: "members")
   "Admin mutation on a member"
   admin: AdminMembersMutation @auth(requires: "admin")
 }

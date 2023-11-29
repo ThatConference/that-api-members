@@ -62,6 +62,8 @@ export const fieldResolvers = {
       return { memberId };
     },
 
+    network: () => ({}),
+
     admin: () => {
       dlog('admin called');
       return {};

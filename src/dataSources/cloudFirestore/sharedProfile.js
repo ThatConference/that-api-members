@@ -30,6 +30,28 @@ const sharedProfile = dbInstance => {
       });
   }
 
+  function batchGet(memberIds) {
+    dlog('batchGet called on %d ids', memberIds?.length);
+    if (!Array.isArray(memberIds))
+      throw new Error('sharedProfiles batchGet parameter must be an array');
+
+    const docRefs = memberIds.map(id => {
+      const docpath = `${collectionName}/${id}/${subCollectionName}/${sharedProfileDocName}`;
+      return dbInstance.doc(docpath);
+    });
+    if (docRefs.length < 1) return [];
+
+    return dbInstance.getAll(...docRefs).then(docSnaps =>
+      docSnaps.map(doc => ({
+        refPath: doc.ref.path,
+        parsedId: doc.ref.path?.split('/')[1] ?? null,
+        exists: doc.exists,
+        id: doc.id,
+        ...doc.data(),
+      })),
+    );
+  }
+
   function create({ memberId, profile }) {
     dlog('create shared profile for %s :: %o', memberId, profile);
     const docRef = memberCollection
@@ -55,7 +77,7 @@ const sharedProfile = dbInstance => {
       .then(() => memberId);
   }
 
-  return { get, create, update, remove };
+  return { get, batchGet, create, update, remove };
 };
 
 export default sharedProfile;

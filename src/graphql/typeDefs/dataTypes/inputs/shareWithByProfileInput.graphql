@@ -1,0 +1,8 @@
+input ShareWithByProfileInput {
+  "Id of member being shared with"
+  shareWithMember: FindMemberInput!
+  # "Message to send person sharing with"
+  # messageToShareWith: String
+  "private notes about this share"
+  notes: String
+}

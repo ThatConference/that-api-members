@@ -4,7 +4,12 @@ type MembersQuery {
 
   "Returns member based on auth, logged in member"
   me: Profile @auth(requires: "members")
+
+  "Checks if provided slug is in use or not"
   isProfileSlugTaken(slug: Slug!): Boolean @auth(requires: "members")
+
+  "Enters my network path of members sharing profiles"
+  network: MembersNetworkQuery @auth(requires: "members")
 
   "Returns all members. Defaults: count: 20, limit: 100, orderby: CREATEDAT"
   members(orderBy: OrderBy, pageSize: Int, after: String): PagedMember

@@ -1,0 +1,6 @@
+type ShareWithAddByMutation {
+  "Share my information using target's event PIN"
+  pin(shareWith: ShareWithByPinInput!): ShareWithAddResult!
+  "Share my information using target's slug or id"
+  profile(shareWith: ShareWithByProfileInput!): ShareWithAddResult!
+}
