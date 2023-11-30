@@ -19,7 +19,7 @@ export const findSharedProfile = async ({ memberId, firestore }) => {
         id: memberRecord.id,
         firstName: memberRecord.firstName,
         lastName: memberRecord.lastName,
-        email: memberRecord.lastName,
+        email: memberRecord.email,
         company: memberRecord.company,
       };
     }
@@ -43,7 +43,7 @@ export const findSharedProfileProfileLoader = async ({
         id: memberRecord.id,
         firstName: memberRecord.firstName,
         lastName: memberRecord.lastName,
-        email: memberRecord.lastName,
+        email: memberRecord.email,
         company: memberRecord.company,
       };
     }
