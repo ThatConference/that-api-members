@@ -3,10 +3,7 @@ import * as Sentry from '@sentry/node';
 import { dataSources } from '@thatconference/api';
 import memberStore from '../../../dataSources/cloudFirestore/member';
 import sharingWithStore from '../../../dataSources/cloudFirestore/sharingWith';
-import {
-  findSharedProfile,
-  findSharedProfileProfileLoader,
-} from '../../../lib/findSharedProfile';
+import { findSharedProfileProfileLoader } from '../../../lib/findSharedProfile';
 
 const dlog = debug('that:api:members:mutation:share-with-add-by');
 const orderStore = dataSources.cloudFirestore.order;
