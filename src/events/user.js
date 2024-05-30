@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 import * as Sentry from '@sentry/node';
 import debug from 'debug';
 import moment from 'moment';
-import { orbitLove } from '@thatconference/api';
 import slackNotifications from '../lib/slackNotifications';
 import hsActions from '../lib/hubSpotActions';
 
@@ -85,34 +84,6 @@ function userEvents(postmark) {
     return hsActions.unsubscribeNoProfileOnboarding(user.email);
   }
 
-  function sendOrbitLoveActivityOnCreate(user, firestore) {
-    dlog('sendOrbitLoveActicityOnCreate for %s', user.id);
-    const orbitLoveApi = orbitLove.orbitLoveApi({ firestore });
-
-    return orbitLoveApi
-      .addProfileActivity({
-        activityType: orbitLove.activityTypes.profile.update(),
-        member: user,
-      })
-      .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
-      );
-  }
-
-  function sendOrbitLoveActivityOnUpdate(user, firestore) {
-    dlog('sendOrbitLoveActivityOnUpdate for %s', user.id);
-    const orbitLoveApi = orbitLove.orbitLoveApi({ firestore });
-
-    return orbitLoveApi
-      .addProfileActivity({
-        activityType: orbitLove.activityTypes.profile.update(),
-        member: user,
-      })
-      .catch(err =>
-        process.nextTick(() => userEventEmitter.emit('error', { err, user })),
-      );
-  }
-
   function sendNewShareEmail({
     sharingWith,
     sharingSharedProfile,
@@ -159,9 +130,6 @@ function userEvents(postmark) {
     'accountUpdated',
     onAccountUpdateEnsureNoProfileUnsubscribe,
   );
-
-  userEventEmitter.on('accountCreated', sendOrbitLoveActivityOnCreate);
-  userEventEmitter.on('accountUpdated', sendOrbitLoveActivityOnUpdate);
 
   userEventEmitter.on('addNewSharingWith', sendNewShareEmail);
 
